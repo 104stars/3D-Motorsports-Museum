@@ -2,58 +2,45 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import CenterUnderline from "@/components/fancy/text/underline-center"
+import UnderlineToBackground from "@/components/fancy/text/underline-to-background"
 
 export default function Navigation() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+    <nav className="fixed top-6 left-0 right-0 z-50">
+      <div className="container mx-auto px-6 py-4 xl:pl-30 xl:pr-8">
+        <div className="grid grid-cols-3 items-center h-12">
           {/* Logo/Brand */}
-          <Link href="/" className="text-white text-xl font-semibold">
-            Motorsports Museum
-          </Link>
+          <div className="justify-self-start flex items-center h-full">
+            <Link href="/" className="text-white/90 hover:text-white text-xl md:text-2xl font-light tracking-tight">
+              Motorsports Museum
+            </Link>
+          </div>
 
-          {/* Navigation Links and Auth Buttons */}
-          <div className="flex items-center gap-8">
-            {/* Nav Links */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link 
-                href="#exhibits" 
-                className="text-white hover:text-white/80 transition-colors"
-              >
-                Exhibits
-              </Link>
-              <Link 
-                href="#tour" 
-                className="text-white hover:text-white/80 transition-colors"
-              >
-                Tour
-              </Link>
-              <Link 
-                href="#about" 
-                className="text-white hover:text-white/80 transition-colors"
-              >
-                About
-              </Link>
-            </div>
+          {/* Navigation Links - Center */}
+          <div className="hidden md:flex items-center justify-center gap-9 h-full">
+            <CenterUnderline as={Link} href="#exhibits" className="text-white font-light text-xl flex items-center h-full">
+              Exhibits
+            </CenterUnderline>
+            <CenterUnderline as={Link} href="#tour" className="text-white font-light text-xl flex items-center h-full">
+              Tour
+            </CenterUnderline>
+            <CenterUnderline as={Link} href="#about" className="text-white font-light text-xl flex items-center h-full">
+              About
+            </CenterUnderline>
+          </div>
 
-            {/* Auth Buttons */}
-            <div className="flex items-center gap-3">
-              <Button 
-                asChild 
-                variant="ghost" 
-                className="text-white hover:text-white hover:bg-white/10"
-              >
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button 
-                asChild 
-                variant="outline" 
-                className="text-white border-white hover:bg-white hover:text-black"
-              >
-                <Link href="/register">Register</Link>
-              </Button>
-            </div>
+          {/* Auth Button - Right */}
+          <div className="justify-self-end flex items-center h-full">
+            <UnderlineToBackground
+              as={Link}
+              href="/login"
+              className="text-white/90 font-light text-lg px-4 py-2 text-center flex items-center justify-center h-full leading-none"
+              targetTextColor="#000000"
+              maxUnderlineHeightRatio={0.8}
+            >
+              Login
+            </UnderlineToBackground>
           </div>
         </div>
       </div>

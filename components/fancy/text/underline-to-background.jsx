@@ -14,7 +14,10 @@ const UnderlineToBackground = ({
   underlineHeightRatio = 0.1,
 
   // Default to 1% of font size
-  underlinePaddingRatio = 0.01,
+  underlinePaddingRatio = -0.3,
+
+  // Cap the maximum background growth as a ratio of container height (0-1)
+  maxUnderlineHeightRatio = 0.7,
 
   targetTextColor = "#fef",
   ...props
@@ -33,6 +36,9 @@ const UnderlineToBackground = ({
         const underlinePadding = fontSize * underlinePaddingRatio
         textRef.current.style.setProperty("--underline-height", `${underlineHeight}px`)
         textRef.current.style.setProperty("--underline-padding", `${underlinePadding}px`)
+        // Set a CSS variable for max growth percentage
+        const clampedRatio = Math.max(0, Math.min(1, maxUnderlineHeightRatio))
+        textRef.current.style.setProperty("--max-underline-height", `${clampedRatio * 100}%`)
       }
     }
 
@@ -40,7 +46,7 @@ const UnderlineToBackground = ({
     window.addEventListener("resize", updateUnderlineStyles)
 
     return () => window.removeEventListener("resize", updateUnderlineStyles);
-  }, [underlineHeightRatio, underlinePaddingRatio])
+  }, [underlineHeightRatio, underlinePaddingRatio, maxUnderlineHeightRatio])
 
   // Animation variants for the underline background
   const underlineVariants = {
@@ -48,7 +54,8 @@ const UnderlineToBackground = ({
       height: "var(--underline-height)",
     },
     target: {
-      height: "100%",
+      // Cap the maximum height the underline can reach to keep text vertically centered
+      height: "var(--max-underline-height)",
       transition: transition,
     },
   }
@@ -57,6 +64,7 @@ const UnderlineToBackground = ({
   const textVariants = {
     initial: {
       color: "currentColor",
+      transition: transition,
     },
     target: {
       color: targetTextColor,
