@@ -29,9 +29,15 @@ const exhibits = [
   },
 ];
 
+
+
+
+
 export default function FeaturedExhibits() {
+  
   return (
-    <section className="bg-neutral-950 py-20 px-6 md:px-12 lg:px-20">
+    
+    <section className="bg-neutral-950 pt-52 pb-20 px-6 md:px-12 lg:px-20">
       {/* Section Heading */}
       <div className="max-w-7xl mx-auto mb-12">
         <h2 className="text-5xl md:text-6xl font-light text-white mb-4 font-sans ">

@@ -2,6 +2,7 @@
   "name": "motorsports-museum",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@latest",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -19,6 +20,7 @@
     "next": "15.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-grab": "^0.0.18",
     "supabase": "^2.51.0",
     "tailwind-merge": "^3.3.1"
   },
@@ -27,6 +29,7 @@
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
+    "shadcn": "^3.4.2",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.4.0"
   }
