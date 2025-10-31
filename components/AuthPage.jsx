@@ -1,8 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
+import Link from "next/link"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
+
+const SilkBackground = dynamic(() => import("./Silk"), { ssr: false })
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -24,16 +28,35 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex bg-neutral-950">
       {/* Left side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden">
-        {/* Subtle background grid */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate">
+        {/* Back button */}
+        <Link
+          href="/"
+          className="absolute top-8 left-8 z-30 text-white/80 hover:text-white transition-colors"
         >
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+        </Link>
+
+        <div className="absolute inset-0 z-0">
+          <SilkBackground speed={3.3} scale={0.8} rotation={0.2} noiseIntensity={0.8} color="#212121" />
         </div>
 
-        <div className="w-full max-w-md relative z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" />
+
+        <div className="w-full max-w-md relative z-20">
           <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
               {isLogin ? "Welcome back" : "Create account"}

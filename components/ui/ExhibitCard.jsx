@@ -10,7 +10,8 @@ export function ExhibitCard({ title, description, image, tags }) {
         alt=""
         aria-hidden
         fill
-        className="object-cover scale-110 opacity-80 blur-2xl brightness-[0.7]"
+        
+        className="object-cover pointer-events-none scale-110 opacity-80 blur-2xl brightness-[0.7]"
       />
 
       <div className="absolute inset-x-0 top-0 h-[65%] md:h-[62%] overflow-hidden">
@@ -19,7 +20,8 @@ export function ExhibitCard({ title, description, image, tags }) {
             src={image}
             alt={title}
             fill
-            className="object-cover transition-transform duration-700"
+            
+            className="object-cover pointer-events-none transition-transform duration-700"
           />
         </div>
       </div>
