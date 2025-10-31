@@ -4,7 +4,7 @@ export function ExhibitCard({ title, description, image, tags }) {
   const compressedImage = image.replace(/(\.\w+)$/, 'com$1');
   
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-3xl group outline-1 outline-white/10">
+    <div className="relative h-[600px] w-full overflow-hidden rounded-3xl group outline-1 outline-white/10 shadow-[0_0_60px_rgba(255,255,255,0.06)] transition-shadow duration-300">
       <Image
         src={compressedImage}
         alt=""

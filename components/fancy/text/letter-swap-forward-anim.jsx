@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, stagger, useAnimate } from "motion/react";
 
 const LetterSwapForward = ({
   label,
   reverse = true,
+  triggerParentHover = false,
 
   transition = {
     type: "spring",
@@ -54,10 +55,23 @@ const LetterSwapForward = ({
     })
   }
 
+  useEffect(() => {
+    if (!triggerParentHover) return
+    const node = scope?.current
+    // Attach to the nearest element with 'group' (GlassButton adds this to the clickable root)
+    const target = node?.closest?.(".group") || node?.parentElement
+    if (!target) return
+
+    target.addEventListener("mouseenter", hoverStart)
+    return () => {
+      target.removeEventListener("mouseenter", hoverStart)
+    }
+  }, [triggerParentHover])
+
   return (
     <span
       className={`flex justify-center items-center relative overflow-hidden  ${className} `}
-      onMouseEnter={hoverStart}
+      onMouseEnter={triggerParentHover ? undefined : hoverStart}
       onClick={onClick}
       ref={scope}
       {...props}>

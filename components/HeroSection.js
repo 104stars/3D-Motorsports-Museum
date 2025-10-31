@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GlassButton } from "@/components/ui/glass-button";
 import LetterSwapForward from "@/components/fancy/text/letter-swap-forward-anim";
 
 export default function HeroSection() {
@@ -35,18 +34,25 @@ export default function HeroSection() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <GlassButton asChild>
-            <a href="#" className="text-white hover:text-white">Learn more</a>
-          </GlassButton>
           <Button
             asChild
             size="lg"
-            className="bg-white text-black rounded-full hover:bg-white/90"
+            className="rounded-full h-12 px-8 text-base font-semibold tracking-wide bg-white text-neutral-950 shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] focus-visible:ring-white/40 focus-visible:ring-offset-0"
           >
-            <a href="#">
-              <LetterSwapForward label="Start tour" reverse={true}>
+            <a href="#" className="flex items-center justify-center gap-3 text-current">
+              <LetterSwapForward label="Start tour" reverse={true} triggerParentHover={true}>
                 Start tour
               </LetterSwapForward>
+            </a>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="ghost"
+            className="rounded-full h-12 px-8 text-base font-semibold tracking-wide border border-white/25 bg-white/5 text-white/80 backdrop-blur-sm shadow-none transition-colors duration-300 hover:bg-white/10 hover:text-white focus-visible:ring-white/30 focus-visible:ring-offset-0"
+          >
+            <a href="#" className="flex items-center justify-center gap-2 text-current">
+              Learn more
             </a>
           </Button>
         </div>
