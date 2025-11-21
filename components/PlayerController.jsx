@@ -3,25 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { PointerLockControls } from "@react-three/drei";
-import { Euler, Vector3 } from "three";
+import { Vector3 } from "three";
 
 const MOVEMENT_SPEED = 5;
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-export default function PlayerController({ bounds, spawn = [0, 1.7, 0], speed = MOVEMENT_SPEED }) {
+export default function PlayerController({
+  bounds,
+  spawn = [0, 1.7, 0],
+  speed = MOVEMENT_SPEED,
+}) {
   const { camera } = useThree();
   const [moveForward, setMoveForward] = useState(false);
   const [moveBackward, setMoveBackward] = useState(false);
   const [moveLeft, setMoveLeft] = useState(false);
   const [moveRight, setMoveRight] = useState(false);
 
-  const frontVector = useRef(new Vector3());
-  const sideVector = useRef(new Vector3());
+  const controlsRef = useRef();
+  const forwardVector = useRef(new Vector3());
+  const rightVector = useRef(new Vector3());
   const movement = useRef(new Vector3());
-  const rotation = useRef(new Euler(0, 0, 0, "YXZ"));
 
   useEffect(() => {
     camera.position.set(spawn[0], spawn[1], spawn[2]);
+    camera.rotation.set(0, 0, 0);
+    controlsRef.current?.getObject()?.rotation.set(0, 0, 0);
   }, [camera, spawn]);
 
   useEffect(() => {
@@ -83,20 +89,27 @@ export default function PlayerController({ bounds, spawn = [0, 1.7, 0], speed = 
   useFrame((_, delta) => {
     if (!bounds) return;
 
-    frontVector.current.set(0, 0, Number(moveBackward) - Number(moveForward));
-    sideVector.current.set(Number(moveRight) - Number(moveLeft), 0, 0);
-    movement.current
-      .set(0, 0, 0)
-      .subVectors(frontVector.current, sideVector.current);
+    camera.getWorldDirection(forwardVector.current);
+    forwardVector.current.y = 0;
+    if (forwardVector.current.lengthSq() === 0) {
+      forwardVector.current.set(0, 0, -1);
+    } else {
+      forwardVector.current.normalize();
+    }
+
+    rightVector.current
+      .crossVectors(forwardVector.current, camera.up)
+      .normalize();
+
+    movement.current.set(0, 0, 0);
+
+    if (moveForward) movement.current.add(forwardVector.current);
+    if (moveBackward) movement.current.sub(forwardVector.current);
+    if (moveRight) movement.current.add(rightVector.current);
+    if (moveLeft) movement.current.sub(rightVector.current);
 
     if (movement.current.lengthSq() > 0) {
-      movement.current
-        .normalize()
-        .multiplyScalar(speed * delta);
-
-      rotation.current.set(0, camera.rotation.y, 0);
-      movement.current.applyEuler(rotation.current);
-
+      movement.current.normalize().multiplyScalar(speed * delta);
       camera.position.add(movement.current);
     }
 
@@ -105,5 +118,5 @@ export default function PlayerController({ bounds, spawn = [0, 1.7, 0], speed = 
     camera.position.y = spawn[1];
   });
 
-  return <PointerLockControls />;
+  return <PointerLockControls ref={controlsRef} />;
 }
