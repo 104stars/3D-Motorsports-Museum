@@ -23,12 +23,10 @@
 # misc
 .DS_Store
 *.pem
-.cursor
+/.cursor
 
 # 3D models (paid/licensed content)
-/public/models/scene/gallery/*.bin
-/public/models/scene/gallery/*.gltf
-/public/models/scene/gallery/textures/*
+/public/models/
 
 # debug
 npm-debug.log*
