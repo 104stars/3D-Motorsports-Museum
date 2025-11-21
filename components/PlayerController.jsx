@@ -23,19 +23,20 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
   return (
     <Ecctrl
       position={initialPosition}
-      capsuleHalfHeight={0.85}
-      capsuleRadius={0.35}
-      floatHeight={0.35}
-      maxVelLimit={3.5}
-      sprintMult={1.6}
-      jumpVel={4.5}
+      capsuleHalfHeight={0.5}
+      capsuleRadius={0.3}
+      floatHeight={0.1}
+      maxVelLimit={5}
+      sprintMult={2}
+      jumpVel={4}
       camCollision={false}
       camInitDis={-0.01}
       camMinDis={-0.01}
       camMaxDis={-0.01}
       camFollowMult={1000}
       camLerpMult={1000}
-      camTargetPos={{ x: 0, y: 0.9, z: 0 }}
+      camTargetPos={{ x: 0, y: 0.7, z: 0 }}
+      camListenerTarget="document"
       turnVelMultiplier={1}
       turnSpeed={100}
       mode="CameraBasedMovement"
