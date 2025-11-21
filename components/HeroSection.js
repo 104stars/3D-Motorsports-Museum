@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import LetterSwapForward from "@/components/fancy/text/letter-swap-forward-anim";
 
 export default function HeroSection() {
@@ -39,11 +40,11 @@ export default function HeroSection() {
             size="lg"
             className="rounded-full h-12 px-8 text-base font-semibold tracking-wide bg-white text-neutral-950 shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] focus-visible:ring-white/40 focus-visible:ring-offset-0"
           >
-            <a href="#" className="flex items-center justify-center gap-3 text-current">
+            <Link href="/tour" className="flex items-center justify-center gap-3 text-current">
               <LetterSwapForward label="Start tour" reverse={true} triggerParentHover={true}>
                 Start tour
               </LetterSwapForward>
-            </a>
+            </Link>
           </Button>
           <Button
             asChild

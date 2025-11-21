@@ -23,6 +23,12 @@
 # misc
 .DS_Store
 *.pem
+.cursor
+
+# 3D models (paid/licensed content)
+/public/models/scene/gallery/*.bin
+/public/models/scene/gallery/*.gltf
+/public/models/scene/gallery/textures/*
 
 # debug
 npm-debug.log*
@@ -40,3 +46,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 card-design.md
+projectInfo.md
