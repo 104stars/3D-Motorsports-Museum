@@ -2,27 +2,22 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useCallback, useState } from "react";
-import { Loader } from "@react-three/drei";
+import { KeyboardControls, Loader } from "@react-three/drei";
+import { Physics } from "@react-three/rapier";
 import { NoToneMapping, SRGBColorSpace } from "three";
 import GalleryModel from "@/components/GalleryModel";
-import PlayerController from "@/components/PlayerController";
+import PlayerController, {
+  PLAYER_KEYBOARD_MAP,
+} from "@/components/PlayerController";
 
 const EYE_HEIGHT = 1.7;
 const CAMERA_PROPS = { position: [0, EYE_HEIGHT, 0], fov: 75 };
 
 export default function TourPage() {
-  const [bounds, setBounds] = useState(null);
-  const [spawn, setSpawn] = useState([0, EYE_HEIGHT, 0]);
+  const [spawn, setSpawn] = useState(null);
 
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
-    const padding = 2;
-    setBounds({
-      minX: Math.min(box.minX + padding, box.maxX - padding),
-      maxX: Math.max(box.maxX - padding, box.minX + padding),
-      minZ: Math.min(box.minZ + padding, box.maxZ - padding),
-      maxZ: Math.max(box.maxZ - padding, box.minZ + padding),
-    });
     setSpawn([box.center.x, EYE_HEIGHT, box.center.z]);
   }, []);
 
@@ -37,11 +32,15 @@ export default function TourPage() {
           gl.outputColorSpace = SRGBColorSpace;
         }}
       >
-        <Suspense fallback={null}>
-          <GalleryModel onBoundsReady={handleBoundsReady} />
-          {bounds && <PlayerController bounds={bounds} spawn={spawn} />}
-          <color attach="background" args={["#000000"]} />
-        </Suspense>
+        <KeyboardControls map={PLAYER_KEYBOARD_MAP}>
+          <Physics gravity={[0, -9.81, 0]} timeStep="vary">
+            <Suspense fallback={null}>
+              <GalleryModel onBoundsReady={handleBoundsReady} />
+              {spawn && <PlayerController spawn={spawn} />}
+              <color attach="background" args={["#000000"]} />
+            </Suspense>
+          </Physics>
+        </KeyboardControls>
       </Canvas>
       <Loader />
     </div>

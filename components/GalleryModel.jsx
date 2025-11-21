@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
+import { RigidBody } from "@react-three/rapier";
 import {
   Box3,
   Color,
@@ -68,7 +69,11 @@ export default function GalleryModel({ onBoundsReady, ...props }) {
 
   if (!bakedScene) return null;
 
-  return <primitive object={bakedScene} {...props} />;
+  return (
+    <RigidBody type="fixed" colliders="trimesh" restitution={0} friction={1}>
+      <primitive object={bakedScene} {...props} />
+    </RigidBody>
+  );
 }
 
 useGLTF.preload(MODEL_PATH);
