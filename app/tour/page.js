@@ -40,6 +40,60 @@ const MAZDA_787B_TRANSFORM = {
   scale: 176,
 };
 
+// Ferrari 499
+const FERRARI_499_MODEL_PATH = "/models/cars/ferrari499/scene.gltf";
+const FERRARI_499_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [-9, 0.07, 2.],
+  rotation: [0, Math.PI, 0],
+  scale: 167,
+};
+
+// Porsche 917
+const PORSCHE_917_MODEL_PATH = "/models/cars/917/scene.gltf";
+const PORSCHE_917_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [17.74, 0, -1],
+  rotation: [0, 3.06, 0],
+  scale: 1.86,
+};
+
+// Subaru Impreza
+const IMPREZA_MODEL_PATH = "/models/cars/impreza/scene.gltf";
+const IMPREZA_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [-10.6, 6.39, 13.9],
+  rotation: [0, 0, 0],
+  scale: 0.012,
+};
+
+// Toyota Celica
+const CELICA_MODEL_PATH = "/models/cars/celica/scene.gltf";
+const CELICA_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [3.60, 6.28, -13.17],
+  rotation: [0, Math.PI/2, 0],
+  scale: 1.7,
+};
+
+// McLaren MP4/5
+const MP45_MODEL_PATH = "/models/cars/mp45/scene.gltf";
+const MP45_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [6.07, 12.07, -13.4],
+  rotation: [0, Math.PI/3, 0],
+  scale: 1,
+};
+
+// Red Bull RB9
+const RB9_MODEL_PATH = "/models/cars/rb19/scene.gltf";
+const RB9_TRANSFORM = {
+  // Car position [x, y, z]
+  position: [-6.1, 11.98, 6],
+  rotation: [0, 0, 0],
+  scale: 1.6,
+};
+
 // Helper to visualize the Audi's location for lighting logic
 const CAR_POS = new Vector3(...AUDI_QUATTRO_TRANSFORM.position);
 
@@ -251,15 +305,93 @@ export default function TourPage() {
                 scale={MAZDA_787B_TRANSFORM.scale}
               />
 
+              {/* Ferrari 499 */}
+              <CarModel
+                modelPath={FERRARI_499_MODEL_PATH}
+                position={FERRARI_499_TRANSFORM.position}
+                rotation={FERRARI_499_TRANSFORM.rotation}
+                scale={FERRARI_499_TRANSFORM.scale}
+              />
+
+              {/* Porsche 917 */}
+              <CarModel
+                modelPath={PORSCHE_917_MODEL_PATH}
+                position={PORSCHE_917_TRANSFORM.position}
+                rotation={PORSCHE_917_TRANSFORM.rotation}
+                scale={PORSCHE_917_TRANSFORM.scale}
+              />
+
+              {/* Subaru Impreza */}
+              <CarModel
+                modelPath={IMPREZA_MODEL_PATH}
+                position={IMPREZA_TRANSFORM.position}
+                rotation={IMPREZA_TRANSFORM.rotation}
+                scale={IMPREZA_TRANSFORM.scale}
+              />
+
+              {/* Toyota Celica */}
+              <CarModel
+                modelPath={CELICA_MODEL_PATH}
+                position={CELICA_TRANSFORM.position}
+                rotation={CELICA_TRANSFORM.rotation}
+                scale={CELICA_TRANSFORM.scale}
+              />
+
+              {/* McLaren MP4/5 */}
+              <CarModel
+                modelPath={MP45_MODEL_PATH}
+                position={MP45_TRANSFORM.position}
+                rotation={MP45_TRANSFORM.rotation}
+                scale={MP45_TRANSFORM.scale}
+              />
+
+              {/* Red Bull RB9 */}
+              <CarModel
+                modelPath={RB9_MODEL_PATH}
+                position={RB9_TRANSFORM.position}
+                rotation={RB9_TRANSFORM.rotation}
+                scale={RB9_TRANSFORM.scale}
+              />
+
               {/* Debug markers to visualize car positions through walls */}
               <DebugMarker
                 position={AUDI_QUATTRO_TRANSFORM.position}
                 color="lime"
-                size={0.4}
+                size={0.5}
               />
               <DebugMarker
                 position={MAZDA_787B_TRANSFORM.position}
                 color="magenta"
+                size={0.5}
+              />
+              <DebugMarker
+                position={FERRARI_499_TRANSFORM.position}
+                color="cyan"
+                size={0.5}
+              />
+              <DebugMarker
+                position={PORSCHE_917_TRANSFORM.position}
+                color="yellow"
+                size={0.5}
+              />
+              <DebugMarker
+                position={IMPREZA_TRANSFORM.position}
+                color="orange"
+                size={0.5}
+              />
+              <DebugMarker
+                position={CELICA_TRANSFORM.position}
+                color="red"
+                size={0.5}
+              />
+              <DebugMarker
+                position={MP45_TRANSFORM.position}
+                color="pink"
+                size={0.5}
+              />
+              <DebugMarker
+                position={RB9_TRANSFORM.position}
+                color="blue"
                 size={0.5}
               />
 
