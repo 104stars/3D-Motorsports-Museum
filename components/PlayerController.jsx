@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useKeyboardControls } from "@react-three/drei";
 import Ecctrl from "ecctrl";
 
 export const PLAYER_KEYBOARD_MAP = [
@@ -10,18 +11,40 @@ export const PLAYER_KEYBOARD_MAP = [
   { name: "rightward", keys: ["ArrowRight", "KeyD"] },
   { name: "jump", keys: ["Space"] },
   { name: "run", keys: ["ShiftLeft", "ShiftRight", "Shift"] },
+  { name: "reset", keys: ["KeyR"] },
 ];
 
 const DEFAULT_SPAWN = [0, 1.7, 0];
+const RESET_POSITION = { x: 4.16, y: 2.21, z: -2.55 };
 
 export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
+  const controllerRef = useRef(null);
+  const [subscribeKeys] = useKeyboardControls();
+
   const initialPosition = useMemo(
     () => [...(spawn ?? DEFAULT_SPAWN)],
     [spawn]
   );
 
+  useEffect(() => {
+    if (!subscribeKeys) return;
+    const unsubscribe = subscribeKeys(
+      (state) => state.reset,
+      (pressed) => {
+        if (!pressed) return;
+        const body = controllerRef.current?.group;
+        if (!body) return;
+        body.setTranslation(RESET_POSITION, true);
+        body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+      }
+    );
+    return unsubscribe;
+  }, [subscribeKeys]);
+
   return (
     <Ecctrl
+      ref={controllerRef}
       position={initialPosition}
       capsuleHalfHeight={0.5}
       capsuleRadius={0.3}
