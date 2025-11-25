@@ -47,33 +47,37 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       ref={controllerRef}
       position={initialPosition}
       
-      // --- 1. SHAPE & COLLISION FIX ---
+      // --- 1. SHAPE & COLLISION ---
       capsuleHalfHeight={1}
-      // Slightly wider radius prevents getting "wedged" into thin handrails
-      capsuleRadius={0.4} 
+      capsuleRadius={0.4}
       
-      // --- 2. LINEAR MOVEMENT (Killing Inertia) ---
-      // High friction stops you instantly on the ground
-      friction={100} 
-      // autoBalance settings effectively act as "Air Friction" here to stop wobbling
-      autoBalanceSpringK={10} // Stiffer spring = less bouncy
-      autoBalanceSpringDamping={100} // High damping = no oscillation/springiness
+      // --- 2. FRICTION & BALANCE (critically damped = no wobble) ---
+      friction={100}
+      autoBalance={true}
+      autoBalanceSpringK={0.5}
+      autoBalanceDampingC={0.2}
+      autoBalanceSpringOnY={0.3}
+      autoBalanceDampingOnY={0.1}
       
-      // --- 3. STAIRS & HANDRAIL FIX ---
-      // We lowered floatHeight slightly (0.2) so it stops trying to "climb" handrails,
-      // but kept it high enough for stairs.
-      floatHeight={0.2} 
+      // --- 3. STAIR & SLOPE HANDLING ---
+      floatHeight={0.35}
+      slopeMaxAngle={1.2}
+      slopeUpExtraForce={1.5}
+      slopeDownExtraForce={0.3}
+      slopeRayLength={2.5}
       
-      // Allow walking on very steep stairs without sliding back
-      slopeMaxAngle={1.2} // ~68 degrees (very steep capability)
+      // --- 4. FLOATING RAY (firm but not explosive) ---
+      rayHitForgiveness={0.5}
+      springK={3}
+      dampingC={0.5}
       
-      // Constant speed in air prevents losing momentum on stairs
-      moveInAir={true}
-      
-      // --- 4. SPEED SETTINGS ---
+      // --- 5. MOVEMENT ---
       maxVelLimit={5}
       sprintMult={2}
       jumpVel={4}
+      accDeltaTime={12}
+      dragDampingC={0.3}
+      airDragMultiplier={0.05}
       
       // --- CAMERA ---
       camCollision={false}
@@ -87,9 +91,9 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       
       // --- RESPONSIVENESS ---
       turnVelMultiplier={1}
-      turnSpeed={1000} // Instant turning
+      turnSpeed={1000}
       mode="CameraBasedMovement"
-      restitution={0} // 0 Bounciness on collision
+      restitution={0}
     >
       <group />
     </Ecctrl>
