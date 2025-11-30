@@ -86,7 +86,7 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       camMaxDis={-0.01}
       camFollowMult={1000} 
       camLerpMult={1000}
-      camTargetPos={{ x: 0, y: -0.7, z: 0 }}
+      camTargetPos={{ x: 0, y: 0, z: 0 }}
       camListenerTarget="document"
       
       // --- RESPONSIVENESS ---

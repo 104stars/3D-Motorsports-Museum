@@ -41,15 +41,20 @@ export default function TourPage() {
       >
         <KeyboardControls map={PLAYER_KEYBOARD_MAP}>
           <Physics gravity={[0, -9.81, 0]} timeStep="vary">
+            <CarStageLighting />
+            <PointerLockHandler />
+            <CameraPositionLogger />
+
             <Suspense fallback={null}>
-              <CarStageLighting />
-              <PointerLockHandler />
-              <CameraPositionLogger />
               <GalleryModel onBoundsReady={handleBoundsReady} />
-              <CarExhibits />
-              {spawn && ready && <PlayerController spawn={spawn} />}
-              <color attach="background" args={["#000000"]} />
             </Suspense>
+
+            <Suspense fallback={null}>
+              <CarExhibits />
+            </Suspense>
+
+            {spawn && ready && <PlayerController spawn={spawn} />}
+            <color attach="background" args={["#000000"]} />
           </Physics>
         </KeyboardControls>
       </Canvas>
