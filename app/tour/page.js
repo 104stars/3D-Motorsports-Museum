@@ -26,7 +26,7 @@ export default function TourPage() {
   }, []);
 
   return (
-    <div className="w-full h-screen bg-neutral-950">
+    <div className="w-full h-screen bg-neutral-950 relative">
       <Canvas
         shadows
         camera={CAMERA_PROPS}
@@ -59,6 +59,11 @@ export default function TourPage() {
         </KeyboardControls>
       </Canvas>
       <Loader />
+      
+      {/* Crosshair */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
+        <div className="w-1.5 h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.5)]" />
+      </div>
     </div>
   );
 }
