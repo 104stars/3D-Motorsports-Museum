@@ -1,16 +1,20 @@
 "use client";
 
 import { useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-export default function PointerLockHandler() {
+export default function PointerLockHandler({ isPanelOpen = false }) {
   const { gl } = useThree();
+  const wasPanelOpenRef = useRef(isPanelOpen);
 
   useEffect(() => {
     const canvas = gl?.domElement;
     if (!canvas) return;
 
     const handleClick = () => {
+      // Don't request pointer lock if panel is open
+      if (isPanelOpen) return;
+      
       if (document.pointerLockElement !== canvas && canvas.requestPointerLock) {
         canvas.requestPointerLock();
       }
@@ -32,8 +36,33 @@ export default function PointerLockHandler() {
       );
       canvas.style.cursor = "auto";
     };
-  }, [gl]);
+  }, [gl, isPanelOpen]);
+
+  // Handle panel open/close transitions
+  useEffect(() => {
+    const canvas = gl?.domElement;
+    if (!canvas) return;
+
+    // Panel just opened - exit pointer lock
+    if (isPanelOpen && !wasPanelOpenRef.current) {
+      if (document.pointerLockElement === canvas) {
+        document.exitPointerLock();
+      }
+      canvas.style.cursor = "auto";
+    }
+
+    // Panel just closed - re-request pointer lock
+    if (!isPanelOpen && wasPanelOpenRef.current) {
+      if (
+        canvas.requestPointerLock &&
+        document.pointerLockElement !== canvas
+      ) {
+        canvas.requestPointerLock();
+      }
+    }
+
+    wasPanelOpenRef.current = isPanelOpen;
+  }, [isPanelOpen, gl]);
 
   return null;
 }
-
