@@ -20,10 +20,16 @@ const HEADER_CONFIG = {
  * Phase 2: Once collapsed, content scrolls normally.
  * Scrolling back up at top re-expands the header.
  */
-function useStagedScroll() {
+function useStagedScroll(dependency) {
   const scrollContainerRef = useRef(null);
   const progressRef = useRef(0); // 0 = expanded, 1 = collapsed
   const [progress, setProgress] = useState(0);
+
+  // Reset progress when dependency (carId) changes
+  useEffect(() => {
+    progressRef.current = 0;
+    setProgress(0);
+  }, [dependency]);
 
   const updateProgress = useCallback((newProgress) => {
     const clamped = Math.max(0, Math.min(1, newProgress));
@@ -65,7 +71,7 @@ function useStagedScroll() {
 
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
-  }, [handleWheel]);
+  }, [handleWheel, dependency]); // Re-run when dependency changes (e.g. carId) to ensure ref is captured
 
   return {
     scrollContainerRef,
@@ -80,7 +86,7 @@ function useStagedScroll() {
  */
 export default function CarInformationPanel({ carId, onClose }) {
   const panelRef = useRef(null);
-  const { scrollContainerRef, progress, isCollapsed } = useStagedScroll();
+  const { scrollContainerRef, progress, isCollapsed } = useStagedScroll(carId);
   const carInfo = carId ? getCarInfo(carId) : null;
 
   // Get the first image to use as hero
@@ -204,7 +210,7 @@ export default function CarInformationPanel({ carId, onClose }) {
             <div className="mt-auto origin-bottom-left">
               <h2
                 id="panel-title"
-                className="font-serif italic font-light text-white tracking-normal drop-shadow-lg transition-all duration-300"
+                className="font-serif italic font-light text-white tracking-tight drop-shadow-lg transition-all duration-300"
                 style={{
                   fontSize: `clamp(1.875rem, ${3.5 - progress * 1.2}rem, 4.5rem)`,
                   marginBottom: isCollapsed ? 0 : '0.75rem',
@@ -316,7 +322,7 @@ export default function CarInformationPanel({ carId, onClose }) {
 
 function SectionHeader({ title }) {
   return (
-    <h3 className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-neutral-500 mb-6 flex items-center gap-4">
+    <h3 className="font-sans text-xs font-medium uppercase tracking-normal text-neutral-500 mb-6 flex items-center gap-4">
       {title}
       <span className="h-px flex-1 bg-white/10"></span>
     </h3>
