@@ -13,10 +13,12 @@ export default function CarExhibits({ showDebugMarkers = true }) {
       {CAR_CONFIGS.map((car) => (
         <CarModel
           key={car.id}
+          id={car.id}
           modelPath={car.modelPath}
           position={car.position}
           rotation={car.rotation}
           scale={car.scale}
+          debugColor={car.debugColor}
         />
       ))}
 
