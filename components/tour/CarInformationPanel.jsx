@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { X, Play } from "lucide-react";
 
 // Header dimensions and collapse configuration
 const HEADER_CONFIG = {
@@ -88,6 +88,8 @@ export default function CarInformationPanel({ carId, onClose }) {
   const panelRef = useRef(null);
   const { scrollContainerRef, progress, isCollapsed } = useStagedScroll(carId);
   const carInfo = carId ? getCarInfo(carId) : null;
+  const [activeVideo, setActiveVideo] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
 
   // Get the first image to use as hero
   const heroImage = useMemo(() => {
@@ -254,7 +256,7 @@ export default function CarInformationPanel({ carId, onClose }) {
                   <SectionHeader title="Gallery" />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {carInfo.media.map((item, index) => (
-                      <MediaItem key={index} item={item} />
+                      <MediaItem key={index} item={item} onVideoClick={setActiveVideo} onImageClick={setActiveImage} />
                     ))}
                   </div>
                 </section>
@@ -301,6 +303,16 @@ export default function CarInformationPanel({ carId, onClose }) {
         </div>
       </div>
 
+      {/* Video Modal */}
+      {activeVideo && (
+        <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
+      )}
+
+      {/* Image Lightbox */}
+      {activeImage && (
+        <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />
+      )}
+
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -340,8 +352,10 @@ function SpecRow({ label, value }) {
   );
 }
 
-function MediaItem({ item }) {
+function MediaItem({ item, onVideoClick, onImageClick }) {
   const isVideo = item.type === "video";
+  const isYoutube = item.type === "youtube";
+  const isImage = item.type === "image";
 
   const handleError = (e) => {
     e.target.style.display = "none";
@@ -350,7 +364,31 @@ function MediaItem({ item }) {
 
   return (
     <div className="relative aspect-video rounded-xl overflow-hidden group bg-neutral-950 border border-white/10">
-      {isVideo ? (
+      {isYoutube ? (
+        <button
+          onClick={() => onVideoClick?.(item)}
+          className="w-full h-full relative cursor-pointer"
+          aria-label={`Play video: ${item.alt}`}
+        >
+          {/* YouTube Thumbnail */}
+          <img
+            src={`https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`}
+            alt={item.alt}
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
+            onError={handleError}
+          />
+          {/* Play Button Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
+              <Play className="w-7 h-7 text-white ml-1" fill="white" />
+            </div>
+          </div>
+          {/* Caption overlay */}
+          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-sm font-light text-white/90">{item.alt}</p>
+          </div>
+        </button>
+      ) : isVideo ? (
         <video
           src={item.src}
           controls
@@ -359,6 +397,23 @@ function MediaItem({ item }) {
         >
           <track kind="captions" />
         </video>
+      ) : isImage ? (
+        <button
+          onClick={() => onImageClick?.(item)}
+          className="w-full h-full relative cursor-pointer"
+          aria-label={`View image: ${item.alt}`}
+        >
+          <img
+            src={item.src}
+            alt={item.alt}
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
+            onError={handleError}
+          />
+          {/* Caption overlay */}
+          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-sm font-light text-white/90">{item.alt}</p>
+          </div>
+        </button>
       ) : (
         <img
           src={item.src}
@@ -369,16 +424,102 @@ function MediaItem({ item }) {
       )}
 
       {/* Error State */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900 opacity-0 [.media-error>&]:opacity-100">
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900 opacity-0 [.media-error>&]:opacity-100 pointer-events-none">
         <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
           <span className="text-white/20 text-xl font-serif italic">!</span>
         </div>
         <p className="text-xs text-neutral-600 uppercase tracking-widest">{item.alt}</p>
       </div>
+    </div>
+  );
+}
 
-      {/* Caption overlay */}
-      <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 [.media-error>&]:hidden">
-        <p className="text-sm font-light text-white/90">{item.alt}</p>
+function VideoModal({ video, onClose }) {
+  // Close on escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Video Container */}
+      <div className="relative w-full max-w-5xl aspect-video animate-in zoom-in-95 fade-in duration-300">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300 group border border-white/10"
+          aria-label="Close video"
+        >
+          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
+        </button>
+
+        {/* YouTube iframe */}
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${video.videoId}?rel=0&modestbranding=1&autoplay=1`}
+          title={video.alt}
+          className="w-full h-full rounded-xl"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    </div>
+  );
+}
+
+function ImageLightbox({ image, onClose }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Image Container */}
+      <div className="relative max-w-5xl max-h-[85vh] animate-in zoom-in-95 fade-in duration-300">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300 group border border-white/10"
+          aria-label="Close image"
+        >
+          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
+        </button>
+
+        <img
+          src={image.src}
+          alt={image.alt}
+          className="max-w-full max-h-[85vh] object-contain rounded-xl"
+        />
+
+        {/* Caption */}
+        <p className="absolute -bottom-10 left-0 right-0 text-center text-sm text-white/70 font-light">
+          {image.alt}
+        </p>
       </div>
     </div>
   );
