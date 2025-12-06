@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState, memo } from "react";
 import { 
   motion, 
   AnimatePresence, 
@@ -169,6 +169,10 @@ export default function CarInformationPanel({ carId, onClose }) {
   const [activeVideo, setActiveVideo] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
   const isMobile = useIsMobile();
+  const handleOpenVideo = useCallback((item) => setActiveVideo(item), []);
+  const handleOpenImage = useCallback((item) => setActiveImage(item), []);
+  const handleCloseVideo = useCallback(() => setActiveVideo(null), []);
+  const handleCloseImage = useCallback(() => setActiveImage(null), []);
 
   // Derived motion values for smooth animations
   const expandedHeight = isMobile ? HEADER_CONFIG.expanded.mobile : HEADER_CONFIG.expanded.desktop;
@@ -203,7 +207,10 @@ export default function CarInformationPanel({ carId, onClose }) {
   // Track if collapsed for conditional rendering
   const [isCollapsed, setIsCollapsed] = useState(false);
   useMotionValueEvent(progress, "change", (latest) => {
-    setIsCollapsed(latest > 0.9);
+    setIsCollapsed((prev) => {
+      const next = latest > 0.9;
+      return prev === next ? prev : next;
+    });
   });
 
   // Get the first image to use as hero
@@ -405,8 +412,8 @@ export default function CarInformationPanel({ carId, onClose }) {
                             key={index} 
                             item={item} 
                             index={index}
-                            onVideoClick={setActiveVideo} 
-                            onImageClick={setActiveImage} 
+                            onVideoClick={handleOpenVideo} 
+                            onImageClick={handleOpenImage} 
                           />
                         ))}
                       </div>
@@ -474,48 +481,32 @@ export default function CarInformationPanel({ carId, onClose }) {
           {/* Video Modal */}
           <AnimatePresence>
             {activeVideo && (
-              <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
+              <VideoModal video={activeVideo} onClose={handleCloseVideo} />
             )}
           </AnimatePresence>
 
           {/* Image Lightbox */}
           <AnimatePresence>
             {activeImage && (
-              <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />
+              <ImageLightbox image={activeImage} onClose={handleCloseImage} />
             )}
           </AnimatePresence>
-
-          <style jsx global>{`
-            .custom-scrollbar::-webkit-scrollbar {
-              width: 6px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-              background: transparent;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-              background: rgba(255, 255, 255, 0.1);
-              border-radius: 3px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-              background: rgba(255, 255, 255, 0.2);
-            }
-          `}</style>
         </div>
       )}
     </AnimatePresence>
   );
 }
 
-function SectionHeader({ title }) {
+const SectionHeader = memo(function SectionHeader({ title }) {
   return (
     <h3 className="font-sans text-xs font-medium uppercase tracking-normal text-neutral-500 mb-6 flex items-center gap-4">
       {title}
       <span className="h-px flex-1 bg-white/10"></span>
     </h3>
   );
-}
+});
 
-function SpecRow({ label, value, index }) {
+const SpecRow = memo(function SpecRow({ label, value, index }) {
   return (
     <motion.div 
       className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-neutral-900/50 hover:bg-white/5 transition-colors duration-300"
@@ -529,9 +520,9 @@ function SpecRow({ label, value, index }) {
       <dd className="text-sm text-neutral-200 font-medium font-mono text-right">{value}</dd>
     </motion.div>
   );
-}
+});
 
-function MediaItem({ item, index, onVideoClick, onImageClick }) {
+const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageClick }) {
   const isVideo = item.type === "video";
   const isYoutube = item.type === "youtube";
   const isImage = item.type === "image";
@@ -559,6 +550,7 @@ function MediaItem({ item, index, onVideoClick, onImageClick }) {
           <img
             src={`https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`}
             alt={item.alt}
+            loading="lazy"
             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
             onError={handleError}
           />
@@ -595,6 +587,7 @@ function MediaItem({ item, index, onVideoClick, onImageClick }) {
           <img
             src={item.src}
             alt={item.alt}
+            loading="lazy"
             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
             onError={handleError}
           />
@@ -607,6 +600,7 @@ function MediaItem({ item, index, onVideoClick, onImageClick }) {
         <img
           src={item.src}
           alt={item.alt}
+          loading="lazy"
           className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
           onError={handleError}
         />
@@ -621,9 +615,9 @@ function MediaItem({ item, index, onVideoClick, onImageClick }) {
       </div>
     </motion.div>
   );
-}
+});
 
-function VideoModal({ video, onClose }) {
+const VideoModal = memo(function VideoModal({ video, onClose }) {
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -680,9 +674,9 @@ function VideoModal({ video, onClose }) {
       </motion.div>
     </motion.div>
   );
-}
+});
 
-function ImageLightbox({ image, onClose }) {
+const ImageLightbox = memo(function ImageLightbox({ image, onClose }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -745,7 +739,7 @@ function ImageLightbox({ image, onClose }) {
       </motion.div>
     </motion.div>
   );
-}
+});
 
 /**
  * Converts camelCase technical spec keys to readable labels.
