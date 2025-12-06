@@ -5,6 +5,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { KeyboardControls, Loader } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
+import { Eye } from "lucide-react";
 import GalleryModel from "@/components/GalleryModel";
 import PlayerController, {
   PLAYER_KEYBOARD_MAP,
@@ -50,11 +51,6 @@ export default function TourPage() {
 
   const isPanelOpen = selectedCarId !== null;
 
-  const crosshairColor = hoveredCarId ? "bg-blue-400" : "bg-white/80";
-  const crosshairShadow = hoveredCarId
-    ? "shadow-[0_0_6px_rgba(59,130,246,0.8)]"
-    : "shadow-[0_0_4px_rgba(255,255,255,0.5)]";
-
   return (
     <div className="w-full h-screen bg-neutral-950 relative">
       <Canvas
@@ -97,9 +93,11 @@ export default function TourPage() {
       {/* Crosshair - hidden when panel is open */}
       {!isPanelOpen && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
-          <div
-            className={`w-1.5 h-1.5 rounded-full ${crosshairColor} ${crosshairShadow}`}
-          />
+          {hoveredCarId ? (
+            <Eye className="w-5 h-5 text-white" />
+          ) : (
+            <div className="w-1.5 h-1.5 rounded-full bg-white/80" />
+          )}
         </div>
       )}
 
