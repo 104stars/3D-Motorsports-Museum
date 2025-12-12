@@ -15,16 +15,38 @@ export function AuthProvider({ children }) {
   const supabase = createClient()
 
   useEffect(() => {
-    // Get initial session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    // Get initial user - getUser() validates with server, so deleted users will return null
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+      if (error) {
+        // Check if project is paused (error code PGRST301 or similar)
+        if (error.message?.includes('paused') || error.status === 503) {
+          console.error('Supabase project appears to be paused:', error.message)
+        }
+        // Clear invalid session
+        supabase.auth.signOut({ scope: 'local' })
+        setUser(null)
+      } else {
+        setUser(user ?? null)
+      }
       setLoading(false)
     })
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null)
+      async (event, session) => {
+        // Validate user exists on server when session changes
+        if (session) {
+          const { data: { user }, error } = await supabase.auth.getUser()
+          if (error || !user) {
+            // User was deleted or session invalid
+            setUser(null)
+            await supabase.auth.signOut({ scope: 'local' })
+          } else {
+            setUser(user)
+          }
+        } else {
+          setUser(null)
+        }
         setLoading(false)
       }
     )
