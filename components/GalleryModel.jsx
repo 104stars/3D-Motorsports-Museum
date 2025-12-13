@@ -10,8 +10,9 @@ import {
   SRGBColorSpace,
   Vector3,
 } from "three";
+import { getGalleryModelUrl } from "@/lib/supabase/storage";
 
-const MODEL_PATH = "/models/scene/gallery/scene.gltf";
+const MODEL_PATH = getGalleryModelUrl();
 
 export default function GalleryModel({ onBoundsReady, ...props }) {
   const { scene } = useGLTF(MODEL_PATH);
