@@ -6,7 +6,7 @@ import LetterSwapForward from "@/components/fancy/text/letter-swap-forward-anim"
 
 export default function HeroSection() {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen w-full overflow-hidden bg-black">
       {/* Background Video */}
       <video
         autoPlay
