@@ -2,7 +2,7 @@
 
 import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { KeyboardControls, useGLTF } from "@react-three/drei";
+import { KeyboardControls, useGLTF, Stats } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
@@ -73,6 +73,7 @@ export default function TourPage() {
         }}
         onPointerDown={handleCanvasClick}
       >
+        <Stats />
         <KeyboardControls map={isPanelOpen ? [] : PLAYER_KEYBOARD_MAP}>
           <Physics gravity={[0, -9.81, 0]} timeStep="vary">
             <CarStageLighting />
