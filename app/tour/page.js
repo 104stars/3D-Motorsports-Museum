@@ -1,15 +1,17 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { KeyboardControls, Loader } from "@react-three/drei";
+import { KeyboardControls, useGLTF } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
+import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { Eye } from "lucide-react";
 import GalleryModel from "@/components/GalleryModel";
 import PlayerController, {
   PLAYER_KEYBOARD_MAP,
 } from "@/components/PlayerController";
+import CustomLoader from "@/components/tour/CustomLoader";
 import CarStageLighting from "@/components/tour/CarStageLighting";
 import CarExhibits from "@/components/tour/CarExhibits";
 import PointerLockHandler from "@/components/tour/PointerLockHandler";
@@ -18,6 +20,11 @@ import CarInformationPanel from "@/components/tour/CarInformationPanel";
 import { EYE_HEIGHT, CAMERA_PROPS } from "@/lib/tour/constants";
 import { CarDetectionProvider } from "@/components/tour/CarDetectionContext";
 import CarHoverDetector from "@/components/tour/CarHoverDetector";
+import { CAR_CONFIGS } from "@/lib/tour/carConfig";
+
+// Pre-enqueue all known tour assets so the loader total is stable from the start
+CAR_CONFIGS.forEach((car) => useGLTF.preload(car.modelPath));
+useLoader.preload(HDRLoader, "/shop.hdr");
 
 export default function TourPage() {
   const [spawn, setSpawn] = useState(null);
@@ -88,7 +95,7 @@ export default function TourPage() {
           </Physics>
         </KeyboardControls>
       </Canvas>
-      <Loader />
+      <CustomLoader />
       
       {/* Crosshair - hidden when panel is open */}
       {!isPanelOpen && (

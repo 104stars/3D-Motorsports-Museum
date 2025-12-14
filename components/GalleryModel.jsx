@@ -11,16 +11,15 @@ import {
   Vector3,
 } from "three";
 
-const MODEL_PATH = "/models/scene/gallery/scene.gltf";
+const MODEL_PATH = "/models/gallery.glb";
 
 export default function GalleryModel({ onBoundsReady, ...props }) {
   const { scene } = useGLTF(MODEL_PATH);
 
   const bakedScene = useMemo(() => {
     if (!scene) return null;
-    const clone = scene.clone(true);
 
-    clone.traverse((child) => {
+    scene.traverse((child) => {
       if (!child.isMesh) return;
 
       const materials = Array.isArray(child.material)
@@ -49,7 +48,7 @@ export default function GalleryModel({ onBoundsReady, ...props }) {
       child.castShadow = false;
     });
 
-    return clone;
+    return scene;
   }, [scene]);
 
   useEffect(() => {

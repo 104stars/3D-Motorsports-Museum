@@ -16,10 +16,10 @@ export default function CarStageLighting() {
     <group>
       {/* 
         1. Environment: Essential for car paint reflections. 
-        'warehouse' or 'city' presets usually look best on cars due to high contrast.
+        Uses custom shop.hdr for lighting and reflections.
         background={false} ensures we don't see the image, just the lighting/reflections.
       */}
-      <Environment preset="warehouse" background={false} blur={0.6} />
+      <Environment files="/shop.hdr" background={false} blur={0.6} />
 
       {/* 
         4. Fill Light: Soft global ambient light to prevent pitch black shadows.
