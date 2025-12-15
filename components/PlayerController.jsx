@@ -46,54 +46,63 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
     <Ecctrl
       ref={controllerRef}
       position={initialPosition}
-      
+
       // --- 1. SHAPE & COLLISION ---
       capsuleHalfHeight={1}
       capsuleRadius={0.4}
-      
-      // --- 2. FRICTION & BALANCE (critically damped = no wobble) ---
-      friction={100}
+
+      // --- 2. FRICTION & BALANCE (Updated for Snappiness) ---
+      // High friction prevents sliding on slopes when stopped
+      friction={10} 
+      // Stiff springs keep the character strictly upright (no drunk wobbling)
       autoBalance={true}
-      autoBalanceSpringK={0.5}
-      autoBalanceDampingC={0.2}
-      autoBalanceSpringOnY={0.3}
-      autoBalanceDampingOnY={0.1}
-      
-      // --- 3. STAIR & SLOPE HANDLING ---
+      autoBalanceSpringK={2.0}
+      autoBalanceDampingC={0.05}
+      autoBalanceSpringOnY={1.0}
+      autoBalanceDampingOnY={0.05}
+
+      // --- 3. STAIR & SLOPE HANDLING (PRESERVED) ---
+      // These are your exact requested values for stairs
       floatHeight={0.35}
       slopeMaxAngle={1.2}
       slopeUpExtraForce={1.5}
       slopeDownExtraForce={0.3}
       slopeRayLength={2.5}
+
+      // --- 4. FLOATING RAY (Tighter) ---
+      // A higher springK stops the character from "bobbing" up and down while walking
+      rayHitForgiveness={0.5} 
+      springK={10} 
+      dampingC={0.8}
+
+      // --- 5. MOVEMENT (Effortless) ---
+      maxVelLimit={6}
+      sprintMult={1.8}
+      jumpVel={7}
+      jumpForceToGroundMult={5} // Snappy jump landing
+      fallingGravityScale={2.5} // Falls faster (less moon-gravity feel)
       
-      // --- 4. FLOATING RAY (firm but not explosive) ---
-      rayHitForgiveness={0.5}
-      springK={3}
-      dampingC={0.5}
-      
-      // --- 5. MOVEMENT ---
-      maxVelLimit={5}
-      sprintMult={2}
-      jumpVel={4}
-      accDeltaTime={12}
-      dragDampingC={0.3}
-      airDragMultiplier={0.05}
-      
+      // The Secret Sauce for "Smooth/Effortless":
+      // Higher drag means you stop instantly when releasing keys (no sliding)
+      dragDampingC={2.0} 
+      accDeltaTime={8} // Responsive acceleration
+      airDragMultiplier={0.2} // Slight control in air
+
       // --- CAMERA ---
       camCollision={false}
       camInitDis={-0.01}
       camMinDis={-0.01}
       camMaxDis={-0.01}
-      camFollowMult={1000} 
+      camFollowMult={1000}
       camLerpMult={1000}
       camTargetPos={{ x: 0, y: 0, z: 0 }}
       camListenerTarget="document"
-      
+
       // --- RESPONSIVENESS ---
       turnVelMultiplier={1}
-      turnSpeed={1000}
+      turnSpeed={100}
       mode="CameraBasedMovement"
-      restitution={0}
+      restitution={0} // 0 bounce when hitting walls
     >
       <group />
     </Ecctrl>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useProgress } from "@react-three/drei";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -18,8 +18,56 @@ export default function CustomLoader() {
   const wasActiveRef = useRef(false);
   const rafRef = useRef(null);
   const loadStartTimeRef = useRef(null);
+  const isAnimatingRef = useRef(false);
   const minDisplayTime = 2000; // Minimum 2 seconds display time
   const postLoadDelay = 1200; // 1.2 seconds after 100% before exit
+
+  // Helper to start animation loop if needed
+  const startAnimationLoop = useCallback(() => {
+    if (!visible || rafRef.current) return;
+
+    const animate = () => {
+      if (!visible || !isAnimatingRef.current) {
+        rafRef.current = null;
+        return;
+      }
+
+      setDisplayPct((prev) => {
+        const target = targetPctRef.current;
+        const diff = target - prev;
+
+        // Close enough - snap to target and stop animating
+        if (Math.abs(diff) < 0.1) {
+          isAnimatingRef.current = false;
+          rafRef.current = null;
+          return target;
+        }
+
+        // Smoother easing: slower acceleration, more consistent speed
+        // Use exponential easing for smoother feel
+        const easingFactor = 0.12;
+        const newValue = prev + diff * easingFactor;
+        
+        // Check if we need to continue animating
+        if (Math.abs(target - newValue) < 0.1) {
+          isAnimatingRef.current = false;
+          rafRef.current = null;
+          return target;
+        }
+        
+        return newValue;
+      });
+
+      // Only continue if still animating and visible
+      if (isAnimatingRef.current && visible) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        rafRef.current = null;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+  }, [visible]);
 
   // Update targetPct monotonically based on real progress
   useEffect(() => {
@@ -29,46 +77,58 @@ export default function CustomLoader() {
       setDisplayPct(0);
       setVisible(true);
       loadStartTimeRef.current = Date.now();
+      isAnimatingRef.current = true;
     }
 
     // Loading finished - snap target to 100
     if (!active && wasActiveRef.current) {
       targetPctRef.current = 100;
+      isAnimatingRef.current = true;
     }
 
     // While active, only allow targetPct to increase
     if (active) {
       const realPct = Math.min(100, Math.max(0, progress));
-      targetPctRef.current = Math.max(targetPctRef.current, realPct);
+      const newTarget = Math.max(targetPctRef.current, realPct);
+      if (newTarget !== targetPctRef.current) {
+        targetPctRef.current = newTarget;
+        isAnimatingRef.current = true;
+      }
     }
 
     wasActiveRef.current = active;
-  }, [active, progress]);
+    
+    // Restart animation if needed
+    if (isAnimatingRef.current && visible) {
+      startAnimationLoop();
+    }
+  }, [active, progress, visible, startAnimationLoop]);
 
   // Animate displayPct toward targetPct using rAF with smoother easing
+  // Only runs when visible and needs animation
   useEffect(() => {
-    const animate = () => {
-      setDisplayPct((prev) => {
-        const target = targetPctRef.current;
-        const diff = target - prev;
+    if (!visible) {
+      // Stop animation when not visible
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      isAnimatingRef.current = false;
+      return;
+    }
 
-        // Close enough - snap to target
-        if (Math.abs(diff) < 0.1) return target;
+    // Start animation if needed
+    if (isAnimatingRef.current) {
+      startAnimationLoop();
+    }
 
-        // Smoother easing: slower acceleration, more consistent speed
-        // Use exponential easing for smoother feel
-        const easingFactor = 0.12;
-        return prev + diff * easingFactor;
-      });
-
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, []);
+  }, [visible, startAnimationLoop]);
 
   // Trigger exit when loading is effectively done, with minimum display time
   useEffect(() => {
@@ -92,7 +152,11 @@ export default function CustomLoader() {
     }
   }, [active, displayPct, loaded, total]);
 
-  const pct = Math.floor(displayPct);
+  // Memoize percentage calculation
+  const pct = useMemo(() => Math.floor(displayPct), [displayPct]);
+  
+  // Memoize item display text
+  const itemText = useMemo(() => item || "Initializing environment...", [item]);
 
   return (
     <AnimatePresence>
@@ -135,7 +199,7 @@ export default function CustomLoader() {
                 <span>LOADING ASSETS</span>
               </div>
               <div className="truncate max-w-[200px] md:max-w-[300px]">
-                {item ? item : "Initializing environment..."}
+                {itemText}
               </div>
             </div>
 
