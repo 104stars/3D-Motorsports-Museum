@@ -60,23 +60,24 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       autoBalanceDampingOnY={0.05}
 
       // --- 3. STAIR & SLOPE HANDLING ---
-      floatHeight={0.35}
+      floatHeight={0.2}
       slopeMaxAngle={1.2}
       slopeUpExtraForce={1.5}
       slopeDownExtraForce={0.3}
       slopeRayLength={2.5}
 
       // --- 4. FLOATING RAY ---
-      rayHitForgiveness={0.5}
-      springK={10}
-      dampingC={0.8}
+      rayHitForgiveness={0.1}
+      springK={8}
+      dampingC={0.3}
 
       // --- 5. MOVEMENT ---
       maxVelLimit={6}
       sprintMult={1.8}
-      jumpVel={7}
+      jumpVel={7.5}
       jumpForceToGroundMult={5}
-      fallingGravityScale={2.5}
+      sprintJumpMult={1}
+      fallingGravityScale={2.7}
       dragDampingC={2.0}
       accDeltaTime={8}
       airDragMultiplier={0.2}
