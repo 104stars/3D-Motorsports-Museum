@@ -51,42 +51,35 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       capsuleHalfHeight={1}
       capsuleRadius={0.4}
 
-      // --- 2. FRICTION & BALANCE (Updated for Snappiness) ---
-      // High friction prevents sliding on slopes when stopped
-      friction={10} 
-      // Stiff springs keep the character strictly upright (no drunk wobbling)
+      // --- 2. FRICTION & BALANCE ---
+      friction={10}
       autoBalance={true}
       autoBalanceSpringK={2.0}
       autoBalanceDampingC={0.05}
       autoBalanceSpringOnY={1.0}
       autoBalanceDampingOnY={0.05}
 
-      // --- 3. STAIR & SLOPE HANDLING (PRESERVED) ---
-      // These are your exact requested values for stairs
+      // --- 3. STAIR & SLOPE HANDLING ---
       floatHeight={0.35}
       slopeMaxAngle={1.2}
       slopeUpExtraForce={1.5}
       slopeDownExtraForce={0.3}
       slopeRayLength={2.5}
 
-      // --- 4. FLOATING RAY (Tighter) ---
-      // A higher springK stops the character from "bobbing" up and down while walking
-      rayHitForgiveness={0.5} 
-      springK={10} 
+      // --- 4. FLOATING RAY ---
+      rayHitForgiveness={0.5}
+      springK={10}
       dampingC={0.8}
 
-      // --- 5. MOVEMENT (Effortless) ---
+      // --- 5. MOVEMENT ---
       maxVelLimit={6}
       sprintMult={1.8}
       jumpVel={7}
-      jumpForceToGroundMult={5} // Snappy jump landing
-      fallingGravityScale={2.5} // Falls faster (less moon-gravity feel)
-      
-      // The Secret Sauce for "Smooth/Effortless":
-      // Higher drag means you stop instantly when releasing keys (no sliding)
-      dragDampingC={2.0} 
-      accDeltaTime={8} // Responsive acceleration
-      airDragMultiplier={0.2} // Slight control in air
+      jumpForceToGroundMult={5}
+      fallingGravityScale={2.5}
+      dragDampingC={2.0}
+      accDeltaTime={8}
+      airDragMultiplier={0.2}
 
       // --- CAMERA ---
       camCollision={false}
@@ -102,7 +95,7 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       turnVelMultiplier={1}
       turnSpeed={100}
       mode="CameraBasedMovement"
-      restitution={0} // 0 bounce when hitting walls
+      restitution={0}
     >
       <group />
     </Ecctrl>

@@ -1,13 +1,12 @@
 "use client";
 
 import CarModel from "@/components/CarModel";
-import DebugMarker from "./DebugMarker";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
 
 /**
- * Renders all car exhibits and their debug markers.
+ * Renders all car exhibits.
  */
-export default function CarExhibits({ showDebugMarkers = true }) {
+export default function CarExhibits() {
   return (
     <>
       {CAR_CONFIGS.map((car) => (
@@ -21,16 +20,6 @@ export default function CarExhibits({ showDebugMarkers = true }) {
           debugColor={car.debugColor}
         />
       ))}
-
-      {showDebugMarkers &&
-        CAR_CONFIGS.map((car) => (
-          <DebugMarker
-            key={`debug-${car.id}`}
-            position={car.position}
-            color={car.debugColor}
-            size={0.5}
-          />
-        ))}
     </>
   );
 }

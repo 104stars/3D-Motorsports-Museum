@@ -11,7 +11,11 @@ import { motion, AnimatePresence } from "motion/react";
 export default function CustomLoader() {
   const { active, progress, loaded, total, item } = useProgress();
   const [visible, setVisible] = useState(true);
-  const [displayPct, setDisplayPct] = useState(0);
+  // Rendered percent (integer). Keep a separate float ref for smooth easing
+  // without forcing React re-renders at 60fps.
+  const [pct, setPct] = useState(0);
+  const pctRef = useRef(0);
+  const displayPctRef = useRef(0);
 
   // Use refs to track monotonic target and previous active state
   const targetPctRef = useRef(0);
@@ -32,31 +36,45 @@ export default function CustomLoader() {
         return;
       }
 
-      setDisplayPct((prev) => {
-        const target = targetPctRef.current;
-        const diff = target - prev;
+      const target = targetPctRef.current;
+      const prev = displayPctRef.current;
+      const diff = target - prev;
 
-        // Close enough - snap to target and stop animating
-        if (Math.abs(diff) < 0.1) {
-          isAnimatingRef.current = false;
-          rafRef.current = null;
-          return target;
+      // Close enough - snap to target and stop animating
+      if (Math.abs(diff) < 0.1) {
+        displayPctRef.current = target;
+        const nextPct = Math.floor(target);
+        if (nextPct !== pctRef.current) {
+          pctRef.current = nextPct;
+          setPct(nextPct);
         }
+        isAnimatingRef.current = false;
+        rafRef.current = null;
+        return;
+      }
 
-        // Smoother easing: slower acceleration, more consistent speed
-        // Use exponential easing for smoother feel
-        const easingFactor = 0.12;
-        const newValue = prev + diff * easingFactor;
-        
-        // Check if we need to continue animating
-        if (Math.abs(target - newValue) < 0.1) {
-          isAnimatingRef.current = false;
-          rafRef.current = null;
-          return target;
+      // Smooth easing toward target (float-only)
+      const easingFactor = 0.12;
+      const next = prev + diff * easingFactor;
+      displayPctRef.current = next;
+
+      // Only re-render when the visible integer changes
+      const nextPct = Math.floor(next);
+      if (nextPct !== pctRef.current) {
+        pctRef.current = nextPct;
+        setPct(nextPct);
+      }
+
+      if (Math.abs(target - next) < 0.1) {
+        displayPctRef.current = target;
+        const finalPct = Math.floor(target);
+        if (finalPct !== pctRef.current) {
+          pctRef.current = finalPct;
+          setPct(finalPct);
         }
-        
-        return newValue;
-      });
+        isAnimatingRef.current = false;
+        rafRef.current = null;
+      }
 
       // Only continue if still animating and visible
       if (isAnimatingRef.current && visible) {
@@ -74,7 +92,9 @@ export default function CustomLoader() {
     // New loading session started - reset
     if (active && !wasActiveRef.current) {
       targetPctRef.current = 0;
-      setDisplayPct(0);
+      displayPctRef.current = 0;
+      pctRef.current = 0;
+      setPct(0);
       setVisible(true);
       loadStartTimeRef.current = Date.now();
       isAnimatingRef.current = true;
@@ -132,12 +152,10 @@ export default function CustomLoader() {
 
   // Trigger exit when loading is effectively done, with minimum display time
   useEffect(() => {
-    const effectivelyDone =
-      !active || (total ?? 0) > 0
-        ? loaded >= total
-        : targetPctRef.current >= 99.5;
+    const hasTotal = (total ?? 0) > 0;
+    const effectivelyDone = hasTotal ? loaded >= total : !active;
 
-    if (effectivelyDone && displayPct >= 99.5) {
+    if (effectivelyDone && pct >= 99) {
       const elapsed = loadStartTimeRef.current 
         ? Date.now() - loadStartTimeRef.current 
         : 0;
@@ -150,10 +168,7 @@ export default function CustomLoader() {
       
       return () => clearTimeout(timeout);
     }
-  }, [active, displayPct, loaded, total]);
-
-  // Memoize percentage calculation
-  const pct = useMemo(() => Math.floor(displayPct), [displayPct]);
+  }, [active, pct, loaded, total]);
   
   // Memoize item display text
   const itemText = useMemo(() => item || "Initializing environment...", [item]);
