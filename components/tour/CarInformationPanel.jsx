@@ -11,7 +11,8 @@ import {
 } from "motion/react";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
-import { X, Play, ChevronUp } from "lucide-react";
+import { X, Play, ChevronUp, Box } from "lucide-react";
+import DetailedCarViewer from "./DetailedCarViewer";
 
 // Header dimensions and collapse configuration
 const HEADER_CONFIG = {
@@ -162,17 +163,35 @@ function useIsMobile() {
  * Information panel that displays detailed car information.
  * Features motion-enhanced staged scroll behavior with spring physics.
  */
-export default function CarInformationPanel({ carId, onClose }) {
+export default function CarInformationPanel({ carId, onClose, onViewerStateChange }) {
   const panelRef = useRef(null);
   const { scrollContainerRef, progress, rawProgress } = useStagedScroll(carId);
   const carInfo = carId ? getCarInfo(carId) : null;
   const [activeVideo, setActiveVideo] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
+  const [isViewerActive, setIsViewerActive] = useState(false);
   const isMobile = useIsMobile();
   const handleOpenVideo = useCallback((item) => setActiveVideo(item), []);
   const handleOpenImage = useCallback((item) => setActiveImage(item), []);
   const handleCloseVideo = useCallback(() => setActiveVideo(null), []);
   const handleCloseImage = useCallback(() => setActiveImage(null), []);
+  const handleOpenViewer = useCallback(() => {
+    setIsViewerActive(true);
+    onViewerStateChange?.(true);
+  }, [onViewerStateChange]);
+  
+  const handleCloseViewer = useCallback(() => {
+    setIsViewerActive(false);
+    onViewerStateChange?.(false);
+  }, [onViewerStateChange]);
+  
+  // Reset viewer state when carId changes
+  useEffect(() => {
+    if (!carId) {
+      setIsViewerActive(false);
+      onViewerStateChange?.(false);
+    }
+  }, [carId, onViewerStateChange]);
 
   // Derived motion values for smooth animations
   const expandedHeight = isMobile ? HEADER_CONFIG.expanded.mobile : HEADER_CONFIG.expanded.desktop;
@@ -222,10 +241,14 @@ export default function CarInformationPanel({ carId, onClose }) {
   const handleKeyDown = useCallback(
     (e) => {
       if (e.key === "Escape") {
-        onClose?.();
+        if (isViewerActive) {
+          handleCloseViewer();
+        } else {
+          onClose?.();
+        }
       }
     },
-    [onClose]
+    [onClose, isViewerActive, handleCloseViewer]
   );
 
   useEffect(() => {
@@ -367,6 +390,33 @@ export default function CarInformationPanel({ carId, onClose }) {
                   >
                     {carInfo.tagline}
                   </motion.p>
+                  
+                  {/* View 3D Model Button */}
+                  <motion.div
+                    className="mt-6"
+                    style={{
+                      opacity: taglineOpacity,
+                    }}
+                  >
+                    <motion.button
+                      onClick={handleOpenViewer}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-2.5 rounded-lg",
+                        "bg-white/10 backdrop-blur-md text-white",
+                        "hover:bg-white/20 border border-white/20",
+                        "transition-colors duration-200",
+                        "group"
+                      )}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      aria-label="View 3D Model"
+                    >
+                      <Box className="w-5 h-5 transition-transform group-hover:rotate-12 duration-300" strokeWidth={1.5} />
+                      <span className="font-sans text-sm font-medium tracking-wide">
+                        View 3D Model
+                      </span>
+                    </motion.button>
+                  </motion.div>
                 </div>
               </div>
 
@@ -491,6 +541,13 @@ export default function CarInformationPanel({ carId, onClose }) {
               <ImageLightbox image={activeImage} onClose={handleCloseImage} />
             )}
           </AnimatePresence>
+
+          {/* Detailed Car Viewer */}
+          <DetailedCarViewer 
+            carId={carId} 
+            onClose={handleCloseViewer} 
+            isActive={isViewerActive}
+          />
         </div>
       )}
     </AnimatePresence>

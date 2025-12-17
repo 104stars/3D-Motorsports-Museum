@@ -31,6 +31,7 @@ export default function TourPage() {
   const [ready, setReady] = useState(false);
   const [hoveredCarId, setHoveredCarId] = useState(null);
   const [selectedCarId, setSelectedCarId] = useState(null);
+  const [isViewerActive, setIsViewerActive] = useState(false);
   const hoveredCarIdRef = useRef(null);
 
   // Keep ref in sync with state for click handler
@@ -54,6 +55,12 @@ export default function TourPage() {
   // Close the panel
   const handleClosePanel = useCallback(() => {
     setSelectedCarId(null);
+    setIsViewerActive(false); // Reset viewer state when panel closes
+  }, []);
+
+  // Handle viewer state changes from panel
+  const handleViewerStateChange = useCallback((active) => {
+    setIsViewerActive(active);
   }, []);
 
   const isPanelOpen = selectedCarId !== null;
@@ -85,10 +92,14 @@ export default function TourPage() {
             </Suspense>
 
             <CarDetectionProvider>
-              <Suspense fallback={null}>
-                <CarExhibits />
-              </Suspense>
-              <CarHoverDetector onDetect={setHoveredCarId} />
+              {!isPanelOpen && !isViewerActive && (
+                <Suspense fallback={null}>
+                  <CarExhibits />
+                </Suspense>
+              )}
+              {!isViewerActive && (
+                <CarHoverDetector onDetect={setHoveredCarId} />
+              )}
             </CarDetectionProvider>
 
             {spawn && ready && <PlayerController spawn={spawn} />}
@@ -110,7 +121,11 @@ export default function TourPage() {
       )}
 
       {/* Car Information Panel */}
-      <CarInformationPanel carId={selectedCarId} onClose={handleClosePanel} />
+      <CarInformationPanel 
+        carId={selectedCarId} 
+        onClose={handleClosePanel}
+        onViewerStateChange={handleViewerStateChange}
+      />
     </div>
   );
 }
