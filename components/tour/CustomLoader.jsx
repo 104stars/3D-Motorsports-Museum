@@ -23,6 +23,7 @@ export default function CustomLoader() {
   const rafRef = useRef(null);
   const loadStartTimeRef = useRef(null);
   const isAnimatingRef = useRef(false);
+  const hasCompletedInitialLoadRef = useRef(false); // Track if initial load cycle is complete
   const minDisplayTime = 2000; // Minimum 2 seconds display time
   const postLoadDelay = 1200; // 1.2 seconds after 100% before exit
 
@@ -89,7 +90,12 @@ export default function CustomLoader() {
 
   // Update targetPct monotonically based on real progress
   useEffect(() => {
-    // New loading session started - reset
+    // Ignore new loading sessions if we've already completed the initial load
+    if (hasCompletedInitialLoadRef.current) {
+      return;
+    }
+
+    // New loading session started - reset (only for initial load)
     if (active && !wasActiveRef.current) {
       targetPctRef.current = 0;
       displayPctRef.current = 0;
@@ -152,6 +158,11 @@ export default function CustomLoader() {
 
   // Trigger exit when loading is effectively done, with minimum display time
   useEffect(() => {
+    // Don't trigger exit if we've already completed initial load
+    if (hasCompletedInitialLoadRef.current) {
+      return;
+    }
+
     const hasTotal = (total ?? 0) > 0;
     const effectivelyDone = hasTotal ? loaded >= total : !active;
 
@@ -164,6 +175,7 @@ export default function CustomLoader() {
       // Wait for minimum display time + post-load delay
       const timeout = setTimeout(() => {
         setVisible(false);
+        hasCompletedInitialLoadRef.current = true; // Mark initial load as complete
       }, remainingTime + postLoadDelay);
       
       return () => clearTimeout(timeout);
