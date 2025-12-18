@@ -28,13 +28,16 @@ import { cn } from "@/lib/utils";
 
 /**
  * High-quality car model component with enhanced materials and shadows
+ * Normalizes all models to a consistent size for uniform viewing experience
  */
 function CarModel({ url, onLoaded }) {
   const { scene } = useGLTF(url);
   const modelRef = useRef(null);
+  const groupRef = useRef(null);
+  const TARGET_MAX_DIMENSION = 5; // Normalize all models to have max dimension of 5 units
 
   useEffect(() => {
-    if (!scene || !modelRef.current) return;
+    if (!scene || !modelRef.current || !groupRef.current) return;
 
     // Enable shadows and enhance materials for high-quality rendering
     scene.traverse((child) => {
@@ -54,16 +57,39 @@ function CarModel({ url, onLoaded }) {
       }
     });
 
-    // Calculate bounding box and notify parent for camera positioning
+    // Calculate bounding box to determine normalization scale
+    const box = new Box3().setFromObject(scene);
+    const center = box.getCenter(new Vector3());
+    const size = box.getSize(new Vector3());
+    const maxDimension = Math.max(size.x, size.y, size.z);
+    
+    // Calculate normalization scale factor
+    // If maxDimension is 0 or very small, use scale of 1 to avoid division issues
+    const normalizeScale = maxDimension > 0.001 ? TARGET_MAX_DIMENSION / maxDimension : 1;
+    
+    // Apply normalization scale to the group
+    groupRef.current.scale.setScalar(normalizeScale);
+    
+    // Calculate normalized bounds for camera positioning
+    const normalizedSize = size.clone().multiplyScalar(normalizeScale);
+    const normalizedCenter = center.clone().multiplyScalar(normalizeScale);
+    
+    // Notify parent with normalized bounds
     if (onLoaded) {
-      const box = new Box3().setFromObject(scene);
-      const center = box.getCenter(new Vector3());
-      const size = box.getSize(new Vector3());
-      onLoaded({ center, size, scene });
+      onLoaded({ 
+        center: normalizedCenter, 
+        size: normalizedSize, 
+        scene,
+        originalScale: normalizeScale 
+      });
     }
   }, [scene, onLoaded]);
 
-  return <primitive ref={modelRef} object={scene} />;
+  return (
+    <group ref={groupRef} rotation={[0, -Math.PI / 2, 0]}>
+      <primitive ref={modelRef} object={scene} />
+    </group>
+  );
 }
 
 /**
@@ -346,7 +372,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               far: 1000
             }}
           >
-            <color attach="background" args={["#000000"]} />
+            <color attach="background" args={["#ededed"]} />
 
             <SceneContent 
               carId={carId} 
