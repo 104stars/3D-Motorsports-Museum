@@ -22,7 +22,7 @@ import {
   Group
 } from "three";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Home, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
 import { cn } from "@/lib/utils";
 
@@ -271,20 +271,9 @@ function SceneContent({ carId, onModelLoaded, isActive, onControlsReady }) {
  */
 export default function DetailedCarViewer({ carId, onClose, isActive }) {
   const modelBoundsRef = useRef(null);
-  const resetCameraRef = useRef(null);
 
   const handleModelLoaded = (bounds) => {
     modelBoundsRef.current = bounds;
-  };
-
-  const handleControlsReady = (resetFn) => {
-    resetCameraRef.current = resetFn;
-  };
-
-  const handleResetCamera = () => {
-    if (resetCameraRef.current) {
-      resetCameraRef.current();
-    }
   };
 
   // Handle ESC key to close
@@ -304,57 +293,31 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
   if (!carId || !isActive) return null;
 
   return (
-    <AnimatePresence>
-      <div
-        className="fixed inset-0 z-[60] flex items-center justify-center"
-        role="dialog"
-        aria-modal="true"
+    <AnimatePresence mode="wait">
+      <motion.div
+        className="fixed inset-0 z-[60] w-screen h-screen bg-[#ededed]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        {/* Backdrop */}
-        <motion.div
-          className="absolute inset-0 bg-black/95 backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+        {/* Close Button */}
+        <motion.button
           onClick={onClose}
-          aria-hidden="true"
-        />
-
-        {/* Viewer Container */}
-        <motion.div
           className={cn(
-            "relative w-full h-full",
-            "focus:outline-none"
+            "absolute top-8 right-8 z-50 p-2",
+            "text-black/50 hover:text-black",
+            "transition-colors duration-200"
           )}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 300,
-            damping: 30,
-            mass: 0.8
-          }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Close viewer"
         >
-          {/* Close Button */}
-          <motion.button
-            onClick={onClose}
-            className={cn(
-              "absolute top-6 right-6 p-3 rounded-full z-50",
-              "bg-black/40 backdrop-blur-md text-white/70",
-              "hover:text-white hover:bg-black/60",
-              "transition-colors duration-200 border border-white/10",
-              "group"
-            )}
-            aria-label="Close viewer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
-          </motion.button>
+          <X className="w-8 h-8" strokeWidth={1.5} />
+        </motion.button>
 
-          {/* 3D Canvas */}
+        {/* 3D Canvas */}
+        <div className="absolute inset-0 w-full h-full">
           <Canvas
             shadows
             dpr={[1, 3]}
@@ -363,11 +326,11 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               toneMapping: ACESFilmicToneMapping,
               toneMappingExposure: 1.0,
               outputColorSpace: SRGBColorSpace,
-              alpha: true,
+              alpha: false, // Opaque canvas prevents bleed-through
             }}
             camera={{ 
-              position: [0, 0, 5], 
-              fov: 50,
+              position: [0, 5, 5], 
+              fov: 10,
               near: 0.1,
               far: 1000
             }}
@@ -378,7 +341,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               carId={carId} 
               onModelLoaded={handleModelLoaded}
               isActive={isActive}
-              onControlsReady={handleControlsReady}
+              onControlsReady={() => {}} 
             />
 
             {/* Post-processing effects */}
@@ -398,39 +361,8 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               <SMAA />
             </EffectComposer>
           </Canvas>
-
-          {/* Reset Camera Button */}
-          <motion.button
-            onClick={handleResetCamera}
-            className={cn(
-              "absolute bottom-20 right-6 p-3 rounded-full z-50",
-              "bg-black/40 backdrop-blur-md text-white/70",
-              "hover:text-white hover:bg-black/60",
-              "transition-colors duration-200 border border-white/10"
-            )}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Reset camera"
-          >
-            <Home className="w-5 h-5" strokeWidth={1.5} />
-          </motion.button>
-
-          {/* Hint text */}
-          <motion.div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <p className="text-xs font-mono text-white/50 tracking-widest uppercase text-center">
-              Drag to rotate • Scroll to zoom • Press <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 mx-1 text-white/70">ESC</kbd> to close
-            </p>
-          </motion.div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </AnimatePresence>
   );
 }
