@@ -1,0 +1,70 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import { Box3, Vector3 } from "three";
+
+/**
+ * High-quality car model component with enhanced materials
+ * Normalizes all models to a consistent size for uniform viewing experience
+ */
+export default function CarModel({ url, onLoaded }) {
+  const { scene } = useGLTF(url);
+  const modelRef = useRef(null);
+  const groupRef = useRef(null);
+  const TARGET_MAX_DIMENSION = 5; // Normalize all models to have max dimension of 5 units
+
+  useEffect(() => {
+    if (!scene || !modelRef.current || !groupRef.current) return;
+
+    // Enhance materials for high-quality rendering
+    scene.traverse((child) => {
+      if (!child.isMesh) return;
+      
+      // Increase material quality if needed
+      if (child.material) {
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach((mat) => {
+          if (mat.roughness !== undefined) {
+            // Keep original roughness values but ensure quality
+            mat.needsUpdate = true;
+          }
+        });
+      }
+    });
+
+    // Calculate bounding box to determine normalization scale
+    const box = new Box3().setFromObject(scene);
+    const center = box.getCenter(new Vector3());
+    const size = box.getSize(new Vector3());
+    const maxDimension = Math.max(size.x, size.y, size.z);
+    
+    // Calculate normalization scale factor
+    // If maxDimension is 0 or very small, use scale of 1 to avoid division issues
+    const normalizeScale = maxDimension > 0.001 ? TARGET_MAX_DIMENSION / maxDimension : 1;
+    
+    // Apply normalization scale to the group
+    groupRef.current.scale.setScalar(normalizeScale);
+    
+    // Calculate normalized bounds for camera positioning
+    const normalizedSize = size.clone().multiplyScalar(normalizeScale);
+    const normalizedCenter = center.clone().multiplyScalar(normalizeScale);
+    
+    // Notify parent with normalized bounds
+    if (onLoaded) {
+      onLoaded({ 
+        center: normalizedCenter, 
+        size: normalizedSize, 
+        scene,
+        originalScale: normalizeScale 
+      });
+    }
+  }, [scene, onLoaded]);
+
+  return (
+    <group ref={groupRef} rotation={[0, -Math.PI / 2, 0]}>
+      <primitive ref={modelRef} object={scene} />
+    </group>
+  );
+}
+
