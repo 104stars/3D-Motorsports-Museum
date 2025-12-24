@@ -34,12 +34,13 @@ export default function GroundContactShadow({ bounds }) {
     <ContactShadows
       position={position}
       scale={scale}
-      opacity={0.45}
-      blur={2.5}
-      far={1.5}
-      resolution={2048}
+      opacity={0.9}
+      blur={2}
+      far={100}
+      resolution={1024}
       color="#000000"
-      frames={1} // Bake once for performance (static scene)
+      frames={Infinity}
+      smooth={false}
     />
   );
 }
