@@ -48,11 +48,11 @@ export default function SceneContent({ carId, onModelLoaded, isActive, onControl
           </Html>
         }
       >
-        <CarModel url={modelUrl} onLoaded={handleModelLoaded} />
+        <CarModel carId={carId} url={modelUrl} onLoaded={handleModelLoaded} />
       </Suspense>
 
       {/* Contact shadow - renders once bounds are available */}
-      {modelBounds && <GroundContactShadow bounds={modelBounds} />}
+      {modelBounds && <GroundContactShadow />}
 
       <CameraController 
         modelBounds={modelBounds} 

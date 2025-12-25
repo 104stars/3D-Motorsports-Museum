@@ -8,7 +8,7 @@ import { Box3, Vector3 } from "three";
  * High-quality car model component with enhanced materials
  * Normalizes all models to a consistent size for uniform viewing experience
  */
-export default function CarModel({ url, onLoaded }) {
+export default function CarModel({ carId, url, onLoaded }) {
   const { scene } = useGLTF(url);
   const modelRef = useRef(null);
   const groupRef = useRef(null);
@@ -45,10 +45,25 @@ export default function CarModel({ url, onLoaded }) {
     
     // Apply normalization scale to the group
     groupRef.current.scale.setScalar(normalizeScale);
+
+    // Ground-align the model so the lowest point sits at y=0 (in normalized space).
+    // This lets us keep <ContactShadows /> at its default position/scale (preserves blur).
+    const minY = box.min.y;
+    let groundLift = -minY * normalizeScale;
+
+    // Per-model micro adjustments (some models have pivots/geometry that make shadows clip or float)
+    if (carId === "mclaren-mp45") {
+      groundLift += 0.01; // lift model up a bit so shadow doesn't clip into tires
+    } else if (carId === "ferrari-499") {
+      groundLift -= 0.01; // slightly lower so shadow touches tires more (inverse issue)
+    }
+
+    groupRef.current.position.set(0, groundLift, 0);
     
     // Calculate normalized bounds for camera positioning
     const normalizedSize = size.clone().multiplyScalar(normalizeScale);
     const normalizedCenter = center.clone().multiplyScalar(normalizeScale);
+    normalizedCenter.y += groundLift;
     
     // Notify parent with normalized bounds
     if (onLoaded) {
@@ -59,7 +74,7 @@ export default function CarModel({ url, onLoaded }) {
         originalScale: normalizeScale 
       });
     }
-  }, [scene, onLoaded]);
+  }, [scene, onLoaded, carId]);
 
   return (
     <group ref={groupRef} rotation={[0, -Math.PI / 2, 0]}>
