@@ -117,7 +117,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               {/* Subtle vignette for professional framing */}
               <Vignette
                 offset={0.35}
-                darkness={0.25}
+                darkness={0.5}
                 eskil={false}
               />
               <SMAA />
