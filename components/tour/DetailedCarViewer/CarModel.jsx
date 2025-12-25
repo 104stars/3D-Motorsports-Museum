@@ -75,8 +75,39 @@ export default function CarModel({ carId, url, onLoaded }) {
             tex.needsUpdate = true;
           });
 
+          // RB9 specific: Make livery glossy while keeping tires matte
+          if (carId === "redbull-rb9" && mat.roughness !== undefined) {
+            const meshName = child.name?.toLowerCase() || "";
+            const materialName = mat.name?.toLowerCase() || "";
+            const isTireMaterial = 
+              meshName.includes("tire") || 
+              meshName.includes("tyre") || 
+              meshName.includes("wheel") || 
+              meshName.includes("rubber") ||
+              materialName.includes("tire") || 
+              materialName.includes("tyre") || 
+              materialName.includes("wheel") || 
+              materialName.includes("rubber");
+
+            if (!isTireMaterial) {
+              // Make livery glossy (not metallic) with low roughness and clearcoat
+              mat.roughness = Math.min(mat.roughness || 0.5, 0.15); // Glossy finish (lower = more glossy)
+              if (mat.metalness !== undefined) {
+                mat.metalness = 0.0; // Non-metallic for painted glossy livery
+              }
+              mat.clearcoat = 1.0; // Add clearcoat for realistic glossy livery
+              mat.clearcoatRoughness = 0.1; // Smooth clearcoat
+            } else {
+              // Realistic F1 tires with slight gloss (new tires have a subtle sheen)
+              mat.roughness = 0.3; // Slight gloss like new F1 tires (not completely matte)
+              if (mat.metalness !== undefined) {
+                mat.metalness = 0.5; // Non-metallic rubber
+              }
+              mat.clearcoat = 0; // No clearcoat on tires
+            }
+          }
+
           if (mat.roughness !== undefined) {
-            // Keep original roughness values but ensure quality
             mat.needsUpdate = true;
           }
         });
@@ -103,7 +134,7 @@ export default function CarModel({ carId, url, onLoaded }) {
 
     // Per-model micro adjustments (some models have pivots/geometry that make shadows clip or float)
     if (carId === "mclaren-mp45") {
-      groundLift += 0.01; // lift model up a bit so shadow doesn't clip into tires
+      groundLift += -0.001; // lift model up a bit so shadow doesn't clip into tires
     } else if (carId === "ferrari-499") {
       groundLift -= 0.01; // slightly lower so shadow touches tires more (inverse issue)
     }
