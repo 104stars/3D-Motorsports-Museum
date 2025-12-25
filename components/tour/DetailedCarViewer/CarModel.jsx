@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { Box3, Vector3 } from "three";
+import { Box3, Vector3, LinearMipmapLinearFilter, LinearFilter } from "three";
 
 /**
  * High-quality car model component with enhanced materials
@@ -10,14 +11,22 @@ import { Box3, Vector3 } from "three";
  */
 export default function CarModel({ carId, url, onLoaded }) {
   const { scene } = useGLTF(url);
+  const gl = useThree((s) => s.gl);
   const modelRef = useRef(null);
   const groupRef = useRef(null);
   const TARGET_MAX_DIMENSION = 5; // Normalize all models to have max dimension of 5 units
 
   useEffect(() => {
-    if (!scene || !modelRef.current || !groupRef.current) return;
+    if (!scene || !modelRef.current || !groupRef.current || !gl) return;
 
-    // Enhance materials for high-quality rendering
+    const maxAnisotropy =
+      typeof gl.capabilities?.getMaxAnisotropy === "function"
+        ? gl.capabilities.getMaxAnisotropy()
+        : 1;
+    // 8–16 is usually enough; maxing out can be expensive on some GPUs
+    const desiredAnisotropy = Math.max(1, Math.min(maxAnisotropy, 16));
+
+    // Enhance materials/textures for high-quality rendering (especially liveries at grazing angles)
     scene.traverse((child) => {
       if (!child.isMesh) return;
       
@@ -25,6 +34,47 @@ export default function CarModel({ carId, url, onLoaded }) {
       if (child.material) {
         const materials = Array.isArray(child.material) ? child.material : [child.material];
         materials.forEach((mat) => {
+          // Sharpen textures at oblique angles (classic "blurry further away on the surface" issue)
+          // Apply to all common texture slots used by glTF materials.
+          const textureSlots = [
+            "map",
+            "emissiveMap",
+            "normalMap",
+            "roughnessMap",
+            "metalnessMap",
+            "aoMap",
+            "alphaMap",
+            "clearcoatMap",
+            "clearcoatNormalMap",
+            "clearcoatRoughnessMap",
+            "sheenColorMap",
+            "sheenRoughnessMap",
+            "specularColorMap",
+            "specularIntensityMap",
+            "iridescenceMap",
+            "iridescenceThicknessMap",
+            "transmissionMap",
+            "thicknessMap",
+          ];
+
+          textureSlots.forEach((slot) => {
+            const tex = mat?.[slot];
+            if (!tex) return;
+
+            // Only increase anisotropy (safe even when mipmaps are present)
+            if (tex.anisotropy !== desiredAnisotropy) {
+              tex.anisotropy = desiredAnisotropy;
+            }
+
+            // If minFilter is set to plain LinearFilter, it can look extra blurry at distance.
+            // Prefer trilinear mipmap filtering when available.
+            if (tex.minFilter === LinearFilter) {
+              tex.minFilter = LinearMipmapLinearFilter;
+            }
+
+            tex.needsUpdate = true;
+          });
+
           if (mat.roughness !== undefined) {
             // Keep original roughness values but ensure quality
             mat.needsUpdate = true;
@@ -74,7 +124,7 @@ export default function CarModel({ carId, url, onLoaded }) {
         originalScale: normalizeScale 
       });
     }
-  }, [scene, onLoaded, carId]);
+  }, [scene, onLoaded, carId, gl]);
 
   return (
     <group ref={groupRef} rotation={[0, -Math.PI / 2, 0]}>
