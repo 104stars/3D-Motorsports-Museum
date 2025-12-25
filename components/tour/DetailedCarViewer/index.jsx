@@ -7,7 +7,9 @@ import {
   Bloom, 
   SMAA,
   Vignette,
-  BrightnessContrast
+  BrightnessContrast,
+  Noise,
+  HueSaturation
 } from "@react-three/postprocessing";
 import { 
   ACESFilmicToneMapping, 
@@ -104,20 +106,27 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
             <EffectComposer multisampling={4} enableNormalPass={false}>
               {/* Subtle bloom for highlights */}
               <Bloom
-                intensity={0.4}
+                intensity={0.3}
                 luminanceThreshold={0.85}
                 luminanceSmoothing={0.9}
                 mipmapBlur
               />
               {/* Mild brightness/contrast for studio punch */}
               <BrightnessContrast
-                brightness={0.02}
-                contrast={0.08}
+                brightness={0.05}
+                contrast={0.15}
               />
+              {/* Boost saturation for vibrancy */}
+              <HueSaturation
+                saturation={0.2}
+                hue={0}
+              />
+              {/* Film grain noise */}
+              <Noise opacity={0.034} />
               {/* Subtle vignette for professional framing */}
               <Vignette
                 offset={0.35}
-                darkness={0.5}
+                darkness={0.4}
                 eskil={false}
               />
               <SMAA />
