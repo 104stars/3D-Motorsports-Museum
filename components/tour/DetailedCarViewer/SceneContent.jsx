@@ -2,12 +2,12 @@
 
 import { Suspense, useState, useMemo, useCallback } from "react";
 import { Html } from "@react-three/drei";
-import { Loader2 } from "lucide-react";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
 import CarModel from "./CarModel";
 import CameraController from "./CameraController";
 import HighQualityLighting from "./HighQualityLighting";
 import GroundContactShadow from "./GroundContactShadow";
+import DetailedViewLoader from "./DetailedViewLoader";
 
 /**
  * Scene content with model, lighting, and post-processing
@@ -26,9 +26,9 @@ export default function SceneContent({ carId, onModelLoaded, isActive, onControl
   if (!modelUrl) {
     return (
       <Html center>
-        <div className="text-white text-center">
-          <p className="text-lg mb-2">Model not found</p>
-          <p className="text-sm text-white/60">High-quality model for this car is not available.</p>
+        <div className="text-black text-center font-mono">
+          <p className="text-sm uppercase tracking-wider mb-2">Model not found</p>
+          <p className="text-xs text-black/40">High-quality model unavailable.</p>
         </div>
       </Html>
     );
@@ -38,16 +38,7 @@ export default function SceneContent({ carId, onModelLoaded, isActive, onControl
     <>
       <HighQualityLighting />
       
-      <Suspense
-        fallback={
-          <Html center>
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-8 h-8 text-white/70 animate-spin" />
-              <p className="text-white/70 text-sm">Loading high-quality model...</p>
-            </div>
-          </Html>
-        }
-      >
+      <Suspense fallback={<DetailedViewLoader />}>
         <CarModel carId={carId} url={modelUrl} onLoaded={handleModelLoaded} />
       </Suspense>
 
