@@ -17,6 +17,7 @@ import CarExhibits from "@/components/tour/CarExhibits";
 import PointerLockHandler from "@/components/tour/PointerLockHandler";
 import CameraPositionLogger from "@/components/tour/CameraPositionLogger";
 import CarInformationPanel from "@/components/tour/CarInformationPanel";
+import PauseMenu from "@/components/tour/PauseMenu";
 import { EYE_HEIGHT, CAMERA_PROPS } from "@/lib/tour/constants";
 import { CarDetectionProvider } from "@/components/tour/CarDetectionContext";
 import CarHoverDetector from "@/components/tour/CarHoverDetector";
@@ -32,12 +33,26 @@ export default function TourPage() {
   const [hoveredCarId, setHoveredCarId] = useState(null);
   const [selectedCarId, setSelectedCarId] = useState(null);
   const [isViewerActive, setIsViewerActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const hoveredCarIdRef = useRef(null);
+  const canvasRef = useRef(null);
 
   // Keep ref in sync with state for click handler
   useEffect(() => {
     hoveredCarIdRef.current = hoveredCarId;
   }, [hoveredCarId]);
+
+  // ESC key handler for pause menu (only when no panel/viewer is active)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && !selectedCarId && !isViewerActive) {
+        setIsPaused((prev) => !prev);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedCarId, isViewerActive]);
 
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
@@ -47,10 +62,10 @@ export default function TourPage() {
 
   // Handle click to open car info panel
   const handleCanvasClick = useCallback(() => {
-    if (hoveredCarIdRef.current && !selectedCarId) {
+    if (hoveredCarIdRef.current && !selectedCarId && !isPaused) {
       setSelectedCarId(hoveredCarIdRef.current);
     }
-  }, [selectedCarId]);
+  }, [selectedCarId, isPaused]);
 
   // Close the panel
   const handleClosePanel = useCallback(() => {
@@ -63,7 +78,17 @@ export default function TourPage() {
     setIsViewerActive(active);
   }, []);
 
+  // Resume from pause menu
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+    // Re-request pointer lock after a small delay (user gesture via button click)
+    setTimeout(() => {
+      canvasRef.current?.requestPointerLock?.();
+    }, 50);
+  }, []);
+
   const isPanelOpen = selectedCarId !== null;
+  const isOverlayOpen = isPanelOpen || isPaused;
 
   return (
     <div className="w-full h-screen bg-neutral-950 relative">
@@ -79,12 +104,15 @@ export default function TourPage() {
           outputColorSpace: SRGBColorSpace,
         }}
         onPointerDown={handleCanvasClick}
+        onCreated={({ gl }) => {
+          canvasRef.current = gl.domElement;
+        }}
       >
         <Stats />
-        <KeyboardControls map={isPanelOpen ? [] : PLAYER_KEYBOARD_MAP}>
+        <KeyboardControls map={isOverlayOpen ? [] : PLAYER_KEYBOARD_MAP}>
           <Physics gravity={[0, -9.81, 0]} timeStep="vary">
             <CarStageLighting />
-            <PointerLockHandler isPanelOpen={isPanelOpen} />
+            <PointerLockHandler isOverlayOpen={isOverlayOpen} />
             <CameraPositionLogger />
 
             <Suspense fallback={null}>
@@ -92,12 +120,12 @@ export default function TourPage() {
             </Suspense>
 
             <CarDetectionProvider>
-              {!isPanelOpen && !isViewerActive && (
+              {!isOverlayOpen && !isViewerActive && (
                 <Suspense fallback={null}>
                   <CarExhibits />
                 </Suspense>
               )}
-              {!isViewerActive && (
+              {!isViewerActive && !isPaused && (
                 <CarHoverDetector onDetect={setHoveredCarId} />
               )}
             </CarDetectionProvider>
@@ -109,8 +137,8 @@ export default function TourPage() {
       </Canvas>
       <CustomLoader />
       
-      {/* Crosshair - hidden when panel is open */}
-      {!isPanelOpen && (
+      {/* Crosshair - hidden when any overlay is open */}
+      {!isOverlayOpen && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
           {hoveredCarId ? (
             <Eye className="w-5 h-5 text-white" />
@@ -119,6 +147,12 @@ export default function TourPage() {
           )}
         </div>
       )}
+
+      {/* Pause Menu */}
+      <PauseMenu 
+        isOpen={isPaused} 
+        onResume={handleResume}
+      />
 
       {/* Car Information Panel */}
       <CarInformationPanel 

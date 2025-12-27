@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SceneContent from "./SceneContent";
+import ControlsGuide from "./ControlsGuide";
 
 /**
  * Detailed 3D car model viewer with high-quality rendering and post-processing
@@ -69,6 +70,8 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
         >
           <X className="w-8 h-8" strokeWidth={1.5} />
         </motion.button>
+
+        <ControlsGuide />
 
         {/* 3D Canvas */}
         <div className="absolute inset-0 w-full h-full">

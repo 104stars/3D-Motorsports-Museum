@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
-    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-slot": "^1.2.4",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",
@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "ecctrl": "^1.0.97",
+    "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "next": "15.5.6",
