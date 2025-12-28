@@ -135,16 +135,16 @@ function PauseMenuItem({ icon: Icon, label, description, onClick, primary = fals
       onClick={onClick}
       className={cn(
         "group relative flex items-center justify-between w-full p-1 pl-1 pr-6 rounded-2xl",
-        "transition-all duration-300 border border-transparent",
+        "transition-colors border border-transparent",
         "hover:bg-white/5 hover:border-white/10"
       )}
-      whileHover={{ scale: 1.02, x: 5 }}
+      whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
     >
       <div className="flex items-center gap-6">
         {/* Icon Box */}
         <div className={cn(
-          "w-14 h-14 rounded-xl flex items-center justify-center transition-colors duration-300",
+          "w-14 h-14 rounded-xl flex items-center justify-center transition-colors",
           primary ? "bg-white text-black" : "bg-white/5 text-white/70 group-hover:text-white group-hover:bg-white/10",
           danger && "group-hover:bg-red-500/10 group-hover:text-red-400"
         )}>
@@ -168,8 +168,8 @@ function PauseMenuItem({ icon: Icon, label, description, onClick, primary = fals
 
       {/* Arrow Indicator */}
       <ChevronRight className={cn(
-        "w-5 h-5 transition-all duration-300 opacity-0 -translate-x-4",
-        "group-hover:opacity-100 group-hover:translate-x-0",
+        "w-5 h-5 transition-opacity opacity-0",
+        "group-hover:opacity-100",
         primary ? "text-white" : "text-white/50"
       )} />
     </motion.button>

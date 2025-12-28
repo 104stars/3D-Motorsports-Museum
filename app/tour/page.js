@@ -42,17 +42,33 @@ export default function TourPage() {
     hoveredCarIdRef.current = hoveredCarId;
   }, [hoveredCarId]);
 
-  // ESC key handler for pause menu (only when no panel/viewer is active)
+  // Detect pointer lock loss to open pause menu (browser exits lock on ESC)
+  useEffect(() => {
+    const handlePointerLockChange = () => {
+      const canvas = canvasRef.current;
+      const isLocked = document.pointerLockElement === canvas;
+      
+      // Pointer lock was lost while no overlay is open → open pause menu
+      if (!isLocked && canvas && !selectedCarId && !isViewerActive) {
+        setIsPaused(true);
+      }
+    };
+
+    document.addEventListener("pointerlockchange", handlePointerLockChange);
+    return () => document.removeEventListener("pointerlockchange", handlePointerLockChange);
+  }, [selectedCarId, isViewerActive]);
+
+  // ESC key handler to close pause menu (opening is handled by pointerlockchange)
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape" && !selectedCarId && !isViewerActive) {
-        setIsPaused((prev) => !prev);
+      if (e.key === "Escape" && isPaused) {
+        setIsPaused(false);
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedCarId, isViewerActive]);
+  }, [isPaused]);
 
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;

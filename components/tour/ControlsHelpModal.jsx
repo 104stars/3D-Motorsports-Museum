@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowLeft, Move, MousePointer2, Hand, Eye, Box } from "lucide-react";
+import { ArrowLeft, ArrowRight, Move, MousePointer2, Hand, Eye, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -55,9 +55,7 @@ const SECTIONS = [
         </p>
         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
           <div className="flex items-center gap-6">
-            <div className="relative w-16 h-24 border-2 border-white/20 rounded-full flex items-center justify-center">
-              <div className="w-1 h-3 bg-blue-400 rounded-full animate-bounce" />
-            </div>
+            <Move className="w-8 h-8 text-white" />
             <div className="space-y-2">
               <h4 className="text-white font-medium text-lg">Vista Libre</h4>
               <p className="text-neutral-400 text-sm">
@@ -104,11 +102,11 @@ const SECTIONS = [
             <div className="w-8 h-12 border border-white rounded-full relative bg-white/10">
                <div className="absolute top-1 left-1 w-3 h-4 bg-white rounded-sm" />
             </div>
-            <span className="text-xs uppercase tracking-widest">Click</span>
+            <span className="text-xs uppercase tracking-widest text-white">Click</span>
           </div>
-          <div className="h-px w-20 bg-white/20" />
+          <ArrowRight className="w-5 h-5 text-white/20" />
           <div className="w-24 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
-            <span className="text-xs font-mono">PANEL</span>
+            <span className="text-xs font-mono text-white">PANEL</span>
           </div>
         </div>
       </div>
