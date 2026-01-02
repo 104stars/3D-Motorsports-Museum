@@ -13,18 +13,26 @@ export default function CameraController({ modelBounds, isActive, onControlsRead
   const controlsRef = useRef(null);
   const hasPositioned = useRef(false);
 
+  // Tweaked defaults for a better "first look" framing in detailed mode.
+  // (User will provide final tuned values later.)
+  const DISTANCE_MULTIPLIER = 2.6;
+  // Side profile: offset primarily on X axis, minimal Z to avoid back/3-4 view
+  // Rotate 90° left from the current rear view (model axis differs per asset),
+  // so we bias along Z instead of X.
+  const OFFSET = { x: 0.0, y: 0.0, z: 1.55 };
+
   useEffect(() => {
     if (!modelBounds || !isActive || hasPositioned.current) return;
 
     const { center, size } = modelBounds;
     const maxDim = Math.max(size.x, size.y, size.z);
-    const distance = maxDim * 1.8; // Distance multiplier for good framing
+    const distance = maxDim * DISTANCE_MULTIPLIER; // Pull back a bit for nicer framing
 
     // Position camera to look at the center of the model
     camera.position.set(
-      center.x + distance * 0.7,
-      center.y + distance * 0.5,
-      center.z + distance * 0.7
+      center.x + distance * OFFSET.x,
+      center.y + distance * OFFSET.y,
+      center.z + distance * OFFSET.z
     );
     camera.lookAt(center.x, center.y, center.z);
     camera.updateProjectionMatrix();
@@ -46,12 +54,12 @@ export default function CameraController({ modelBounds, isActive, onControlsRead
       if (!modelBounds || !controlsRef.current) return;
       const { center, size } = modelBounds;
       const maxDim = Math.max(size.x, size.y, size.z);
-      const distance = maxDim * 1.8;
+      const distance = maxDim * DISTANCE_MULTIPLIER;
 
       camera.position.set(
-        center.x + distance * 0.7,
-        center.y + distance * 0.5,
-        center.z + distance * 0.7
+        center.x + distance * OFFSET.x,
+        center.y + distance * OFFSET.y,
+        center.z + distance * OFFSET.z
       );
       controlsRef.current.target.copy(center);
       controlsRef.current.update();
