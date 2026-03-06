@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button"
 import CenterUnderline from "@/components/fancy/text/underline-center"
 import UnderlineToBackground from "@/components/fancy/text/underline-to-background"
 import { useAuth } from "@/components/auth/AuthProvider"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { getAvatarThumbUrl } from "@/lib/avatars/defaultAvatars"
 
 export default function Navigation() {
   const { user, loading } = useAuth()
   const initial = user?.email?.[0]?.toUpperCase() || "U"
+  const avatarThumb = getAvatarThumbUrl(user?.user_metadata?.avatar_id)
 
   return (
     <nav className="fixed top-6 left-0 right-0 z-50">
@@ -50,6 +52,7 @@ export default function Navigation() {
             )}
             {!loading && user && (
               <Avatar className="h-10 w-10 border-2 border-white/20 hover:border-white/40 transition-colors cursor-pointer">
+                {avatarThumb && <AvatarImage src={avatarThumb} alt="User avatar" />}
                 <AvatarFallback className="bg-white/10 text-white font-light text-lg">
                   {initial}
                 </AvatarFallback>

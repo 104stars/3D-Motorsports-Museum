@@ -1,15 +1,34 @@
 "use client";
 
+import { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import CarModel from "@/components/CarModel";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
+import { getActiveFloors, getCarFloor } from "@/lib/tour/constants";
 
 /**
- * Renders all car exhibits.
+ * Renders car exhibits based on the player's current floor.
+ * Uses camera Y to determine active floors and only mounts cars on those floors.
  */
 export default function CarExhibits() {
+  const [activeFloors, setActiveFloors] = useState(() => getActiveFloors(0));
+  const prevFloorsRef = useRef(activeFloors);
+
+  useFrame(({ camera }) => {
+    const floors = getActiveFloors(camera.position.y);
+    if (!setsEqual(floors, prevFloorsRef.current)) {
+      prevFloorsRef.current = floors;
+      setActiveFloors(floors);
+    }
+  });
+
+  const visibleCars = CAR_CONFIGS.filter((car) =>
+    activeFloors.has(getCarFloor(car.position[1]))
+  );
+
   return (
     <>
-      {CAR_CONFIGS.map((car) => (
+      {visibleCars.map((car) => (
         <CarModel
           key={car.id}
           id={car.id}
@@ -24,3 +43,8 @@ export default function CarExhibits() {
   );
 }
 
+function setsEqual(a, b) {
+  if (a.size !== b.size) return false;
+  for (const v of a) if (!b.has(v)) return false;
+  return true;
+}
