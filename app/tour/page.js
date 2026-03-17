@@ -21,6 +21,7 @@ import PauseMenu from "@/components/tour/PauseMenu";
 import { EYE_HEIGHT, CAMERA_PROPS } from "@/lib/tour/constants";
 import { CarDetectionProvider } from "@/components/tour/CarDetectionContext";
 import CarHoverDetector from "@/components/tour/CarHoverDetector";
+import SceneWarmup from "@/components/tour/SceneWarmup";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
 
 // Pre-enqueue all known tour assets so the loader total is stable from the start
@@ -73,7 +74,9 @@ export default function TourPage() {
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
     setSpawn([box.center.x, EYE_HEIGHT + 1, box.center.z]);
-    setTimeout(() => setReady(true), 300);
+    // Allow physics world + car colliders to stabilize before spawning the player.
+    // 800ms gives the fixed-step sim time to settle after initial asset decode spikes.
+    setTimeout(() => setReady(true), 800);
   }, []);
 
   // Handle click to open car info panel
@@ -125,8 +128,9 @@ export default function TourPage() {
         }}
       >
         <Stats />
+        <SceneWarmup />
         <KeyboardControls map={isOverlayOpen ? [] : PLAYER_KEYBOARD_MAP}>
-          <Physics gravity={[0, -9.81, 0]} timeStep="vary">
+          <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60}>
             <CarStageLighting />
             <PointerLockHandler isOverlayOpen={isOverlayOpen} />
             <CameraPositionLogger />
@@ -136,12 +140,10 @@ export default function TourPage() {
             </Suspense>
 
             <CarDetectionProvider>
-              {!isOverlayOpen && !isViewerActive && (
-                <Suspense fallback={null}>
-                  <CarExhibits />
-                </Suspense>
-              )}
-              {!isViewerActive && !isPaused && (
+              <Suspense fallback={null}>
+                <CarExhibits />
+              </Suspense>
+              {!isOverlayOpen && !isViewerActive && !isPaused && (
                 <CarHoverDetector onDetect={setHoveredCarId} />
               )}
             </CarDetectionProvider>
