@@ -26,11 +26,18 @@ import CarInfoOverlay from "./CarInfoOverlay";
  * Detailed 3D car model viewer with high-quality rendering and post-processing.
  * tourMode: when true, suppresses the close button and ESC handler (HUD controls lifecycle).
  */
-export default function DetailedCarViewer({ carId, onClose, isActive, tourMode = false }) {
+export default function DetailedCarViewer({ carId, onClose, isActive, tourMode = false, onReady }) {
   const modelBoundsRef = useRef(null);
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
 
   const handleModelLoaded = useCallback((bounds) => {
     modelBoundsRef.current = bounds;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        onReadyRef.current?.();
+      });
+    });
   }, []);
 
   const noopControlsReady = useCallback(() => {}, []);
@@ -54,7 +61,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive, tourMode =
     <AnimatePresence mode="wait">
       <motion.div
         className="fixed inset-0 z-[60] w-screen h-screen bg-[#ededed]"
-        initial={{ opacity: 0 }}
+        initial={tourMode ? { opacity: 1 } : { opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}

@@ -7,6 +7,7 @@ import { Physics } from "@react-three/rapier";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { Eye } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import GalleryModel from "@/components/GalleryModel";
 import PlayerController, {
   PLAYER_KEYBOARD_MAP,
@@ -56,6 +57,9 @@ function TourPageInner() {
   const [tourPreloading, setTourPreloading] = useState(false);
 
   const tour = useNarratedTour();
+
+  const [viewerReady, setViewerReady] = useState(false);
+  const viewerCarIdRef = useRef(null);
 
   useEffect(() => {
     hoveredCarIdRef.current = hoveredCarId;
@@ -150,6 +154,19 @@ function TourPageInner() {
     }
   }, [tour.isActive, modeSelected]);
 
+  // Synchronous reset: when tour car changes, hide viewer until new model + camera are ready
+  const showTourViewer = tour.isActive && tour.tourState !== "loading" && tour.tourState !== "finished";
+  const tourCarId = showTourViewer ? tour.currentCarId : null;
+
+  if (tourCarId !== viewerCarIdRef.current) {
+    viewerCarIdRef.current = tourCarId;
+    if (viewerReady) setViewerReady(false);
+  }
+
+  const handleViewerReady = useCallback(() => {
+    setViewerReady(true);
+  }, []);
+
   const isPanelOpen = selectedCarId !== null;
   const isOverlayOpen = isPanelOpen || isPaused || tour.isActive;
 
@@ -214,13 +231,28 @@ function TourPageInner() {
       />
 
       {/* Narrated Tour — DetailedCarViewer + HUD */}
-      {tour.isActive && tour.tourState !== "loading" && tour.tourState !== "finished" && (
-        <DetailedCarViewer
-          key={tour.currentCarId}
-          carId={tour.currentCarId}
-          isActive={true}
-          tourMode={true}
-        />
+      {showTourViewer && (
+        <>
+          <DetailedCarViewer
+            key={tour.currentCarId}
+            carId={tour.currentCarId}
+            isActive={true}
+            tourMode={true}
+            onReady={handleViewerReady}
+          />
+          {/* Transition overlay — covers viewer during car changes until model + camera ready */}
+          <AnimatePresence>
+            {!viewerReady && (
+              <motion.div
+                key="tour-transition"
+                className="fixed inset-0 z-[62] bg-[#ededed]"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              />
+            )}
+          </AnimatePresence>
+        </>
       )}
       <NarratedTourHUD />
 
