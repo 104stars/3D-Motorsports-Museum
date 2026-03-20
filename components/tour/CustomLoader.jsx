@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
  * Full-screen loader with smooth, monotonic progress (0→100).
  * Redesigned with Swiss-style aesthetics and Framer Motion animations.
  */
-export default function CustomLoader() {
+export default function CustomLoader({ onComplete }) {
   const { active, progress, loaded, total, item } = useProgress();
   const [visible, setVisible] = useState(true);
   // Rendered percent (integer). Keep a separate float ref for smooth easing
@@ -175,7 +175,8 @@ export default function CustomLoader() {
       // Wait for minimum display time + post-load delay
       const timeout = setTimeout(() => {
         setVisible(false);
-        hasCompletedInitialLoadRef.current = true; // Mark initial load as complete
+        hasCompletedInitialLoadRef.current = true;
+        onComplete?.();
       }, remainingTime + postLoadDelay);
       
       return () => clearTimeout(timeout);

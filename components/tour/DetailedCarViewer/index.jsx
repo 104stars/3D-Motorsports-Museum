@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { 
   EffectComposer, 
@@ -20,20 +20,23 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SceneContent from "./SceneContent";
 import ControlsGuide from "./ControlsGuide";
+import CarInfoOverlay from "./CarInfoOverlay";
 
 /**
- * Detailed 3D car model viewer with high-quality rendering and post-processing
+ * Detailed 3D car model viewer with high-quality rendering and post-processing.
+ * tourMode: when true, suppresses the close button and ESC handler (HUD controls lifecycle).
  */
-export default function DetailedCarViewer({ carId, onClose, isActive }) {
+export default function DetailedCarViewer({ carId, onClose, isActive, tourMode = false }) {
   const modelBoundsRef = useRef(null);
 
-  const handleModelLoaded = (bounds) => {
+  const handleModelLoaded = useCallback((bounds) => {
     modelBoundsRef.current = bounds;
-  };
+  }, []);
 
-  // Handle ESC key to close
+  const noopControlsReady = useCallback(() => {}, []);
+
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || tourMode) return;
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -43,7 +46,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isActive, onClose]);
+  }, [isActive, onClose, tourMode]);
 
   if (!carId || !isActive) return null;
 
@@ -56,22 +59,27 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Close Button */}
-        <motion.button
-          onClick={onClose}
-          className={cn(
-            "absolute top-8 right-8 z-50 p-2",
-            "text-black/50 hover:text-black",
-            "transition-colors duration-200"
-          )}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Close viewer"
-        >
-          <X className="w-8 h-8" strokeWidth={1.5} />
-        </motion.button>
+        {/* Close Button — hidden in tour mode (HUD handles exit) */}
+        {!tourMode && (
+          <motion.button
+            onClick={onClose}
+            className={cn(
+              "absolute top-8 right-8 z-50 p-2",
+              "text-black/50 hover:text-black",
+              "transition-colors duration-200"
+            )}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Close viewer"
+          >
+            <X className="w-8 h-8" strokeWidth={1.5} />
+          </motion.button>
+        )}
 
         <ControlsGuide />
+
+        {/* Car info overlay (both modes) */}
+        <CarInfoOverlay carId={carId} />
 
         {/* 3D Canvas */}
         <div className="absolute inset-0 w-full h-full">
@@ -102,7 +110,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive }) {
               carId={carId} 
               onModelLoaded={handleModelLoaded}
               isActive={isActive}
-              onControlsReady={() => {}} 
+              onControlsReady={noopControlsReady} 
             />
 
             {/* Post-processing effects */}

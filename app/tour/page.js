@@ -23,12 +23,24 @@ import { CarDetectionProvider } from "@/components/tour/CarDetectionContext";
 import CarHoverDetector from "@/components/tour/CarHoverDetector";
 import SceneWarmup from "@/components/tour/SceneWarmup";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
+import ModeSelectionScreen from "@/components/tour/ModeSelectionScreen";
+import { NarratedTourProvider, useNarratedTour } from "@/components/tour/NarratedTourContext";
+import TourPreloader from "@/components/tour/TourPreloader";
+import NarratedTourHUD from "@/components/tour/NarratedTourHUD";
+import DetailedCarViewer from "@/components/tour/DetailedCarViewer";
 
-// Pre-enqueue all known tour assets so the loader total is stable from the start
 CAR_CONFIGS.forEach((car) => useGLTF.preload(car.modelPath));
 useLoader.preload(HDRLoader, "/shop.hdr");
 
 export default function TourPage() {
+  return (
+    <NarratedTourProvider>
+      <TourPageInner />
+    </NarratedTourProvider>
+  );
+}
+
+function TourPageInner() {
   const [spawn, setSpawn] = useState(null);
   const [ready, setReady] = useState(false);
   const [hoveredCarId, setHoveredCarId] = useState(null);
@@ -38,28 +50,32 @@ export default function TourPage() {
   const hoveredCarIdRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Keep ref in sync with state for click handler
+  // Mode selection: null = not chosen, "free" = free roam, "tour" = narrated tour
+  const [loaderComplete, setLoaderComplete] = useState(false);
+  const [modeSelected, setModeSelected] = useState(null);
+  const [tourPreloading, setTourPreloading] = useState(false);
+
+  const tour = useNarratedTour();
+
   useEffect(() => {
     hoveredCarIdRef.current = hoveredCarId;
   }, [hoveredCarId]);
 
-  // Detect pointer lock loss to open pause menu (browser exits lock on ESC)
+  // Suppress pointer-lock pause menu during tour or before mode is selected
   useEffect(() => {
     const handlePointerLockChange = () => {
       const canvas = canvasRef.current;
       const isLocked = document.pointerLockElement === canvas;
-      
-      // Pointer lock was lost while no overlay is open → open pause menu
-      if (!isLocked && canvas && !selectedCarId && !isViewerActive) {
+
+      if (!isLocked && canvas && !selectedCarId && !isViewerActive && !tour.isActive && modeSelected === "free") {
         setIsPaused(true);
       }
     };
 
     document.addEventListener("pointerlockchange", handlePointerLockChange);
     return () => document.removeEventListener("pointerlockchange", handlePointerLockChange);
-  }, [selectedCarId, isViewerActive]);
+  }, [selectedCarId, isViewerActive, tour.isActive, modeSelected]);
 
-  // ESC key handler to close pause menu (opening is handled by pointerlockchange)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && isPaused) {
@@ -74,40 +90,70 @@ export default function TourPage() {
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
     setSpawn([box.center.x, EYE_HEIGHT + 1, box.center.z]);
-    // Allow physics world + car colliders to stabilize before spawning the player.
-    // 800ms gives the fixed-step sim time to settle after initial asset decode spikes.
     setTimeout(() => setReady(true), 800);
   }, []);
 
-  // Handle click to open car info panel
   const handleCanvasClick = useCallback(() => {
-    if (hoveredCarIdRef.current && !selectedCarId && !isPaused) {
+    if (hoveredCarIdRef.current && !selectedCarId && !isPaused && !tour.isActive) {
       setSelectedCarId(hoveredCarIdRef.current);
     }
-  }, [selectedCarId, isPaused]);
+  }, [selectedCarId, isPaused, tour.isActive]);
 
-  // Close the panel
   const handleClosePanel = useCallback(() => {
     setSelectedCarId(null);
-    setIsViewerActive(false); // Reset viewer state when panel closes
+    setIsViewerActive(false);
   }, []);
 
-  // Handle viewer state changes from panel
   const handleViewerStateChange = useCallback((active) => {
     setIsViewerActive(active);
   }, []);
 
-  // Resume from pause menu
   const handleResume = useCallback(() => {
     setIsPaused(false);
-    // Re-request pointer lock after a small delay (user gesture via button click)
     setTimeout(() => {
       canvasRef.current?.requestPointerLock?.();
     }, 50);
   }, []);
 
+  // --- Mode selection handlers ---
+  const handleLoaderComplete = useCallback(() => {
+    setLoaderComplete(true);
+  }, []);
+
+  const handleFreeRoam = useCallback(() => {
+    setModeSelected("free");
+  }, []);
+
+  const handleNarratedTour = useCallback(() => {
+    tour.activateTour();
+    setTourPreloading(true);
+    setModeSelected("tour");
+  }, [tour]);
+
+  const handleTourPreloadReady = useCallback(() => {
+    setTourPreloading(false);
+    tour.beginFirstStop();
+  }, [tour]);
+
+  // Start tour from pause menu
+  const handleStartTourFromPause = useCallback(() => {
+    setIsPaused(false);
+    tour.activateTour();
+    setTourPreloading(true);
+    setModeSelected("tour");
+  }, [tour]);
+
+  // When tour deactivates, return to free roam
+  useEffect(() => {
+    if (!tour.isActive && modeSelected === "tour") {
+      setModeSelected("free");
+    }
+  }, [tour.isActive, modeSelected]);
+
   const isPanelOpen = selectedCarId !== null;
-  const isOverlayOpen = isPanelOpen || isPaused;
+  const isOverlayOpen = isPanelOpen || isPaused || tour.isActive;
+
+  const showModeSelection = loaderComplete && !modeSelected;
 
   return (
     <div className="w-full h-screen bg-neutral-950 relative">
@@ -117,7 +163,6 @@ export default function TourPage() {
         dpr={[1, 2]}
         gl={{
           antialias: true,
-          // Use ACESFilmic for realistic lighting falloff
           toneMapping: ACESFilmicToneMapping,
           toneMappingExposure: 0.9,
           outputColorSpace: SRGBColorSpace,
@@ -129,10 +174,10 @@ export default function TourPage() {
       >
         <Stats />
         <SceneWarmup />
-        <KeyboardControls map={isOverlayOpen ? [] : PLAYER_KEYBOARD_MAP}>
+        <KeyboardControls map={isOverlayOpen || showModeSelection ? [] : PLAYER_KEYBOARD_MAP}>
           <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60}>
             <CarStageLighting />
-            <PointerLockHandler isOverlayOpen={isOverlayOpen} />
+            <PointerLockHandler isOverlayOpen={isOverlayOpen || showModeSelection} />
             <CameraPositionLogger />
 
             <Suspense fallback={null}>
@@ -143,7 +188,7 @@ export default function TourPage() {
               <Suspense fallback={null}>
                 <CarExhibits />
               </Suspense>
-              {!isOverlayOpen && !isViewerActive && !isPaused && (
+              {!isOverlayOpen && !isViewerActive && !isPaused && !showModeSelection && (
                 <CarHoverDetector onDetect={setHoveredCarId} />
               )}
             </CarDetectionProvider>
@@ -153,10 +198,34 @@ export default function TourPage() {
           </Physics>
         </KeyboardControls>
       </Canvas>
-      <CustomLoader />
-      
-      {/* Crosshair - hidden when any overlay is open */}
-      {!isOverlayOpen && (
+      <CustomLoader onComplete={handleLoaderComplete} />
+
+      {/* Mode Selection Screen */}
+      <ModeSelectionScreen
+        isVisible={showModeSelection}
+        onFreeRoam={handleFreeRoam}
+        onNarratedTour={handleNarratedTour}
+      />
+
+      {/* Tour Preloader */}
+      <TourPreloader
+        isActive={tourPreloading}
+        onReady={handleTourPreloadReady}
+      />
+
+      {/* Narrated Tour — DetailedCarViewer + HUD */}
+      {tour.isActive && tour.tourState !== "loading" && tour.tourState !== "finished" && (
+        <DetailedCarViewer
+          key={tour.currentCarId}
+          carId={tour.currentCarId}
+          isActive={true}
+          tourMode={true}
+        />
+      )}
+      <NarratedTourHUD />
+
+      {/* Crosshair — hidden when any overlay is open or mode not selected */}
+      {!isOverlayOpen && modeSelected === "free" && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
           {hoveredCarId ? (
             <Eye className="w-5 h-5 text-white" />
@@ -167,17 +236,20 @@ export default function TourPage() {
       )}
 
       {/* Pause Menu */}
-      <PauseMenu 
-        isOpen={isPaused} 
+      <PauseMenu
+        isOpen={isPaused}
         onResume={handleResume}
+        onStartTour={handleStartTourFromPause}
       />
 
-      {/* Car Information Panel */}
-      <CarInformationPanel 
-        carId={selectedCarId} 
-        onClose={handleClosePanel}
-        onViewerStateChange={handleViewerStateChange}
-      />
+      {/* Car Information Panel (free roam only) */}
+      {!tour.isActive && (
+        <CarInformationPanel
+          carId={selectedCarId}
+          onClose={handleClosePanel}
+          onViewerStateChange={handleViewerStateChange}
+        />
+      )}
     </div>
   );
 }

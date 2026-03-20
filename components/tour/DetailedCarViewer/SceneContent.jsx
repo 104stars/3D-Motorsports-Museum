@@ -9,9 +9,6 @@ import HighQualityLighting from "./HighQualityLighting";
 import GroundContactShadow from "./GroundContactShadow";
 import DetailedViewLoader from "./DetailedViewLoader";
 
-/**
- * Scene content with model, lighting, and post-processing
- */
 export default function SceneContent({ carId, onModelLoaded, isActive, onControlsReady }) {
   const modelUrl = useMemo(() => getHighQualityModelUrl(carId), [carId]);
   const [modelBounds, setModelBounds] = useState(null);
@@ -42,7 +39,6 @@ export default function SceneContent({ carId, onModelLoaded, isActive, onControl
         <CarModel carId={carId} url={modelUrl} onLoaded={handleModelLoaded} />
       </Suspense>
 
-      {/* Contact shadow - renders once bounds are available */}
       {modelBounds && <GroundContactShadow />}
 
       <CameraController 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Play, HelpCircle, Home, ChevronRight } from "lucide-react";
+import { Play, HelpCircle, Home, Headphones, ChevronRight } from "lucide-react";
 import ControlsHelpModal from "./ControlsHelpModal";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ const itemVariants = {
   exit: { opacity: 0, y: 10, transition: { duration: 0.2 } },
 };
 
-export default function PauseMenu({ isOpen, onResume }) {
+export default function PauseMenu({ isOpen, onResume, onStartTour }) {
   const router = useRouter();
   const [showHelp, setShowHelp] = useState(false);
 
@@ -93,6 +93,12 @@ export default function PauseMenu({ isOpen, onResume }) {
                       description="Volver al recorrido"
                       onClick={onResume}
                       primary
+                    />
+                    <PauseMenuItem
+                      icon={Headphones}
+                      label="Narrated Tour"
+                      description="Recorrido narrado por 8 exhibiciones"
+                      onClick={onStartTour}
                     />
                     <PauseMenuItem
                       icon={HelpCircle}
