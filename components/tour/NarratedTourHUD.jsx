@@ -8,6 +8,7 @@ import {
   X,
   ChevronRight,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useNarratedTour } from "./NarratedTourContext";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,8 @@ export default function NarratedTourHUD() {
     restartTour,
   } = useNarratedTour();
 
+  const t = useTranslations("tour.hud");
+
   if (!isActive) return null;
 
   // Tour complete screen
@@ -46,23 +49,23 @@ export default function NarratedTourHUD() {
         >
           <div className="h-px w-12 bg-white/20 mb-8" />
           <h2 className="font-serif italic text-4xl md:text-5xl tracking-tight mb-3">
-            Tour Complete
+            {t("tourComplete")}
           </h2>
           <p className="text-neutral-400 font-light text-sm tracking-wide mb-10 text-center max-w-sm">
-            Thank you for experiencing the Motorsports Museum collection.
+            {t("tourCompleteMessage")}
           </p>
           <div className="flex gap-4">
             <button
               onClick={deactivateTour}
               className="px-6 py-3 rounded-xl bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors"
             >
-              Return to Museum
+              {t("returnToMuseum")}
             </button>
             <button
               onClick={restartTour}
               className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors"
             >
-              Restart Tour
+              {t("restartTour")}
             </button>
           </div>
         </motion.div>
@@ -86,7 +89,7 @@ export default function NarratedTourHUD() {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
-                Stop {currentStopIndex + 1} / {totalStops}
+                {t("stop")} {currentStopIndex + 1} / {totalStops}
               </span>
               {currentCarInfo && (
                 <>
@@ -148,14 +151,14 @@ export default function NarratedTourHUD() {
             <ControlButton
               onClick={pauseNarration}
               icon={Pause}
-              label="Pause"
+              label={t("pause")}
             />
           )}
           {canResume && (
             <ControlButton
               onClick={resumeNarration}
               icon={Play}
-              label="Resume"
+              label={t("resume")}
             />
           )}
 
@@ -164,7 +167,7 @@ export default function NarratedTourHUD() {
             <ControlButton
               onClick={skipStop}
               icon={SkipForward}
-              label="Skip"
+              label={t("skip")}
             />
           )}
 
@@ -182,7 +185,7 @@ export default function NarratedTourHUD() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              {currentStopIndex < totalStops - 1 ? "Next Exhibit" : "Finish Tour"}
+              {currentStopIndex < totalStops - 1 ? t("nextExhibit") : t("finishTour")}
               <ChevronRight className="w-4 h-4" />
             </motion.button>
           )}

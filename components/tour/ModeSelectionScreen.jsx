@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { Compass, Headphones, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const containerVariants = {
@@ -23,6 +24,8 @@ const itemVariants = {
 };
 
 export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedTour }) {
+  const t = useTranslations("tour.modeSelection");
+
   return (
     <AnimatePresence mode="wait">
       {isVisible && (
@@ -42,14 +45,14 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
             variants={itemVariants}
             className="font-serif italic text-5xl md:text-7xl tracking-tighter text-center mb-4 drop-shadow-2xl"
           >
-            Motorsports Museum
+            {t("title")}
           </motion.h1>
 
           <motion.p
             variants={itemVariants}
             className="text-neutral-400 font-light text-base md:text-lg tracking-wide mb-14 text-center max-w-md"
           >
-            Choose how you'd like to experience the collection
+            {t("subtitle")}
           </motion.p>
 
           {/* Mode cards */}
@@ -59,14 +62,16 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
           >
             <ModeCard
               icon={Compass}
-              title="Free Roam"
-              description="Explore the museum at your own pace. Walk through exhibits and interact with cars freely."
+              title={t("freeRoam")}
+              description={t("freeRoamDesc")}
+              enterLabel={t("enter")}
               onClick={onFreeRoam}
             />
             <ModeCard
               icon={Headphones}
-              title="Narrated Tour"
-              description="A curated journey through 8 legendary cars with narration and interesting facts."
+              title={t("narratedTour")}
+              description={t("narratedTourDesc")}
+              enterLabel={t("enter")}
               onClick={onNarratedTour}
               accent
             />
@@ -78,7 +83,7 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
             className="mt-14 flex items-center gap-2 text-white/20 text-xs font-mono tracking-widest uppercase"
           >
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            Select a mode to begin
+            {t("footer")}
             <span className="w-1 h-1 rounded-full bg-white/20" />
           </motion.div>
         </motion.div>
@@ -87,7 +92,7 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
   );
 }
 
-function ModeCard({ icon: Icon, title, description, onClick, accent = false }) {
+function ModeCard({ icon: Icon, title, description, enterLabel, onClick, accent = false }) {
   return (
     <motion.button
       onClick={onClick}
@@ -121,7 +126,7 @@ function ModeCard({ icon: Icon, title, description, onClick, accent = false }) {
 
       {/* CTA hint */}
       <div className="mt-auto flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/40 group-hover:text-white/70 transition-colors">
-        Enter
+        {enterLabel}
         <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </div>
     </motion.button>

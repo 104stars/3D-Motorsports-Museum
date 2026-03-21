@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Play, HelpCircle, Home, Headphones, ChevronRight } from "lucide-react";
 import ControlsHelpModal from "./ControlsHelpModal";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const containerVariants = {
@@ -34,6 +36,7 @@ const itemVariants = {
 export default function PauseMenu({ isOpen, onResume, onStartTour }) {
   const router = useRouter();
   const [showHelp, setShowHelp] = useState(false);
+  const t = useTranslations("tour.pause");
 
   const handleExit = () => {
     router.push("/");
@@ -82,46 +85,51 @@ export default function PauseMenu({ isOpen, onResume, onStartTour }) {
                     variants={itemVariants}
                     className="font-serif italic text-6xl md:text-7xl text-white tracking-tighter mb-12 text-center drop-shadow-2xl"
                   >
-                    Pausa
+                    {t("title")}
                   </motion.h1>
 
                   {/* Menu Items */}
                   <div className="flex flex-col gap-4 w-full">
                     <PauseMenuItem
                       icon={Play}
-                      label="Reanudar"
-                      description="Volver al recorrido"
+                      label={t("resume")}
+                      description={t("resumeDesc")}
                       onClick={onResume}
                       primary
                     />
                     <PauseMenuItem
                       icon={Headphones}
-                      label="Narrated Tour"
-                      description="Recorrido narrado por 8 exhibiciones"
+                      label={t("narratedTour")}
+                      description={t("narratedTourDesc")}
                       onClick={onStartTour}
                     />
                     <PauseMenuItem
                       icon={HelpCircle}
-                      label="Controles"
-                      description="Guía de movimiento e interacción"
+                      label={t("controls")}
+                      description={t("controlsDesc")}
                       onClick={() => setShowHelp(true)}
                     />
                     <PauseMenuItem
                       icon={Home}
-                      label="Salir"
-                      description="Volver al inicio"
+                      label={t("exit")}
+                      description={t("exitDesc")}
                       onClick={handleExit}
                       danger
                     />
                   </div>
 
+                  {/* Language Switcher */}
+                  <motion.div variants={itemVariants} className="mt-10">
+                    <LanguageSwitcher />
+                  </motion.div>
+
                   {/* Footer Hint */}
                   <motion.div
                     variants={itemVariants}
-                    className="mt-12 flex items-center gap-2 text-white/30 text-xs font-mono tracking-widest uppercase"
+                    className="mt-6 flex items-center gap-2 text-white/30 text-xs font-mono tracking-widest uppercase"
                   >
                     <span className="w-1 h-1 rounded-full bg-white/30" />
-                    Presiona ESC para volver
+                    {t("footer")}
                     <span className="w-1 h-1 rounded-full bg-white/30" />
                   </motion.div>
                 </motion.div>

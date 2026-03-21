@@ -9,6 +9,7 @@ import {
   useTransform,
   useMotionValueEvent
 } from "motion/react";
+import { useTranslations, useLocale } from "next-intl";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 import { X, Play, ChevronUp, Box } from "lucide-react";
@@ -164,9 +165,11 @@ function useIsMobile() {
  * Features motion-enhanced staged scroll behavior with spring physics.
  */
 export default function CarInformationPanel({ carId, onClose, onViewerStateChange }) {
+  const t = useTranslations("carInfo");
+  const locale = useLocale();
   const panelRef = useRef(null);
   const { scrollContainerRef, progress, rawProgress } = useStagedScroll(carId);
-  const carInfo = carId ? getCarInfo(carId) : null;
+  const carInfo = carId ? getCarInfo(carId, locale) : null;
   const [activeVideo, setActiveVideo] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
   const [isViewerActive, setIsViewerActive] = useState(false);
@@ -413,7 +416,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                     >
                       <Box className="w-5 h-5 transition-transform group-hover:rotate-12 duration-300" strokeWidth={1.5} />
                       <span className="font-sans text-sm font-medium tracking-wide">
-                        View 3D Model
+                        {t("view3DModel")}
                       </span>
                     </motion.button>
                   </motion.div>
@@ -455,7 +458,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                   {/* Media Gallery */}
                   {carInfo.media && carInfo.media.length > 0 && (
                     <section>
-                      <SectionHeader title="Gallery" />
+                      <SectionHeader title={t("gallery")} />
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {carInfo.media.map((item, index) => (
                           <MediaItem 
@@ -475,7 +478,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                 <div className="lg:col-span-5 space-y-12">
                   {/* Technical Specifications */}
                   <section>
-                    <SectionHeader title="Technical Specifications" />
+                    <SectionHeader title={t("technicalSpecs")} />
                     <div className="grid grid-cols-1 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/5">
                       {Object.entries(carInfo.technical).map(([key, value], index) => (
                         <SpecRow key={key} label={formatLabel(key)} value={value} index={index} />
@@ -485,7 +488,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
 
                   {/* Interesting Facts */}
                   <section>
-                    <SectionHeader title="Did You Know?" />
+                    <SectionHeader title={t("didYouKnow")} />
                     <ul className="space-y-6">
                       {carInfo.facts.map((fact, index) => (
                         <motion.li 
@@ -511,7 +514,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
               {/* Footer hint */}
               <div className="px-12 py-8 border-t border-white/5 flex items-center justify-between">
                 <span className="text-xs font-mono text-neutral-500 tracking-widest uppercase">
-                  Press <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 mx-1 text-neutral-300">ESC</kbd> to close
+                  {t("pressEscToClose")} <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 mx-1 text-neutral-300">{t("escKey")}</kbd> {t("toClose")}
                 </span>
                 
                 {/* Back to top button */}
@@ -522,7 +525,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                   whileTap={{ scale: 0.95 }}
                 >
                   <ChevronUp className="w-4 h-4" />
-                  Back to top
+                  {t("backToTop")}
                 </motion.button>
               </div>
             </div>

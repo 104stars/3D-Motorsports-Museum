@@ -3,12 +3,14 @@
 import { useState } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
 
 const SilkBackground = dynamic(() => import("./Silk"), { ssr: false })
 
 export default function AuthPage() {
+  const t = useTranslations("auth")
   const [isLogin, setIsLogin] = useState(true)
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -59,12 +61,12 @@ export default function AuthPage() {
         <div className="w-full max-w-md relative z-20">
           <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
-              {isLogin ? "Welcome back" : "Create account"}
+              {isLogin ? t("welcomeBack") : t("createAccount")}
             </h1>
             <p className="text-neutral-400 text-lg font-light">
               {isLogin
-                ? "Enter your credentials to access your account"
-                : "Sign up to start your motorsport journey"}
+                ? t("loginSubtitle")
+                : t("signupSubtitle")}
             </p>
           </div>
 

@@ -51,7 +51,6 @@ function TourPageInner() {
   const hoveredCarIdRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Mode selection: null = not chosen, "free" = free roam, "tour" = narrated tour
   const [loaderComplete, setLoaderComplete] = useState(false);
   const [modeSelected, setModeSelected] = useState(null);
   const [tourPreloading, setTourPreloading] = useState(false);
@@ -65,7 +64,6 @@ function TourPageInner() {
     hoveredCarIdRef.current = hoveredCarId;
   }, [hoveredCarId]);
 
-  // Suppress pointer-lock pause menu during tour or before mode is selected
   useEffect(() => {
     const handlePointerLockChange = () => {
       const canvas = canvasRef.current;
@@ -119,7 +117,6 @@ function TourPageInner() {
     }, 50);
   }, []);
 
-  // --- Mode selection handlers ---
   const handleLoaderComplete = useCallback(() => {
     setLoaderComplete(true);
   }, []);
@@ -139,7 +136,6 @@ function TourPageInner() {
     tour.beginFirstStop();
   }, [tour]);
 
-  // Start tour from pause menu
   const handleStartTourFromPause = useCallback(() => {
     setIsPaused(false);
     tour.activateTour();
@@ -147,14 +143,12 @@ function TourPageInner() {
     setModeSelected("tour");
   }, [tour]);
 
-  // When tour deactivates, return to free roam
   useEffect(() => {
     if (!tour.isActive && modeSelected === "tour") {
       setModeSelected("free");
     }
   }, [tour.isActive, modeSelected]);
 
-  // Synchronous reset: when tour car changes, hide viewer until new model + camera are ready
   const showTourViewer = tour.isActive && tour.tourState !== "loading" && tour.tourState !== "finished";
   const tourCarId = showTourViewer ? tour.currentCarId : null;
 
@@ -217,20 +211,17 @@ function TourPageInner() {
       </Canvas>
       <CustomLoader onComplete={handleLoaderComplete} />
 
-      {/* Mode Selection Screen */}
       <ModeSelectionScreen
         isVisible={showModeSelection}
         onFreeRoam={handleFreeRoam}
         onNarratedTour={handleNarratedTour}
       />
 
-      {/* Tour Preloader */}
       <TourPreloader
         isActive={tourPreloading}
         onReady={handleTourPreloadReady}
       />
 
-      {/* Narrated Tour — DetailedCarViewer + HUD */}
       {showTourViewer && (
         <>
           <DetailedCarViewer
@@ -240,7 +231,6 @@ function TourPageInner() {
             tourMode={true}
             onReady={handleViewerReady}
           />
-          {/* Transition overlay — covers viewer during car changes until model + camera ready */}
           <AnimatePresence>
             {!viewerReady && (
               <motion.div
@@ -256,7 +246,6 @@ function TourPageInner() {
       )}
       <NarratedTourHUD />
 
-      {/* Crosshair — hidden when any overlay is open or mode not selected */}
       {!isOverlayOpen && modeSelected === "free" && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
           {hoveredCarId ? (
@@ -267,14 +256,12 @@ function TourPageInner() {
         </div>
       )}
 
-      {/* Pause Menu */}
       <PauseMenu
         isOpen={isPaused}
         onResume={handleResume}
         onStartTour={handleStartTourFromPause}
       />
 
-      {/* Car Information Panel (free roam only) */}
       {!tour.isActive && (
         <CarInformationPanel
           carId={selectedCarId}

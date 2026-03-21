@@ -10,9 +10,10 @@ import {
   useState,
 } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useLocale } from "next-intl";
 import NarrationEngine from "./NarrationEngine";
 import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
-import { NARRATION_SCRIPTS } from "@/lib/tour/narrationScripts";
+import { getNarrationScript } from "@/lib/tour/narrationScripts";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
 import { getCarInfo } from "@/lib/tour/carInfo";
 
@@ -34,6 +35,7 @@ function prefetchStop(index) {
 }
 
 export function NarratedTourProvider({ children }) {
+  const locale = useLocale();
   const [isActive, setIsActive] = useState(false);
   const [currentStopIndex, setCurrentStopIndex] = useState(0);
   const [tourState, setTourState] = useState("idle"); // idle | loading | narrating | paused | waiting | finished
@@ -50,7 +52,7 @@ export function NarratedTourProvider({ children }) {
   }, []);
 
   const currentCarId = NARRATION_ROUTE[currentStopIndex] ?? null;
-  const currentCarInfo = currentCarId ? getCarInfo(currentCarId) : null;
+  const currentCarInfo = currentCarId ? getCarInfo(currentCarId, locale) : null;
   const totalStops = NARRATION_ROUTE.length;
 
   // Wire engine state back to React
@@ -73,7 +75,7 @@ export function NarratedTourProvider({ children }) {
       if (!engine) return;
 
       const carId = NARRATION_ROUTE[stopIndex];
-      const script = NARRATION_SCRIPTS[carId];
+      const script = getNarrationScript(carId, locale);
       if (!script) return;
 
       const text = script[phase];
@@ -88,15 +90,14 @@ export function NarratedTourProvider({ children }) {
         } else if (phase === "body") {
           speakPhase("outro", stopIndex);
         } else {
-          // outro finished
           setIsNarrating(false);
           setTourState("waiting");
         }
       };
 
-      engine.speak(text);
+      engine.speak(text, locale);
     },
-    [],
+    [locale],
   );
 
   const startNarrationForStop = useCallback(

@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import LetterSwapForward from "@/components/fancy/text/letter-swap-forward-anim";
 
 export default function HeroSection() {
+  const t = useTranslations("hero");
   return (
     <section className="relative h-screen w-full overflow-hidden bg-black">
       {/* Background Video */}
@@ -24,13 +26,12 @@ export default function HeroSection() {
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col justify-end h-full text-left pl-30 pb-26">
         <h1 className="text-4xl md:text-5xl font-sans italic font-light text-white mb-6 max-w-xl leading-tight">
-          Where Legends of the Track{" "}
-          <span className="font-serif italic">Come to Life</span>
+          {t("headlinePre")}
+          <span className="font-serif italic">{t("headlineAccent")}</span>
         </h1>
 
         <p className="text-lg md:text-xl mb-8 max-w-lg text-neutral-200 font-sans font-extralight">
-          Experience the thrill of motorsport legends inside an interactive
-          digital space.
+          {t("subtitle")}
         </p>
 
         {/* CTA Buttons */}
@@ -41,8 +42,8 @@ export default function HeroSection() {
             className="rounded-full h-12 px-8 text-base font-semibold tracking-wide bg-white text-neutral-950 shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] focus-visible:ring-white/40 focus-visible:ring-offset-0"
           >
             <Link href="/tour" className="flex items-center justify-center gap-3 text-current">
-              <LetterSwapForward label="Start tour" reverse={true} triggerParentHover={true}>
-                Start tour
+              <LetterSwapForward label={t("ctaTour")} reverse={true} triggerParentHover={true}>
+                {t("ctaTour")}
               </LetterSwapForward>
             </Link>
           </Button>
@@ -53,7 +54,7 @@ export default function HeroSection() {
             className="rounded-full h-12 px-8 text-base font-semibold tracking-wide border border-white/25 bg-white/5 text-white/80 backdrop-blur-sm shadow-none transition-colors duration-300 hover:bg-white/10 hover:text-white focus-visible:ring-white/30 focus-visible:ring-offset-0"
           >
             <a href="#" className="flex items-center justify-center gap-2 text-current">
-              Learn more
+              {t("ctaLearn")}
             </a>
           </Button>
         </div>

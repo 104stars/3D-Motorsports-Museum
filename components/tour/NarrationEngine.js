@@ -34,7 +34,7 @@ export default class NarrationEngine {
     });
   }
 
-  speak(text) {
+  speak(text, locale = "en") {
     if (!this.isAvailable) {
       this.onEnd?.();
       return;
@@ -42,11 +42,13 @@ export default class NarrationEngine {
 
     this.stop();
 
+    const langMap = { en: "en-US", es: "es-ES" };
+
     this._currentText = text;
     this._utterance = new SpeechSynthesisUtterance(text);
     this._utterance.rate = 0.95;
     this._utterance.pitch = 1.0;
-    this._utterance.lang = "en-US";
+    this._utterance.lang = langMap[locale] || "en-US";
 
     this._utterance.onstart = () => {
       this._isSpeaking = true;

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Info, X } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 
@@ -11,19 +12,21 @@ import { cn } from "@/lib/utils";
  * Shows car name, year, category, historic summary, and top specs.
  */
 export default function CarInfoOverlay({ carId }) {
+  const t = useTranslations("carInfo");
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
-  const carInfo = useMemo(() => (carId ? getCarInfo(carId) : null), [carId]);
+  const carInfo = useMemo(() => (carId ? getCarInfo(carId, locale) : null), [carId, locale]);
 
   if (!carInfo) return null;
 
   const topSpecs = useMemo(() => {
     const { engine, power, weight } = carInfo.technical;
     return [
-      { label: "Engine", value: engine },
-      { label: "Power", value: power },
-      { label: "Weight", value: weight },
+      { label: t("engine"), value: engine },
+      { label: t("power"), value: power },
+      { label: t("weight"), value: weight },
     ];
-  }, [carInfo]);
+  }, [carInfo, t]);
 
   return (
     <>
@@ -92,7 +95,7 @@ export default function CarInfoOverlay({ carId }) {
               {/* History summary (first paragraph) */}
               <div>
                 <h4 className="font-sans text-[10px] uppercase tracking-wider text-white/40 mb-2">
-                  History
+                  {t("history")}
                 </h4>
                 <p className="text-sm text-white/70 font-light leading-relaxed">
                   {carInfo.historic.content.split("\n\n")[0]}
@@ -102,7 +105,7 @@ export default function CarInfoOverlay({ carId }) {
               {/* Top specs */}
               <div>
                 <h4 className="font-sans text-[10px] uppercase tracking-wider text-white/40 mb-2">
-                  Key Specs
+                  {t("keySpecs")}
                 </h4>
                 <div className="space-y-1.5">
                   {topSpecs.map(({ label, value }) => (
@@ -118,7 +121,7 @@ export default function CarInfoOverlay({ carId }) {
               {carInfo.facts?.[0] && (
                 <div>
                   <h4 className="font-sans text-[10px] uppercase tracking-wider text-white/40 mb-2">
-                    Did you know?
+                    {t("didYouKnow")}
                   </h4>
                   <p className="text-sm text-white/60 font-light leading-relaxed italic">
                     "{carInfo.facts[0]}"

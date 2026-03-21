@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
 import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
 
@@ -11,6 +12,7 @@ import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
  * Shows a minimal loading UI while models download.
  */
 export default function TourPreloader({ isActive, onReady }) {
+  const t = useTranslations("tour.loading");
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const hasCalledReady = useRef(false);
@@ -92,10 +94,10 @@ export default function TourPreloader({ isActive, onReady }) {
             <div className="h-px w-12 bg-white/20 mb-8" />
 
             <h2 className="font-serif italic text-3xl md:text-4xl tracking-tight mb-3">
-              Preparing your tour
+              {t("preparingTour")}
             </h2>
             <p className="text-neutral-500 text-sm font-mono tracking-wider uppercase mb-10">
-              Loading exhibits...
+              {t("loadingExhibits")}
             </p>
 
             {/* Progress bar */}

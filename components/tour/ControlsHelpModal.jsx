@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Move, MousePointer2, Hand, Eye, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import {
   Carousel,
   CarouselContent,
@@ -11,140 +12,133 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const SECTIONS = [
-  {
-    id: "movement",
-    title: "Movimiento",
-    icon: Move,
-    content: (
-      <div className="space-y-6">
-        <p className="text-neutral-400 text-lg leading-relaxed">
-          Explora el museo libremente usando tu teclado.
-        </p>
-        <div className="space-y-4">
-          <div className="flex justify-between items-center pb-4 border-b border-white/5">
-            <span className="text-white text-lg">Desplazarse</span>
-            <div className="flex gap-2">
-              <Key>W</Key><Key>A</Key><Key>S</Key><Key>D</Key>
-            </div>
-          </div>
-          <div className="flex justify-between items-center pb-4 border-b border-white/5">
-            <span className="text-white text-lg">Correr</span>
-            <Key wide>Shift</Key>
-          </div>
-          <div className="flex justify-between items-center pb-4 border-b border-white/5">
-            <span className="text-white text-lg">Saltar</span>
-            <Key wide>Space</Key>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-white text-lg">Resetear posición</span>
-            <Key>R</Key>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "camera",
-    title: "Cámara",
-    icon: MousePointer2,
-    content: (
-      <div className="space-y-6">
-        <p className="text-neutral-400 text-lg leading-relaxed">
-          Controla tu vista para admirar cada detalle.
-        </p>
-        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-          <div className="flex items-center gap-6">
-            <Move className="w-8 h-8 text-white" />
-            <div className="space-y-2">
-              <h4 className="text-white font-medium text-lg">Vista Libre</h4>
-              <p className="text-neutral-400 text-sm">
-                Mueve el mouse para mirar alrededor. El cursor permanecerá oculto durante el recorrido.
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex justify-between items-center pt-2">
-          <span className="text-white text-lg">Pausar / Liberar Cursor</span>
-          <Key>ESC</Key>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "interaction",
-    title: "Interacción",
-    icon: Hand,
-    content: (
-      <div className="space-y-6">
-        <p className="text-neutral-400 text-lg leading-relaxed">
-          Descubre la historia detrás de cada vehículo.
-        </p>
-        
-        <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
-          <div className="flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-              <Eye className="w-5 h-5 text-blue-300" />
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-blue-100 font-medium text-lg">Indicador de Interés</h4>
-              <p className="text-blue-200/70 text-sm leading-relaxed">
-                Cuando mires fijamente un auto, aparecerá un icono de ojo. 
-                Haz <strong className="text-blue-100">click izquierdo</strong> para abrir su panel de información.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-8 py-4 opacity-50">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-8 h-12 border border-white rounded-full relative bg-white/10">
-               <div className="absolute top-1 left-1 w-3 h-4 bg-white rounded-sm" />
-            </div>
-            <span className="text-xs uppercase tracking-widest text-white">Click</span>
-          </div>
-          <ArrowRight className="w-5 h-5 text-white/20" />
-          <div className="w-24 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
-            <span className="text-xs font-mono text-white">PANEL</span>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "inspection",
-    title: "Vista Detallada",
-    icon: Box,
-    content: (
-      <div className="space-y-6">
-        <p className="text-neutral-400 text-lg leading-relaxed">
-          Examina los modelos 3D con total libertad.
-        </p>
-        
-        <div className="grid grid-cols-3 gap-3">
-          <MouseAction label="Rotar" action="LMB" active="left" />
-          <MouseAction label="Mover" action="RMB" active="right" />
-          <MouseAction label="Zoom" action="Scroll" active="wheel" />
-        </div>
-
-        <div className="bg-neutral-950/30 rounded-xl p-4 border border-white/5 text-sm text-neutral-400">
-          <p>
-            En este modo el cursor <strong className="text-white">no está bloqueado</strong>. 
-            Puedes interactuar libremente con el modelo.
-          </p>
-        </div>
-
-        <div className="flex justify-between items-center pt-2">
-          <span className="text-white text-lg">Cerrar vista</span>
-          <Key>ESC</Key>
-        </div>
-      </div>
-    ),
-  },
-];
-
 export default function ControlsHelpModal({ onBack }) {
+  const t = useTranslations("tour.controls");
+
+  const sections = [
+    {
+      id: "movement",
+      title: t("movement.title"),
+      icon: Move,
+      content: (
+        <div className="space-y-6">
+          <p className="text-neutral-400 text-lg leading-relaxed">
+            {t("movement.subtitle")}
+          </p>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center pb-4 border-b border-white/5">
+              <span className="text-white text-lg">{t("movement.move")}</span>
+              <div className="flex gap-2">
+                <Key>W</Key><Key>A</Key><Key>S</Key><Key>D</Key>
+              </div>
+            </div>
+            <div className="flex justify-between items-center pb-4 border-b border-white/5">
+              <span className="text-white text-lg">{t("movement.run")}</span>
+              <Key wide>Shift</Key>
+            </div>
+            <div className="flex justify-between items-center pb-4 border-b border-white/5">
+              <span className="text-white text-lg">{t("movement.jump")}</span>
+              <Key wide>Space</Key>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-white text-lg">{t("movement.resetPosition")}</span>
+              <Key>R</Key>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "camera",
+      title: t("camera.title"),
+      icon: MousePointer2,
+      content: (
+        <div className="space-y-6">
+          <p className="text-neutral-400 text-lg leading-relaxed">
+            {t("camera.subtitle")}
+          </p>
+          <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="flex items-center gap-6">
+              <Move className="w-8 h-8 text-white" />
+              <div className="space-y-2">
+                <h4 className="text-white font-medium text-lg">{t("camera.freeLook")}</h4>
+                <p className="text-neutral-400 text-sm">
+                  {t("camera.freeLookDesc")}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-white text-lg">{t("camera.pauseCursor")}</span>
+            <Key>ESC</Key>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "interaction",
+      title: t("interaction.title"),
+      icon: Hand,
+      content: (
+        <div className="space-y-6">
+          <p className="text-neutral-400 text-lg leading-relaxed">
+            {t("interaction.subtitle")}
+          </p>
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
+            <div className="flex gap-4">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <Eye className="w-5 h-5 text-blue-300" />
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-blue-100 font-medium text-lg">{t("interaction.interestIndicator")}</h4>
+                <p
+                  className="text-blue-200/70 text-sm leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: t("interaction.interestIndicatorDesc") }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-8 py-4 opacity-50">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-12 border border-white rounded-full relative bg-white/10">
+                <div className="absolute top-1 left-1 w-3 h-4 bg-white rounded-sm" />
+              </div>
+              <span className="text-xs uppercase tracking-widest text-white">{t("interaction.click")}</span>
+            </div>
+            <ArrowRight className="w-5 h-5 text-white/20" />
+            <div className="w-24 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
+              <span className="text-xs font-mono text-white">{t("interaction.panel")}</span>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "inspection",
+      title: t("detailedView.title"),
+      icon: Box,
+      content: (
+        <div className="space-y-6">
+          <p className="text-neutral-400 text-lg leading-relaxed">
+            {t("detailedView.subtitle")}
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <MouseAction label={t("detailedView.rotate")} action="LMB" active="left" />
+            <MouseAction label={t("detailedView.move")} action="RMB" active="right" />
+            <MouseAction label={t("detailedView.zoom")} action="Scroll" active="wheel" />
+          </div>
+          <div className="bg-neutral-950/30 rounded-xl p-4 border border-white/5 text-sm text-neutral-400">
+            <p dangerouslySetInnerHTML={{ __html: t("detailedView.cursorNote") }} />
+          </div>
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-white text-lg">{t("detailedView.closeView")}</span>
+            <Key>ESC</Key>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <motion.div
       className="w-full max-w-5xl px-4 md:px-0"
@@ -164,11 +158,11 @@ export default function ControlsHelpModal({ onBack }) {
             <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </div>
-            <span className="text-lg font-medium tracking-wide">Volver</span>
+            <span className="text-lg font-medium tracking-wide">{t("back")}</span>
           </motion.button>
           
           <h2 className="font-serif italic text-4xl text-white/90 tracking-tight">
-            Guía de Controles
+            {t("title")}
           </h2>
         </div>
 
@@ -176,7 +170,7 @@ export default function ControlsHelpModal({ onBack }) {
         <div className="w-full max-w-3xl mx-auto">
           <Carousel className="w-full">
             <CarouselContent>
-              {SECTIONS.map((section) => (
+              {sections.map((section) => (
                 <CarouselItem key={section.id}>
                   <ControlCard 
                     icon={section.icon} 
@@ -193,7 +187,7 @@ export default function ControlsHelpModal({ onBack }) {
             {/* Mobile Navigation Hint */}
             <div className="flex md:hidden justify-center mt-4 gap-2">
               <span className="text-xs text-white/30 font-mono uppercase tracking-widest">
-                Desliza para ver más
+                {t("swipeHint")}
               </span>
             </div>
           </Carousel>

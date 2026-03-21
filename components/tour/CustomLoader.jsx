@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useProgress } from "@react-three/drei";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 
 /**
  * Full-screen loader with smooth, monotonic progress (0→100).
  * Redesigned with Swiss-style aesthetics and Framer Motion animations.
  */
 export default function CustomLoader({ onComplete }) {
+  const t = useTranslations("tour.loading");
   const { active, progress, loaded, total, item } = useProgress();
   const [visible, setVisible] = useState(true);
   // Rendered percent (integer). Keep a separate float ref for smooth easing
@@ -184,7 +186,7 @@ export default function CustomLoader({ onComplete }) {
   }, [active, pct, loaded, total]);
   
   // Memoize item display text
-  const itemText = useMemo(() => item || "Initializing environment...", [item]);
+  const itemText = useMemo(() => item || t("initializing"), [item, t]);
 
   return (
     <AnimatePresence>
@@ -205,10 +207,10 @@ export default function CustomLoader({ onComplete }) {
           {/* Top Section */}
           <div className="flex w-full justify-between items-start border-b border-white/20 pb-4">
             <h1 className="text-sm md:text-base font-bold uppercase tracking-widest">
-              Motorsports Museum
+              {t("title")}
             </h1>
             <div className="text-xs md:text-sm font-mono opacity-60">
-              EST. 2025
+              {t("est")}
             </div>
           </div>
 
@@ -224,7 +226,7 @@ export default function CustomLoader({ onComplete }) {
             <div className="space-y-2 font-mono text-xs md:text-sm opacity-60">
               <div className="flex items-center gap-2">
                 <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                <span>LOADING ASSETS</span>
+                <span>{t("loadingAssets")}</span>
               </div>
               <div className="truncate max-w-[200px] md:max-w-[300px]">
                 {itemText}

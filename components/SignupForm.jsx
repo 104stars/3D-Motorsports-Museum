@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from 'next/navigation'
+import { useTranslations } from "next-intl"
 import { createClient } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { DEFAULT_AVATARS } from "@/lib/avatars/defaultAvatars"
 
 export default function SignupForm({ onToggle }) {
+  const t = useTranslations("auth")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -25,13 +27,13 @@ export default function SignupForm({ onToggle }) {
     setError("")
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(t("passwordMismatch"))
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+      setError(t("passwordTooShort"))
       setLoading(false)
       return
     }
@@ -52,7 +54,7 @@ export default function SignupForm({ onToggle }) {
         }, 2000)
       }
     } catch (err) {
-      setError("An unexpected error occurred")
+      setError(t("unexpectedError"))
     } finally {
       setLoading(false)
     }
@@ -61,9 +63,9 @@ export default function SignupForm({ onToggle }) {
   if (success) {
     return (
       <div className="py-8">
-        <h2 className="text-2xl font-light mb-3 text-white">Check your email!</h2>
+        <h2 className="text-2xl font-light mb-3 text-white">{t("checkEmail")}</h2>
         <p className="text-neutral-400 font-light">
-          We've sent you a confirmation link to complete your registration.
+          {t("confirmationSent")}
         </p>
       </div>
     )
@@ -72,11 +74,11 @@ export default function SignupForm({ onToggle }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="signup-email" className="text-neutral-300 font-light text-sm">Email</Label>
+        <Label htmlFor="signup-email" className="text-neutral-300 font-light text-sm">{t("email")}</Label>
         <Input
           id="signup-email"
           type="email"
-          placeholder="you@example.com"
+          placeholder={t("emailPlaceholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -86,11 +88,11 @@ export default function SignupForm({ onToggle }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="signup-password" className="text-neutral-300 font-light text-sm">Password</Label>
+        <Label htmlFor="signup-password" className="text-neutral-300 font-light text-sm">{t("password")}</Label>
         <Input
           id="signup-password"
           type="password"
-          placeholder="Enter your password"
+          placeholder={t("passwordPlaceholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -100,11 +102,11 @@ export default function SignupForm({ onToggle }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirm-password" className="text-neutral-300 font-light text-sm">Confirm password</Label>
+        <Label htmlFor="confirm-password" className="text-neutral-300 font-light text-sm">{t("confirmPassword")}</Label>
         <Input
           id="confirm-password"
           type="password"
-          placeholder="Confirm your password"
+          placeholder={t("confirmPasswordPlaceholder")}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
@@ -115,7 +117,7 @@ export default function SignupForm({ onToggle }) {
 
       {/* Avatar selection */}
       <div className="space-y-3">
-        <Label className="text-neutral-300 font-light text-sm">Choose your avatar</Label>
+        <Label className="text-neutral-300 font-light text-sm">{t("chooseAvatar")}</Label>
         <div className="grid grid-cols-5 gap-3">
           {DEFAULT_AVATARS.map((avatar) => {
             const isSelected = selectedAvatar === avatar.id
@@ -159,18 +161,18 @@ export default function SignupForm({ onToggle }) {
         className="w-full h-12 cursor-pointer text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed" 
         disabled={loading}
       >
-        {loading ? "Creating account..." : "Create account"}
+        {loading ? t("creatingAccount") : t("createAccountBtn")}
       </Button>
 
       <p className="text-center text-sm text-neutral-400 font-light">
-        Already have an account?{" "}
+        {t("hasAccount")}{" "}
         <button 
           type="button" 
           onClick={onToggle} 
           className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer" 
           disabled={loading}
         >
-          Sign in
+          {t("signIn")}
         </button>
       </p>
     </form>
