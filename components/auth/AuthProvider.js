@@ -15,6 +15,13 @@ export function AuthProvider({ children }) {
   const supabase = createClient()
 
   useEffect(() => {
+    // Get initial session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null)

@@ -1,0 +1,163 @@
+{
+  "nav": {
+    "brand": "Motorsports Museum",
+    "exhibits": "Exhibits",
+    "tour": "Tour",
+    "about": "About",
+    "login": "Login"
+  },
+  "hero": {
+    "headlinePre": "Where Legends of the Track ",
+    "headlineAccent": "Come to Life",
+    "subtitle": "Experience the thrill of motorsport legends inside an interactive digital space.",
+    "ctaTour": "Start tour",
+    "ctaLearn": "Learn more"
+  },
+  "exhibits": {
+    "title": "Featured Exhibits",
+    "subtitle": "Explore our carefully curated collection of motorsport history's most iconic moments and machines.",
+    "cards": {
+      "f1": {
+        "title": "Formula 1 Heritage",
+        "description": "Witness the evolution of speed with iconic F1 machines, from legendary championship-winning cars to cutting-edge hybrid technology that defines modern racing.",
+        "tags": ["Interactive Display", "20+ Vehicles"]
+      },
+      "lemans": {
+        "title": "Le Mans Endurance",
+        "description": "Experience the ultimate test of stamina and engineering, featuring legendary endurance racers that conquered the 24-hour battle at Circuit de la Sarthe.",
+        "tags": ["Historic Collection", "Prototype Racers"]
+      },
+      "rally": {
+        "title": "Rally Legends",
+        "description": "Feel the raw power of off-road racing with championship-winning rally cars that dominated grueling stages across mountains, forests, and desert terrain.",
+        "tags": ["All-Terrain Icons", "Group B Classics"]
+      }
+    }
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create account",
+    "loginSubtitle": "Enter your credentials to access your account",
+    "signupSubtitle": "Sign up to start your motorsport journey",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "chooseAvatar": "Choose your avatar",
+    "signingIn": "Signing in...",
+    "signIn": "Sign in",
+    "creatingAccount": "Creating account...",
+    "createAccountBtn": "Create account",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "hasAccount": "Already have an account?",
+    "checkEmail": "Check your email!",
+    "confirmationSent": "We've sent you a confirmation link to complete your registration.",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "tour": {
+    "modeSelection": {
+      "title": "Motorsports Museum",
+      "subtitle": "Choose how you'd like to experience the collection",
+      "freeRoam": "Free Roam",
+      "freeRoamDesc": "Explore the museum at your own pace. Walk through exhibits and interact with cars freely.",
+      "narratedTour": "Narrated Tour",
+      "narratedTourDesc": "A curated journey through 8 legendary cars with narration and interesting facts.",
+      "footer": "Select a mode to begin",
+      "enter": "Enter"
+    },
+    "pause": {
+      "title": "Pause",
+      "resume": "Resume",
+      "resumeDesc": "Return to the tour",
+      "narratedTour": "Narrated Tour",
+      "narratedTourDesc": "Narrated tour through 8 exhibits",
+      "controls": "Controls",
+      "controlsDesc": "Movement and interaction guide",
+      "exit": "Exit",
+      "exitDesc": "Return to home",
+      "footer": "Press ESC to return"
+    },
+    "controls": {
+      "back": "Back",
+      "title": "Controls Guide",
+      "swipeHint": "Swipe for more",
+      "movement": {
+        "title": "Movement",
+        "subtitle": "Explore the museum freely using your keyboard.",
+        "move": "Move",
+        "run": "Run",
+        "jump": "Jump",
+        "resetPosition": "Reset position"
+      },
+      "camera": {
+        "title": "Camera",
+        "subtitle": "Control your view to admire every detail.",
+        "freeLook": "Free Look",
+        "freeLookDesc": "Move the mouse to look around. The cursor will remain hidden during the tour.",
+        "pauseCursor": "Pause / Release Cursor"
+      },
+      "interaction": {
+        "title": "Interaction",
+        "subtitle": "Discover the history behind each vehicle.",
+        "interestIndicator": "Interest Indicator",
+        "interestIndicatorDesc": "When you look at a car, an eye icon will appear. <strong>Left click</strong> to open its information panel.",
+        "click": "Click",
+        "panel": "PANEL"
+      },
+      "detailedView": {
+        "title": "Detailed View",
+        "subtitle": "Examine 3D models with total freedom.",
+        "rotate": "Rotate",
+        "move": "Move",
+        "zoom": "Zoom",
+        "cursorNote": "In this mode the cursor <strong>is not locked</strong>. You can interact freely with the model.",
+        "closeView": "Close view"
+      }
+    },
+    "hud": {
+      "tourComplete": "Tour Complete",
+      "tourCompleteMessage": "Thank you for experiencing the Motorsports Museum collection.",
+      "returnToMuseum": "Return to Museum",
+      "restartTour": "Restart Tour",
+      "stop": "Stop",
+      "pause": "Pause",
+      "resume": "Resume",
+      "skip": "Skip",
+      "nextExhibit": "Next Exhibit",
+      "finishTour": "Finish Tour"
+    },
+    "loading": {
+      "title": "Motorsports Museum",
+      "est": "EST. 2025",
+      "loadingAssets": "LOADING ASSETS",
+      "initializing": "Initializing environment...",
+      "preparingTour": "Preparing your tour",
+      "loadingExhibits": "Loading exhibits..."
+    }
+  },
+  "carInfo": {
+    "history": "History",
+    "keySpecs": "Key Specs",
+    "didYouKnow": "Did you know?",
+    "engine": "Engine",
+    "power": "Power",
+    "weight": "Weight",
+    "view3DModel": "View 3D Model",
+    "gallery": "Gallery",
+    "technicalSpecs": "Technical Specifications",
+    "pressEscToClose": "Press",
+    "escKey": "ESC",
+    "toClose": "to close",
+    "backToTop": "Back to top"
+  },
+  "carViewer": {
+    "rotate": "Rotate",
+    "pan": "Pan",
+    "zoom": "Zoom"
+  }
+}

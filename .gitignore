@@ -23,6 +23,10 @@
 # misc
 .DS_Store
 *.pem
+/.cursor
+
+# 3D models (paid/licensed content)
+/public/models/
 
 # debug
 npm-debug.log*
@@ -35,7 +39,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+*.md
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+card-design.md
+projectInfo.md
+desc.md
