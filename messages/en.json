@@ -129,7 +129,11 @@
       "resume": "Resume",
       "skip": "Skip",
       "nextExhibit": "Next Exhibit",
-      "finishTour": "Finish Tour"
+      "finishTour": "Finish Tour",
+      "exitConfirmTitle": "Exit narrated tour?",
+      "exitConfirmMessage": "Your progress will be lost. Are you sure you want to leave?",
+      "cancel": "Cancel",
+      "exitTour": "Exit tour"
     },
     "loading": {
       "title": "Motorsports Museum",

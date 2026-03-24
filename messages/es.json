@@ -129,7 +129,11 @@
       "resume": "Reanudar",
       "skip": "Saltar",
       "nextExhibit": "Siguiente Exhibición",
-      "finishTour": "Finalizar Recorrido"
+      "finishTour": "Finalizar Recorrido",
+      "exitConfirmTitle": "¿Salir del recorrido narrado?",
+      "exitConfirmMessage": "Perderás tu progreso. ¿Estás seguro de que quieres salir?",
+      "cancel": "Cancelar",
+      "exitTour": "Salir del recorrido"
     },
     "loading": {
       "title": "Museo del Motorsport",

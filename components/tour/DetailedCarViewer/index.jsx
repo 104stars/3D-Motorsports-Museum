@@ -83,7 +83,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive, tourMode =
           </motion.button>
         )}
 
-        <ControlsGuide />
+        <ControlsGuide tourMode={tourMode} />
 
         {/* Car info overlay (both modes) */}
         <CarInfoOverlay carId={carId} />
