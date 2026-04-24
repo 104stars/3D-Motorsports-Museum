@@ -67,8 +67,9 @@ Mazda had been competing at Le Mans since 1970, never giving up on their rotary 
     ],
     media: [
       { type: "image", src: "/media/cars/787b/787header.webp", alt: "Mazda 787B at Circuit de la Sarthe" },
-      { type: "image", src: "/media/cars/787b/lemans.jpg", alt: "787B at Le Mans 1991" },
-      { type: "video", src: "/media/cars/787b/sound.mp4", alt: "The legendary rotary scream" },
+      { type: "image", src: "/media/cars/787b/1.webp", alt: "787B at Circuit de la Sarthe" },
+      { type: "image", src: "/media/cars/787b/2.jpg", alt: "787B at Le Mans 1991" },
+      { type: "youtube", videoId: "Fw5pKN5Kg6s", alt: "787B at Le Mans 1991" },
     ],
   },
 
@@ -105,6 +106,7 @@ The victory at the 2023 24 Hours of Le Mans was emotional for Ferrari, the fans,
     media: [
       { type: "image", src: "/media/cars/ferrari499/499pheader.webp", alt: "499P at Sebring 2023" },
       { type: "image", src: "/media/cars/ferrari499/1.webp", alt: "Ferrari 499P doing a pit stop at Le Mans 2025" },
+      { type: "youtube", videoId: "zCOq-8wBWTo", alt: "499P onboard in 2023 at Bahrain" },
     ],
   },
 
@@ -139,7 +141,7 @@ After extensive development, the 917K (Kurzheck/short-tail) became dominant. In 
       "One 917 sold at auction in 2017 for $14 million, making it one of the most valuable Porsches ever.",
     ],
     media: [
-      { type: "image", src: "/media/cars/917/917header.jpg", alt: "Porsche 917 Gulf-liveried" },
+      { type: "image", src: "/media/cars/917/header.jpg", alt: "Porsche 917 Gulf-liveried" },
       { type: "image", src: "/media/cars/917/1.jpg", alt: "917K at Le Mans" },
       { type: "image", src: "/media/cars/917/2.webp", alt: "917K at Le Mans" },
       { type: "youtube", videoId: "Oj1bLHBmf3g", alt: "917 video" },
