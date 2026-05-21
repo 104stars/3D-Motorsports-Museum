@@ -33,7 +33,6 @@ import DetailedCarViewer from "@/components/tour/DetailedCarViewer";
 import A11yAnnouncer from "@/components/tour/A11yAnnouncer";
 import CarA11yList from "@/components/tour/CarA11yList";
 
-CAR_CONFIGS.forEach((car) => useGLTF.preload(car.modelPath));
 useLoader.preload(HDRLoader, "/shop.hdr");
 
 export default function TourPage() {
@@ -97,6 +96,7 @@ function TourPageInner() {
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
     setSpawn([box.center.x, EYE_HEIGHT + 1, box.center.z]);
+    CAR_CONFIGS.forEach((car) => useGLTF.preload(car.modelPath));
     setTimeout(() => setReady(true), 800);
   }, []);
 
