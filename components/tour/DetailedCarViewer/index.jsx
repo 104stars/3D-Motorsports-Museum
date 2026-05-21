@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { 
   EffectComposer, 
@@ -15,9 +15,11 @@ import {
   ACESFilmicToneMapping, 
   SRGBColorSpace
 } from "three";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { X } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
+import { getCarInfo } from "@/lib/tour/carInfo";
 import SceneContent from "./SceneContent";
 import ControlsGuide from "./ControlsGuide";
 import CarInfoOverlay from "./CarInfoOverlay";
@@ -30,6 +32,13 @@ export default function DetailedCarViewer({ carId, onClose, isActive, tourMode =
   const modelBoundsRef = useRef(null);
   const onReadyRef = useRef(onReady);
   onReadyRef.current = onReady;
+  const tA11y = useTranslations("tour.a11y");
+  const locale = useLocale();
+  const shouldReduceMotion = useReducedMotion();
+  const carName = useMemo(() => {
+    if (!carId) return "";
+    return getCarInfo(carId, locale)?.name || "";
+  }, [carId, locale]);
 
   const handleModelLoaded = useCallback((bounds) => {
     modelBoundsRef.current = bounds;
@@ -64,7 +73,7 @@ export default function DetailedCarViewer({ carId, onClose, isActive, tourMode =
         initial={tourMode ? { opacity: 1 } : { opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
       >
         {/* Close Button — hidden in tour mode (HUD handles exit) */}
         {!tourMode && (
@@ -73,23 +82,28 @@ export default function DetailedCarViewer({ carId, onClose, isActive, tourMode =
             className={cn(
               "absolute top-8 right-8 z-50 p-2",
               "text-black/50 hover:text-black",
-              "transition-colors duration-200"
+              "transition-colors duration-200",
+              "focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:outline-none rounded-full"
             )}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Close viewer"
           >
-            <X className="w-8 h-8" strokeWidth={1.5} />
+            <X className="w-8 h-8" strokeWidth={1.5} aria-hidden="true" />
           </motion.button>
         )}
 
-        <ControlsGuide />
+        <ControlsGuide tourMode={tourMode} />
 
         {/* Car info overlay (both modes) */}
         <CarInfoOverlay carId={carId} />
 
         {/* 3D Canvas */}
-        <div className="absolute inset-0 w-full h-full">
+        <div
+          className="absolute inset-0 w-full h-full"
+          role="img"
+          aria-label={carName ? tA11y("carViewerLabel", { name: carName }) : undefined}
+        >
           <Canvas
             shadows={false}
             dpr={[1, 3]}

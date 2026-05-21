@@ -129,7 +129,11 @@
       "resume": "Reanudar",
       "skip": "Saltar",
       "nextExhibit": "Siguiente Exhibición",
-      "finishTour": "Finalizar Recorrido"
+      "finishTour": "Finalizar Recorrido",
+      "exitConfirmTitle": "¿Salir del recorrido narrado?",
+      "exitConfirmMessage": "Perderás tu progreso. ¿Estás seguro de que quieres salir?",
+      "cancel": "Cancelar",
+      "exitTour": "Salir del recorrido"
     },
     "loading": {
       "title": "Museo del Motorsport",
@@ -138,6 +142,17 @@
       "initializing": "Inicializando entorno...",
       "preparingTour": "Preparando tu recorrido",
       "loadingExhibits": "Cargando exhibiciones..."
+    },
+    "a11y": {
+      "appLabel": "Recorrido 3D del Museo del Motorsport",
+      "exhibitList": "Exhibiciones del museo",
+      "exhibitListHeading": "Exhibiciones",
+      "viewExhibit": "Ver exhibición de {name}, {category}",
+      "openingExhibit": "Abriendo {name}",
+      "freeRoamMouseNote": "Requiere mouse y bloqueo del puntero. Para navegación por teclado, usa el Recorrido Narrado.",
+      "tourProgress": "Progreso del recorrido: parada {current} de {total}",
+      "carViewerLabel": "Visor 3D del modelo de {name}",
+      "exhibitListSkipLink": "Saltar a la lista de exhibiciones"
     }
   },
   "carInfo": {

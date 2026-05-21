@@ -30,8 +30,9 @@ El auto dominó el Campeonato Mundial de Rally, ganando títulos de fabricantes 
       "El turbo lag del auto era legendario: los pilotos debían anticipar las curvas y mantener el turbo en régimen.",
     ],
     media: [
-      { type: "image", src: "/media/cars/audi-quattro/rally.jpg", alt: "Audi Quattro in rally action" },
-      { type: "image", src: "/media/cars/audi-quattro/engine.jpg", alt: "Quattro's inline-5 turbo engine" },
+      { type: "image", src: "/media/cars/quattro/1mnc.webp", alt: "Audi Quattro in rally action" },
+      { type: "image", src: "/media/cars/quattro/2snr.webp", alt: "Audi Quattro side profile" },
+      { type: "image", src: "/media/cars/quattro/3nz.webp", alt: "Audi Quattro detail shot" },
     ],
   },
 
@@ -67,8 +68,9 @@ Mazda había competido en Le Mans desde 1970, sin jamás abandonar su sueño rot
     ],
     media: [
       { type: "image", src: "/media/cars/787b/787header.webp", alt: "Mazda 787B at Circuit de la Sarthe" },
-      { type: "image", src: "/media/cars/787b/lemans.jpg", alt: "787B at Le Mans 1991" },
-      { type: "video", src: "/media/cars/787b/sound.mp4", alt: "The legendary rotary scream" },
+      { type: "image", src: "/media/cars/787b/1.webp", alt: "787B at Circuit de la Sarthe" },
+      { type: "image", src: "/media/cars/787b/2.jpg", alt: "787B at Le Mans 1991" },
+      { type: "youtube", videoId: "Fw5pKN5Kg6s", alt: "787B at Le Mans 1991" },
     ],
   },
 
@@ -139,7 +141,7 @@ Tras un extenso desarrollo, el 917K (Kurzheck/cola corta) se volvió dominante. 
       "Un 917 se vendió en subasta en 2017 por 14 millones de dólares, convirtiéndolo en uno de los Porsche más valiosos jamás vendidos.",
     ],
     media: [
-      { type: "image", src: "/media/cars/917/917header.jpg", alt: "Porsche 917 Gulf-liveried" },
+      { type: "image", src: "/media/cars/917/header.jpg", alt: "Porsche 917 Gulf-liveried" },
       { type: "image", src: "/media/cars/917/1.jpg", alt: "917K at Le Mans" },
       { type: "image", src: "/media/cars/917/2.webp", alt: "917K at Le Mans" },
       { type: "youtube", videoId: "Oj1bLHBmf3g", alt: "917 video" },
@@ -177,8 +179,9 @@ El compromiso de Toyota con el rally a través del Yaris ha devuelto al fabrican
       "El Yaris WRC ha ganado campeonatos en múltiples temporadas, demostrando su fiabilidad y rendimiento.",
     ],
     media: [
-      { type: "image", src: "/media/cars/yaris/rally.jpg", alt: "Toyota Yaris WRC in action" },
-      { type: "image", src: "/media/cars/yaris/jump.jpg", alt: "Yaris WRC airborne on gravel" },
+      { type: "image", src: "/media/cars/yaris/1.webp", alt: "Toyota Yaris WRC in action" },
+      { type: "image", src: "/media/cars/yaris/2.webp", alt: "Yaris WRC in motion" },
+      { type: "image", src: "/media/cars/yaris/3.webp", alt: "Yaris WRC on stage" },
     ],
   },
 
@@ -213,8 +216,9 @@ Sin embargo, en 1995, Toyota fue descubierta utilizando un restrictor de turbo i
       "A pesar de la controversia, el Celica GT-Four ganó 17 rallies del WRC a lo largo de sus tres generaciones.",
     ],
     media: [
-      { type: "image", src: "/media/cars/celica/sainz.jpg", alt: "Carlos Sainz in the Celica GT-Four" },
-      { type: "image", src: "/media/cars/celica/st205.jpg", alt: "ST205 Celica in competition" },
+      { type: "image", src: "/media/cars/celica/1.jpg", alt: "Carlos Sainz in the Celica GT-Four" },
+      { type: "image", src: "/media/cars/celica/2.jpg", alt: "ST205 Celica in competition" },
+      { type: "image", src: "/media/cars/celica/3.jpg", alt: "Toyota Celica GT-Four action shot" },
     ],
   },
 
@@ -249,8 +253,9 @@ La temporada culminó en la infame colisión en Suzuka, donde Prost cerró a Sen
       "Este auto representó la cúspide de la alianza McLaren-Honda, que ganó cuatro títulos consecutivos de constructores.",
     ],
     media: [
-      { type: "image", src: "/media/cars/mp45/senna.jpg", alt: "Ayrton Senna in the MP4/5" },
-      { type: "video", src: "/media/cars/mp45/suzuka89.mp4", alt: "The infamous Suzuka incident" },
+      { type: "image", src: "/media/cars/mp45/1.webp", alt: "Ayrton Senna in the MP4/5" },
+      { type: "image", src: "/media/cars/mp45/2.webp", alt: "McLaren MP4/5 track shot" },
+      { type: "image", src: "/media/cars/mp45/3.webp", alt: "McLaren MP4/5 detail shot" },
     ],
   },
 
@@ -285,8 +290,9 @@ La temporada de Vettel fue histórica: tras una primera mitad competitiva, ganó
       "La distintiva nariz escalonada del auto fue resultado de los cambios reglamentarios de 2012, que Red Bull adaptó de manera brillante.",
     ],
     media: [
-      { type: "image", src: "/media/cars/rb9/vettel.jpg", alt: "Sebastian Vettel celebrating in the RB9" },
-      { type: "image", src: "/media/cars/rb9/aero.jpg", alt: "RB9 aerodynamic details" },
+      { type: "image", src: "/media/cars/rb9/1.webp", alt: "Sebastian Vettel celebrating in the RB9" },
+      { type: "image", src: "/media/cars/rb9/2.webp", alt: "Red Bull RB9 on track" },
+      { type: "image", src: "/media/cars/rb9/3.webp", alt: "RB9 aerodynamic details" },
     ],
   },
 };

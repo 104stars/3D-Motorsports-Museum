@@ -19,7 +19,8 @@ export default function CameraController({ modelBounds, isActive, onControlsRead
   // Side profile: offset primarily on X axis, minimal Z to avoid back/3-4 view
   // Rotate 90° left from the current rear view (model axis differs per asset),
   // so we bias along Z instead of X.
-  const OFFSET = { x: 0.0, y: 0.0, z: 1.55 };
+  // Negative Y positions camera lower so we look up at the car, keeping it above the bottom HUD bar
+  const OFFSET = { x: 0.0, y: -1.6, z: 1.55 };
 
   useEffect(() => {
     if (!modelBounds || !isActive || hasPositioned.current) return;

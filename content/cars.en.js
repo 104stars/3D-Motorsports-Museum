@@ -30,8 +30,9 @@ The car dominated the World Rally Championship, winning manufacturer titles in 1
       "The car's turbo lag was legendary - drivers had to anticipate corners and keep the turbo spooled.",
     ],
     media: [
-      { type: "image", src: "/media/cars/audi-quattro/rally.jpg", alt: "Audi Quattro in rally action" },
-      { type: "image", src: "/media/cars/audi-quattro/engine.jpg", alt: "Quattro's inline-5 turbo engine" },
+      { type: "image", src: "/media/cars/quattro/1mnc.webp", alt: "Audi Quattro in rally action" },
+      { type: "image", src: "/media/cars/quattro/2snr.webp", alt: "Audi Quattro side profile" },
+      { type: "image", src: "/media/cars/quattro/3nz.webp", alt: "Audi Quattro detail shot" },
     ],
   },
 
@@ -67,8 +68,9 @@ Mazda had been competing at Le Mans since 1970, never giving up on their rotary 
     ],
     media: [
       { type: "image", src: "/media/cars/787b/787header.webp", alt: "Mazda 787B at Circuit de la Sarthe" },
-      { type: "image", src: "/media/cars/787b/lemans.jpg", alt: "787B at Le Mans 1991" },
-      { type: "video", src: "/media/cars/787b/sound.mp4", alt: "The legendary rotary scream" },
+      { type: "image", src: "/media/cars/787b/1.webp", alt: "787B at Circuit de la Sarthe" },
+      { type: "image", src: "/media/cars/787b/2.jpg", alt: "787B at Le Mans 1991" },
+      { type: "youtube", videoId: "Fw5pKN5Kg6s", alt: "787B at Le Mans 1991" },
     ],
   },
 
@@ -105,6 +107,7 @@ The victory at the 2023 24 Hours of Le Mans was emotional for Ferrari, the fans,
     media: [
       { type: "image", src: "/media/cars/ferrari499/499pheader.webp", alt: "499P at Sebring 2023" },
       { type: "image", src: "/media/cars/ferrari499/1.webp", alt: "Ferrari 499P doing a pit stop at Le Mans 2025" },
+      { type: "youtube", videoId: "zCOq-8wBWTo", alt: "499P onboard in 2023 at Bahrain" },
     ],
   },
 
@@ -139,7 +142,7 @@ After extensive development, the 917K (Kurzheck/short-tail) became dominant. In 
       "One 917 sold at auction in 2017 for $14 million, making it one of the most valuable Porsches ever.",
     ],
     media: [
-      { type: "image", src: "/media/cars/917/917header.jpg", alt: "Porsche 917 Gulf-liveried" },
+      { type: "image", src: "/media/cars/917/header.jpg", alt: "Porsche 917 Gulf-liveried" },
       { type: "image", src: "/media/cars/917/1.jpg", alt: "917K at Le Mans" },
       { type: "image", src: "/media/cars/917/2.webp", alt: "917K at Le Mans" },
       { type: "youtube", videoId: "Oj1bLHBmf3g", alt: "917 video" },
@@ -177,8 +180,9 @@ Toyota's commitment to rallying with the Yaris has brought the manufacturer back
       "The Yaris WRC has won championships across multiple seasons, proving its reliability and performance.",
     ],
     media: [
-      { type: "image", src: "/media/cars/yaris/rally.jpg", alt: "Toyota Yaris WRC in action" },
-      { type: "image", src: "/media/cars/yaris/jump.jpg", alt: "Yaris WRC airborne on gravel" },
+      { type: "image", src: "/media/cars/yaris/1.webp", alt: "Toyota Yaris WRC in action" },
+      { type: "image", src: "/media/cars/yaris/2.webp", alt: "Yaris WRC in motion" },
+      { type: "image", src: "/media/cars/yaris/3.webp", alt: "Yaris WRC on stage" },
     ],
   },
 
@@ -213,8 +217,9 @@ However, in 1995, Toyota was caught using an illegal turbo restrictor that bypas
       "Despite the controversy, the Celica GT-Four won 17 WRC rallies across its three generations.",
     ],
     media: [
-      { type: "image", src: "/media/cars/celica/sainz.jpg", alt: "Carlos Sainz in the Celica GT-Four" },
-      { type: "image", src: "/media/cars/celica/st205.jpg", alt: "ST205 Celica in competition" },
+      { type: "image", src: "/media/cars/celica/1.jpg", alt: "Carlos Sainz in the Celica GT-Four" },
+      { type: "image", src: "/media/cars/celica/2.jpg", alt: "ST205 Celica in competition" },
+      { type: "image", src: "/media/cars/celica/3.jpg", alt: "Toyota Celica GT-Four action shot" },
     ],
   },
 
@@ -249,8 +254,9 @@ The season culminated in the infamous collision at Suzuka, where Prost turned in
       "This car represented the peak of the McLaren-Honda partnership that won four consecutive constructors' titles.",
     ],
     media: [
-      { type: "image", src: "/media/cars/mp45/senna.jpg", alt: "Ayrton Senna in the MP4/5" },
-      { type: "video", src: "/media/cars/mp45/suzuka89.mp4", alt: "The infamous Suzuka incident" },
+      { type: "image", src: "/media/cars/mp45/1.webp", alt: "Ayrton Senna in the MP4/5" },
+      { type: "image", src: "/media/cars/mp45/2.webp", alt: "McLaren MP4/5 track shot" },
+      { type: "image", src: "/media/cars/mp45/3.webp", alt: "McLaren MP4/5 detail shot" },
     ],
   },
 
@@ -285,8 +291,9 @@ Vettel's season was historic - after a competitive first half, he won nine conse
       "The car's distinctive step nose was a result of 2012 regulation changes that Red Bull adapted brilliantly.",
     ],
     media: [
-      { type: "image", src: "/media/cars/rb9/vettel.jpg", alt: "Sebastian Vettel celebrating in the RB9" },
-      { type: "image", src: "/media/cars/rb9/aero.jpg", alt: "RB9 aerodynamic details" },
+      { type: "image", src: "/media/cars/rb9/1.webp", alt: "Sebastian Vettel celebrating in the RB9" },
+      { type: "image", src: "/media/cars/rb9/2.webp", alt: "Red Bull RB9 on track" },
+      { type: "image", src: "/media/cars/rb9/3.webp", alt: "RB9 aerodynamic details" },
     ],
   },
 };

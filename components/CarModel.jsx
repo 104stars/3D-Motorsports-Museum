@@ -74,51 +74,74 @@ export default function CarModel({
   }, [scene, scale, modelPath]);
 
   useEffect(() => {
-    const colliderHandle = colliderRef.current?.handle;
-    if (!colliderHandle || !id) return;
+    if (!id || !collider) return;
 
-    // Only register with hover-detection system when on the active floor.
-    if (!active) {
-      unregister(colliderHandle);
-      return () => {};
-    }
+    let registeredHandle = null;
+    let rafId = null;
+    let cancelled = false;
 
-    const positionVec = Array.isArray(position)
-      ? new Vector3(...position)
-      : position.clone();
-    const offsetVec = new Vector3(...collider.offset);
+    const attemptRegistration = () => {
+      if (cancelled) return;
 
-    const rotationEuler = Array.isArray(rotation)
-      ? new Euler(...rotation)
-      : rotation;
-    const rotationQuat = new Quaternion().setFromEuler(rotationEuler);
+      const colliderHandle = colliderRef.current?.handle;
 
-    const rotatedOffset = offsetVec.clone().applyQuaternion(rotationQuat);
-    const worldCenter = positionVec.clone().add(rotatedOffset);
+      // Rapier assigns handles asynchronously; the first collider in the world
+      // gets handle 0, which is a valid ID. Use nullish check so we don't skip
+      // registration for handle 0. If not yet available, retry next frame.
+      if (colliderHandle == null) {
+        rafId = requestAnimationFrame(attemptRegistration);
+        return;
+      }
 
-    const radius = Math.sqrt(
-      collider.halfExtents[0] ** 2 +
-        collider.halfExtents[1] ** 2 +
-        collider.halfExtents[2] ** 2
-    );
+      if (!active) {
+        unregister(colliderHandle);
+        return;
+      }
 
-    register(colliderHandle, {
-      id,
-      center: worldCenter.toArray(),
-      radius,
-      halfExtents: collider.halfExtents,
-      rotationQuat: [
-        rotationQuat.x,
-        rotationQuat.y,
-        rotationQuat.z,
-        rotationQuat.w,
-      ],
-    });
-    return () => unregister(colliderHandle);
+      const positionVec = Array.isArray(position)
+        ? new Vector3(...position)
+        : position.clone();
+      const offsetVec = new Vector3(...collider.offset);
+
+      const rotationEuler = Array.isArray(rotation)
+        ? new Euler(...rotation)
+        : rotation;
+      const rotationQuat = new Quaternion().setFromEuler(rotationEuler);
+
+      const rotatedOffset = offsetVec.clone().applyQuaternion(rotationQuat);
+      const worldCenter = positionVec.clone().add(rotatedOffset);
+
+      const radius = Math.sqrt(
+        collider.halfExtents[0] ** 2 +
+          collider.halfExtents[1] ** 2 +
+          collider.halfExtents[2] ** 2
+      );
+
+      register(colliderHandle, {
+        id,
+        center: worldCenter.toArray(),
+        radius,
+        halfExtents: collider.halfExtents,
+        rotationQuat: [
+          rotationQuat.x,
+          rotationQuat.y,
+          rotationQuat.z,
+          rotationQuat.w,
+        ],
+      });
+      registeredHandle = colliderHandle;
+    };
+
+    attemptRegistration();
+
+    return () => {
+      cancelled = true;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      if (registeredHandle !== null) unregister(registeredHandle);
+    };
   }, [
     active,
-    collider?.halfExtents,
-    collider?.offset,
+    collider,
     id,
     position,
     register,

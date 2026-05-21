@@ -98,7 +98,7 @@ export default function ControlsHelpModal({ onBack }) {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-8 py-4 opacity-50">
+          <div className="flex items-center justify-center gap-8 py-4 opacity-50" aria-hidden="true">
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-12 border border-white rounded-full relative bg-white/10">
                 <div className="absolute top-1 left-1 w-3 h-4 bg-white rounded-sm" />
@@ -152,10 +152,11 @@ export default function ControlsHelpModal({ onBack }) {
         <div className="flex items-center justify-between">
           <motion.button
             onClick={onBack}
-            className="flex items-center gap-3 text-white/50 hover:text-white transition-colors group"
+            aria-label={t("back")}
+            className="flex items-center gap-3 text-white/50 hover:text-white transition-colors group focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none rounded-full"
             whileHover={{ x: -4 }}
           >
-            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors" aria-hidden="true">
               <ArrowLeft className="w-5 h-5" />
             </div>
             <span className="text-lg font-medium tracking-wide">{t("back")}</span>
@@ -170,8 +171,11 @@ export default function ControlsHelpModal({ onBack }) {
         <div className="w-full max-w-3xl mx-auto">
           <Carousel className="w-full">
             <CarouselContent>
-              {sections.map((section) => (
-                <CarouselItem key={section.id}>
+              {sections.map((section, index) => (
+                <CarouselItem
+                  key={section.id}
+                  aria-label={`Slide ${index + 1} of ${sections.length}: ${section.title}`}
+                >
                   <ControlCard 
                     icon={section.icon} 
                     title={section.title}
@@ -200,13 +204,13 @@ export default function ControlsHelpModal({ onBack }) {
 function ControlCard({ icon: Icon, title, children }) {
   return (
     <div className="bg-neutral-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden relative group min-h-[500px] flex flex-col justify-center">
-      <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity duration-500">
+      <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity duration-500" aria-hidden="true">
         <Icon className="w-48 h-48 text-white" />
       </div>
       
       <div className="relative z-10 w-full">
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white" aria-hidden="true">
             <Icon className="w-6 h-6" />
           </div>
           <h3 className="text-3xl font-serif italic text-white tracking-tight">{title}</h3>
@@ -233,7 +237,7 @@ function Key({ children, wide = false }) {
 function MouseAction({ label, action, active }) {
   return (
     <div className="bg-black/20 rounded-xl p-4 text-center border border-white/5 hover:bg-white/5 transition-colors">
-      <div className="flex justify-center mb-3">
+      <div className="flex justify-center mb-3" aria-hidden="true">
         <div className="w-8 h-10 border border-white/20 rounded-full relative">
           {active === 'left' && <div className="absolute top-1 left-1.5 w-2 h-3 bg-white/80 rounded-sm" />}
           {active === 'right' && <div className="absolute top-1 right-1.5 w-2 h-3 bg-white/80 rounded-sm" />}

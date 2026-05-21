@@ -14,6 +14,7 @@ import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 import { X, Play, ChevronUp, Box } from "lucide-react";
 import DetailedCarViewer from "./DetailedCarViewer";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 // Header dimensions and collapse configuration
 const HEADER_CONFIG = {
@@ -367,12 +368,12 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
 
                   <motion.button
                     onClick={onClose}
-                    className="p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:text-white hover:bg-black/40 transition-colors duration-200 group border border-white/5"
+                    className="p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:text-white hover:bg-black/40 transition-colors duration-200 group border border-white/5 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
                     aria-label="Close panel"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
+                    <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} aria-hidden="true" />
                   </motion.button>
                 </div>
 
@@ -408,13 +409,14 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                         "bg-white/10 backdrop-blur-md text-white",
                         "hover:bg-white/20 border border-white/20",
                         "transition-colors duration-200",
+                        "focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
                         "group"
                       )}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       aria-label="View 3D Model"
                     >
-                      <Box className="w-5 h-5 transition-transform group-hover:rotate-12 duration-300" strokeWidth={1.5} />
+                      <Box className="w-5 h-5 transition-transform group-hover:rotate-12 duration-300" strokeWidth={1.5} aria-hidden="true" />
                       <span className="font-sans text-sm font-medium tracking-wide">
                         {t("view3DModel")}
                       </span>
@@ -429,6 +431,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isCollapsed ? 0 : 0.5 }}
                 transition={{ duration: 0.3 }}
+                aria-hidden="true"
               >
                 <ChevronUp className="w-5 h-5 text-white/50 animate-bounce" />
               </motion.div>
@@ -448,8 +451,8 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                 {/* Left Column: History & Media */}
                 <div className="lg:col-span-7 space-y-12">
                   {/* Historic Section */}
-                  <section>
-                    <SectionHeader title={carInfo.historic.title} />
+                  <section aria-labelledby="section-historic">
+                    <SectionHeader id="section-historic" title={carInfo.historic.title} />
                     <p className="text-neutral-300 font-light leading-relaxed whitespace-pre-line text-lg">
                       {carInfo.historic.content}
                     </p>
@@ -457,8 +460,8 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
 
                   {/* Media Gallery */}
                   {carInfo.media && carInfo.media.length > 0 && (
-                    <section>
-                      <SectionHeader title={t("gallery")} />
+                    <section aria-labelledby="section-gallery">
+                      <SectionHeader id="section-gallery" title={t("gallery")} />
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {carInfo.media.map((item, index) => (
                           <MediaItem 
@@ -477,18 +480,18 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                 {/* Right Column: Specs & Facts */}
                 <div className="lg:col-span-5 space-y-12">
                   {/* Technical Specifications */}
-                  <section>
-                    <SectionHeader title={t("technicalSpecs")} />
-                    <div className="grid grid-cols-1 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/5">
+                  <section aria-labelledby="section-specs">
+                    <SectionHeader id="section-specs" title={t("technicalSpecs")} />
+                    <dl className="grid grid-cols-1 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/5">
                       {Object.entries(carInfo.technical).map(([key, value], index) => (
                         <SpecRow key={key} label={formatLabel(key)} value={value} index={index} />
                       ))}
-                    </div>
+                    </dl>
                   </section>
 
                   {/* Interesting Facts */}
-                  <section>
-                    <SectionHeader title={t("didYouKnow")} />
+                  <section aria-labelledby="section-facts">
+                    <SectionHeader id="section-facts" title={t("didYouKnow")} />
                     <ul className="space-y-6">
                       {carInfo.facts.map((fact, index) => (
                         <motion.li 
@@ -498,7 +501,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.3 + index * 0.1 }}
                         >
-                          <span className="absolute left-0 top-0 font-mono text-xs text-blue-400/80">
+                          <span className="absolute left-0 top-0 font-mono text-xs text-blue-400/80" aria-hidden="true">
                             {(index + 1).toString().padStart(2, '0')}
                           </span>
                           <p className="text-neutral-300 font-light leading-relaxed">
@@ -520,11 +523,12 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                 {/* Back to top button */}
                 <motion.button
                   onClick={scrollToTop}
-                  className="text-xs font-mono text-neutral-500 hover:text-neutral-300 uppercase tracking-wider flex items-center gap-2 transition-colors"
+                  className="text-xs font-mono text-neutral-500 hover:text-neutral-300 uppercase tracking-wider flex items-center gap-2 transition-colors focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none rounded"
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-label={t("backToTop")}
                 >
-                  <ChevronUp className="w-4 h-4" />
+                  <ChevronUp className="w-4 h-4" aria-hidden="true" />
                   {t("backToTop")}
                 </motion.button>
               </div>
@@ -557,18 +561,18 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
   );
 }
 
-const SectionHeader = memo(function SectionHeader({ title }) {
+const SectionHeader = memo(function SectionHeader({ title, id }) {
   return (
-    <h3 className="font-sans text-xs font-medium uppercase tracking-normal text-neutral-500 mb-6 flex items-center gap-4">
+    <h3 id={id} className="font-sans text-xs font-medium uppercase tracking-normal text-neutral-500 mb-6 flex items-center gap-4">
       {title}
-      <span className="h-px flex-1 bg-white/10"></span>
+      <span className="h-px flex-1 bg-white/10" aria-hidden="true"></span>
     </h3>
   );
 });
 
 const SpecRow = memo(function SpecRow({ label, value, index }) {
   return (
-    <motion.div 
+    <motion.div
       className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-neutral-900/50 hover:bg-white/5 transition-colors duration-300"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -603,7 +607,7 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
       {isYoutube ? (
         <button
           onClick={() => onVideoClick?.(item)}
-          className="w-full h-full relative cursor-pointer"
+          className="w-full h-full relative cursor-pointer focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
           aria-label={`Play video: ${item.alt}`}
         >
           {/* YouTube Thumbnail */}
@@ -615,7 +619,7 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
             onError={handleError}
           />
           {/* Play Button Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
             <motion.div 
               className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center"
               whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.2)" }}
@@ -625,7 +629,7 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
             </motion.div>
           </div>
           {/* Caption overlay */}
-          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300">
             <p className="text-sm font-light text-white/90">{item.alt}</p>
           </div>
         </button>
@@ -641,7 +645,7 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
       ) : isImage ? (
         <button
           onClick={() => onImageClick?.(item)}
-          className="w-full h-full relative cursor-pointer"
+          className="w-full h-full relative cursor-pointer focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
           aria-label={`View image: ${item.alt}`}
         >
           <img
@@ -652,7 +656,7 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
             onError={handleError}
           />
           {/* Caption overlay */}
-          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300">
             <p className="text-sm font-light text-white/90">{item.alt}</p>
           </div>
         </button>
@@ -678,6 +682,9 @@ const MediaItem = memo(function MediaItem({ item, index, onVideoClick, onImageCl
 });
 
 const VideoModal = memo(function VideoModal({ video, onClose }) {
+  const dialogRef = useRef(null);
+  useFocusTrap(dialogRef, true);
+
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -696,6 +703,9 @@ const VideoModal = memo(function VideoModal({ video, onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={video.alt}
     >
       {/* Backdrop */}
       <motion.div
@@ -706,6 +716,7 @@ const VideoModal = memo(function VideoModal({ video, onClose }) {
 
       {/* Video Container */}
       <motion.div 
+        ref={dialogRef}
         className="relative w-full max-w-5xl aspect-video"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -715,12 +726,12 @@ const VideoModal = memo(function VideoModal({ video, onClose }) {
         {/* Close Button */}
         <motion.button
           onClick={onClose}
-          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-200 group border border-white/10"
+          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-200 group border border-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
           aria-label="Close video"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
+          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} aria-hidden="true" />
         </motion.button>
 
         {/* YouTube iframe */}
@@ -737,6 +748,9 @@ const VideoModal = memo(function VideoModal({ video, onClose }) {
 });
 
 const ImageLightbox = memo(function ImageLightbox({ image, onClose }) {
+  const dialogRef = useRef(null);
+  useFocusTrap(dialogRef, true);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -754,6 +768,9 @@ const ImageLightbox = memo(function ImageLightbox({ image, onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={image.alt}
     >
       {/* Backdrop */}
       <motion.div
@@ -764,6 +781,7 @@ const ImageLightbox = memo(function ImageLightbox({ image, onClose }) {
 
       {/* Image Container */}
       <motion.div 
+        ref={dialogRef}
         className="relative max-w-5xl max-h-[85vh]"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -773,12 +791,12 @@ const ImageLightbox = memo(function ImageLightbox({ image, onClose }) {
         {/* Close Button */}
         <motion.button
           onClick={onClose}
-          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-200 group border border-white/10"
+          className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors duration-200 group border border-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
           aria-label="Close image"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} />
+          <X className="w-6 h-6 transition-transform group-hover:rotate-90 duration-300" strokeWidth={1.5} aria-hidden="true" />
         </motion.button>
 
         <img

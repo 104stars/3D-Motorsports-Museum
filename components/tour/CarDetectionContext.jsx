@@ -8,12 +8,12 @@ export function CarDetectionProvider({ children }) {
   const registryRef = useRef(new Map());
 
   const register = useCallback((handle, data) => {
-    if (!handle) return;
+    if (handle == null) return;
     registryRef.current.set(handle, data);
   }, []);
 
   const unregister = useCallback((handle) => {
-    if (!handle) return;
+    if (handle == null) return;
     registryRef.current.delete(handle);
   }, []);
 
