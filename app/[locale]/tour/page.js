@@ -7,7 +7,8 @@ import { Physics } from "@react-three/rapier";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { Eye } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import GalleryModel from "@/components/GalleryModel";
 import PlayerController, {
   PLAYER_KEYBOARD_MAP,
@@ -29,6 +30,8 @@ import { NarratedTourProvider, useNarratedTour } from "@/components/tour/Narrate
 import TourPreloader from "@/components/tour/TourPreloader";
 import NarratedTourHUD from "@/components/tour/NarratedTourHUD";
 import DetailedCarViewer from "@/components/tour/DetailedCarViewer";
+import A11yAnnouncer from "@/components/tour/A11yAnnouncer";
+import CarA11yList from "@/components/tour/CarA11yList";
 
 CAR_CONFIGS.forEach((car) => useGLTF.preload(car.modelPath));
 useLoader.preload(HDRLoader, "/shop.hdr");
@@ -42,6 +45,8 @@ export default function TourPage() {
 }
 
 function TourPageInner() {
+  const t = useTranslations("tour.a11y");
+  const shouldReduceMotion = useReducedMotion();
   const [spawn, setSpawn] = useState(null);
   const [ready, setReady] = useState(false);
   const [hoveredCarId, setHoveredCarId] = useState(null);
@@ -166,8 +171,45 @@ function TourPageInner() {
 
   const showModeSelection = loaderComplete && !modeSelected;
 
+  // Intercept Tab in free roam before the browser can move focus to its own
+  // chrome (address bar etc.), which would drop pointer lock and open the pause
+  // menu. Instead, redirect focus into the a11y exhibit list. If focus is
+  // already inside the list, let Tab cycle through it naturally.
+  useEffect(() => {
+    if (modeSelected !== "free") return;
+
+    const handleTab = (e) => {
+      if (e.key !== "Tab") return;
+      if (isOverlayOpen || isViewerActive) return;
+
+      const nav = document.querySelector("[data-a11y-list]");
+      if (!nav || nav.contains(document.activeElement)) return;
+
+      e.preventDefault();
+      nav.querySelector("button")?.focus();
+    };
+
+    document.addEventListener("keydown", handleTab, { capture: true });
+    return () => document.removeEventListener("keydown", handleTab, { capture: true });
+  }, [modeSelected, isOverlayOpen, isViewerActive]);
+
+  const handleA11yCarSelect = useCallback((id) => {
+    if (!tour.isActive && !isViewerActive) {
+      setSelectedCarId(id);
+    }
+  }, [tour.isActive, isViewerActive]);
+
   return (
-    <div className="w-full h-screen bg-neutral-950 relative">
+    <div
+      className="w-full h-screen bg-neutral-950 relative"
+      role="application"
+      aria-label={t("appLabel")}
+    >
+      <A11yAnnouncer />
+      <CarA11yList
+        onSelect={handleA11yCarSelect}
+        disabled={isOverlayOpen || showModeSelection || isViewerActive}
+      />
       <Canvas
         shadows
         camera={CAMERA_PROPS}
@@ -237,7 +279,8 @@ function TourPageInner() {
                 className="fixed inset-0 z-[62] bg-[#ededed]"
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: "easeOut" }}
+                aria-hidden="true"
               />
             )}
           </AnimatePresence>
@@ -246,7 +289,10 @@ function TourPageInner() {
       <NarratedTourHUD />
 
       {!isOverlayOpen && modeSelected === "free" && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10"
+          aria-hidden="true"
+        >
           {hoveredCarId ? (
             <Eye className="w-5 h-5 text-white" />
           ) : (

@@ -30,31 +30,36 @@ export default function CarInfoOverlay({ carId }) {
 
   return (
     <>
-      {/* Toggle button */}
-      {!isOpen && (
-        <motion.button
-          onClick={() => setIsOpen(true)}
-          className={cn(
-            "absolute top-8 left-8 z-50 p-2.5",
-            "rounded-full bg-black/20 backdrop-blur-md",
-            "text-black/50 hover:text-black hover:bg-black/30",
-            "border border-black/10",
-            "transition-colors duration-200",
-          )}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Show car information"
-        >
-          <Info className="w-5 h-5" strokeWidth={1.5} />
-        </motion.button>
-      )}
+      {/* Persistent toggle button — visible only when collapsed, controls the info panel */}
+      <motion.button
+        onClick={() => setIsOpen((v) => !v)}
+        aria-expanded={isOpen}
+        aria-controls="detailed-viewer-info-panel"
+        aria-label="Toggle car information"
+        className={cn(
+          "absolute top-8 left-8 z-50 p-2.5",
+          "rounded-full bg-black/20 backdrop-blur-md",
+          "text-black/50 hover:text-black hover:bg-black/30",
+          "border border-black/10",
+          "transition-all duration-200",
+          "focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:outline-none",
+          isOpen && "opacity-0 pointer-events-none",
+        )}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: isOpen ? 0 : 1, scale: 1 }}
+        whileHover={{ scale: isOpen ? 1 : 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Info className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
+      </motion.button>
 
       {/* Info panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="detailed-viewer-info-panel"
+            role="region"
+            aria-labelledby="detailed-viewer-info-heading"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -75,15 +80,15 @@ export default function CarInfoOverlay({ carId }) {
                   </span>
                   <span className="font-mono text-[10px] text-white/40">{carInfo.year}</span>
                 </div>
-                <h3 className="font-serif italic text-xl tracking-tight">{carInfo.name}</h3>
+                <h3 id="detailed-viewer-info-heading" className="font-serif italic text-xl tracking-tight">{carInfo.name}</h3>
                 <p className="text-xs text-white/40 font-light mt-0.5">{carInfo.tagline}</p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors"
+                className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
                 aria-label="Close info panel"
               >
-                <X className="w-4 h-4" strokeWidth={1.5} />
+                <X className="w-4 h-4" strokeWidth={1.5} aria-hidden="true" />
               </button>
             </div>
 

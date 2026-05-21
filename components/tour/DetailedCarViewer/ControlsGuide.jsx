@@ -16,6 +16,7 @@ export default function ControlsGuide({ tourMode = false }) {
 
   return (
     <motion.div
+      aria-hidden="true"
       className={cn(
         "z-50 pointer-events-none select-none",
         "rounded-2xl border border-white/10 bg-black/30 backdrop-blur-xl",

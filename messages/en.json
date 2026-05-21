@@ -142,6 +142,17 @@
       "initializing": "Initializing environment...",
       "preparingTour": "Preparing your tour",
       "loadingExhibits": "Loading exhibits..."
+    },
+    "a11y": {
+      "appLabel": "Motorsports Museum 3D Tour",
+      "exhibitList": "Museum exhibits",
+      "exhibitListHeading": "Exhibits",
+      "viewExhibit": "View {name} exhibit, {category}",
+      "openingExhibit": "Opening {name}",
+      "freeRoamMouseNote": "Requires mouse and pointer lock. For keyboard navigation, use the Narrated Tour.",
+      "tourProgress": "Tour progress: stop {current} of {total}",
+      "carViewerLabel": "3D model viewer for {name}",
+      "exhibitListSkipLink": "Skip to exhibits list"
     }
   },
   "carInfo": {

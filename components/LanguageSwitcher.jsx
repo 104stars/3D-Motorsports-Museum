@@ -33,8 +33,11 @@ export default function LanguageSwitcher({ className, variant = "default" }) {
     >
       <button
         onClick={() => switchLocale("en")}
+        aria-pressed={locale === "en"}
+        aria-label="English"
+        lang="en"
         className={cn(
-          "font-mono text-xs tracking-wider uppercase transition-colors px-3 py-1.5 rounded-full",
+          "font-mono text-xs tracking-wider uppercase transition-colors px-3 py-1.5 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
           locale === "en"
             ? "bg-white text-black font-semibold"
             : "text-white/50 hover:text-white",
@@ -44,8 +47,11 @@ export default function LanguageSwitcher({ className, variant = "default" }) {
       </button>
       <button
         onClick={() => switchLocale("es")}
+        aria-pressed={locale === "es"}
+        aria-label="Español"
+        lang="es"
         className={cn(
-          "font-mono text-xs tracking-wider uppercase transition-colors px-3 py-1.5 rounded-full",
+          "font-mono text-xs tracking-wider uppercase transition-colors px-3 py-1.5 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
           locale === "es"
             ? "bg-white text-black font-semibold"
             : "text-white/50 hover:text-white",
