@@ -227,7 +227,11 @@ function TourPageInner() {
       >
         <SceneWarmup />
         <KeyboardControls map={isOverlayOpen || showModeSelection ? [] : PLAYER_KEYBOARD_MAP}>
-          <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60}>
+          <Physics
+            gravity={[0, -9.81, 0]}
+            timeStep={1 / 60}
+            updateLoop="independent"
+          >
             <CarStageLighting />
             <PointerLockHandler isOverlayOpen={isOverlayOpen || showModeSelection} />
             <CameraPositionLogger />
