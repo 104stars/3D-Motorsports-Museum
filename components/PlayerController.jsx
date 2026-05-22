@@ -111,12 +111,12 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       // --- 5. MOVEMENT ---
       maxVelLimit={6}
       sprintMult={1.8}
-      jumpVel={7.5}
-      jumpForceToGroundMult={3}
+      jumpVel={6.8}
+      jumpForceToGroundMult={0}
       sprintJumpMult={1}
       fallingGravityScale={2.7}
       dragDampingC={2.0}
-      accDeltaTime={6}
+      accDeltaTime={4}
       airDragMultiplier={0.2}
 
       // --- CAMERA ---
