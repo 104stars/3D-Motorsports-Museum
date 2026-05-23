@@ -165,7 +165,7 @@ function useIsMobile() {
  * Information panel that displays detailed car information.
  * Features motion-enhanced staged scroll behavior with spring physics.
  */
-export default function CarInformationPanel({ carId, onClose, onViewerStateChange }) {
+export default function CarInformationPanel({ carId, onClose, onViewerStateChange, tourMode = false }) {
   const t = useTranslations("carInfo");
   const locale = useLocale();
   const panelRef = useRef(null);
@@ -280,7 +280,10 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
     <AnimatePresence mode="wait">
       {carId && carInfo && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+          className={cn(
+            "fixed inset-0 flex items-center justify-center p-4 md:p-8",
+            tourMode ? "z-[70]" : "z-50"
+          )}
           role="dialog"
           aria-modal="true"
           aria-labelledby="panel-title"
@@ -395,7 +398,9 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                     {carInfo.tagline}
                   </motion.p>
                   
-                  {/* View 3D Model Button */}
+                  {/* View 3D Model Button — hidden in tour mode, since the
+                      tour already exposes the model in its own viewer. */}
+                  {!tourMode && (
                   <motion.div
                     className="mt-6"
                     style={{
@@ -422,6 +427,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                       </span>
                     </motion.button>
                   </motion.div>
+                  )}
                 </div>
               </div>
 

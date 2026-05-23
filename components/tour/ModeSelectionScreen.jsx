@@ -81,19 +81,13 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
             {t("subtitle")}
           </motion.p>
 
-          {/* Mode cards */}
+          {/* Mode cards — Narrated Tour first so keyboard users land on the
+              accessible path by default. Free Roam includes a visible
+              requirement note so all users can self-select. */}
           <motion.div
             variants={activeItemVariants}
             className="flex flex-col md:flex-row gap-5 w-full max-w-2xl px-6"
           >
-            <ModeCard
-              icon={Compass}
-              title={t("freeRoam")}
-              description={t("freeRoamDesc")}
-              enterLabel={t("enter")}
-              onClick={onFreeRoam}
-              ariaDescription={tA11y("freeRoamMouseNote")}
-            />
             <ModeCard
               icon={Headphones}
               title={t("narratedTour")}
@@ -101,6 +95,16 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
               enterLabel={t("enter")}
               onClick={onNarratedTour}
               accent
+              autoFocus
+            />
+            <ModeCard
+              icon={Compass}
+              title={t("freeRoam")}
+              description={t("freeRoamDesc")}
+              enterLabel={t("enter")}
+              onClick={onFreeRoam}
+              requirementLabel={t("freeRoamRequires")}
+              ariaDescription={tA11y("freeRoamMouseNote")}
             />
           </motion.div>
 
@@ -119,12 +123,23 @@ export default function ModeSelectionScreen({ isVisible, onFreeRoam, onNarratedT
   );
 }
 
-function ModeCard({ icon: Icon, title, description, enterLabel, onClick, accent = false, ariaDescription }) {
+function ModeCard({
+  icon: Icon,
+  title,
+  description,
+  enterLabel,
+  onClick,
+  accent = false,
+  ariaDescription,
+  requirementLabel,
+  autoFocus = false,
+}) {
   const descId = ariaDescription ? `mode-card-desc-${title.replace(/\s+/g, "-")}` : undefined;
   return (
     <motion.button
       onClick={onClick}
       aria-describedby={descId}
+      autoFocus={autoFocus}
       className={cn(
         "group relative flex-1 flex flex-col items-start text-left p-8 rounded-2xl",
         "border transition-colors duration-200",
@@ -154,9 +169,15 @@ function ModeCard({ icon: Icon, title, description, enterLabel, onClick, accent 
 
       {/* Text */}
       <h3 className="text-xl font-medium tracking-wide mb-2">{title}</h3>
-      <p className="text-sm text-neutral-400 font-light leading-relaxed mb-6">
+      <p className="text-sm text-neutral-400 font-light leading-relaxed mb-4">
         {description}
       </p>
+
+      {requirementLabel && (
+        <p className="text-[11px] font-mono uppercase tracking-wider text-amber-300/70 mb-6">
+          {requirementLabel}
+        </p>
+      )}
 
       {/* CTA hint */}
       <div className="mt-auto flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/40 group-hover:text-white/70 transition-colors">

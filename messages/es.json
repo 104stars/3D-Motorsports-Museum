@@ -65,6 +65,7 @@
       "subtitle": "Elige cómo quieres experimentar la colección",
       "freeRoam": "Exploración Libre",
       "freeRoamDesc": "Explora el museo a tu ritmo. Camina por las exhibiciones e interactúa con los autos libremente.",
+      "freeRoamRequires": "Requiere mouse y bloqueo del puntero",
       "narratedTour": "Recorrido Narrado",
       "narratedTourDesc": "Un viaje curado por 8 autos legendarios con narración y datos interesantes.",
       "footer": "Selecciona un modo para comenzar",
@@ -128,6 +129,12 @@
       "pause": "Pausar",
       "resume": "Reanudar",
       "skip": "Saltar",
+      "previous": "Anterior",
+      "replay": "Repetir",
+      "muteNarrator": "Silenciar narrador",
+      "unmuteNarrator": "Activar narrador",
+      "textOnly": "Solo texto",
+      "viewDetails": "Ver Detalles",
       "nextExhibit": "Siguiente Exhibición",
       "finishTour": "Finalizar Recorrido",
       "exitConfirmTitle": "¿Salir del recorrido narrado?",
@@ -152,7 +159,11 @@
       "freeRoamMouseNote": "Requiere mouse y bloqueo del puntero. Para navegación por teclado, usa el Recorrido Narrado.",
       "tourProgress": "Progreso del recorrido: parada {current} de {total}",
       "carViewerLabel": "Visor 3D del modelo de {name}",
-      "exhibitListSkipLink": "Saltar a la lista de exhibiciones"
+      "exhibitListSkipLink": "Saltar a la lista de exhibiciones",
+      "previousExhibit": "Ir a la exhibición anterior: {name}",
+      "replayStop": "Repetir narración de {name}",
+      "toggleMuteNarrator": "Alternar audio del narrador",
+      "viewDetailsFor": "Ver detalles completos de {name}"
     }
   },
   "carInfo": {

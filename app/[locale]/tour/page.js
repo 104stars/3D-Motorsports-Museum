@@ -58,6 +58,7 @@ function TourPageInner() {
   const [loaderComplete, setLoaderComplete] = useState(false);
   const [modeSelected, setModeSelected] = useState(null);
   const [tourPreloading, setTourPreloading] = useState(false);
+  const [tourDetailOpen, setTourDetailOpen] = useState(false);
 
   const tour = useNarratedTour();
 
@@ -154,6 +155,20 @@ function TourPageInner() {
     }
   }, [tour.isActive, modeSelected]);
 
+  // Close the in-tour details panel whenever the tour stop changes, so
+  // a stale panel from the previous car can't linger over the new stop.
+  useEffect(() => {
+    setTourDetailOpen(false);
+  }, [tour.currentCarId]);
+
+  const handleOpenTourDetails = useCallback(() => {
+    setTourDetailOpen(true);
+  }, []);
+
+  const handleCloseTourDetails = useCallback(() => {
+    setTourDetailOpen(false);
+  }, []);
+
   const showTourViewer = tour.isActive && tour.tourState !== "loading" && tour.tourState !== "finished";
   const tourCarId = showTourViewer ? tour.currentCarId : null;
 
@@ -167,7 +182,7 @@ function TourPageInner() {
   }, []);
 
   const isPanelOpen = selectedCarId !== null;
-  const isOverlayOpen = isPanelOpen || isPaused || tour.isActive;
+  const isOverlayOpen = isPanelOpen || isPaused || tour.isActive || tourDetailOpen;
 
   const showModeSelection = loaderComplete && !modeSelected;
 
@@ -290,7 +305,15 @@ function TourPageInner() {
           </AnimatePresence>
         </>
       )}
-      <NarratedTourHUD />
+      <NarratedTourHUD onViewDetails={handleOpenTourDetails} />
+
+      {tour.isActive && tourDetailOpen && (
+        <CarInformationPanel
+          carId={tour.currentCarId}
+          onClose={handleCloseTourDetails}
+          tourMode={true}
+        />
+      )}
 
       {!isOverlayOpen && modeSelected === "free" && (
         <div

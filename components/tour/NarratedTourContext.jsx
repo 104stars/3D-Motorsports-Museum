@@ -42,8 +42,14 @@ export function NarratedTourProvider({ children }) {
   const [subtitleText, setSubtitleText] = useState("");
   const [narrationPhase, setNarrationPhase] = useState("intro"); // intro | body | outro
   const [isNarrating, setIsNarrating] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const engineRef = useRef(null);
+  const isMutedRef = useRef(false);
+
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
   // Lazy-init engine on client
   useEffect(() => {
@@ -77,6 +83,21 @@ export function NarratedTourProvider({ children }) {
       const carId = NARRATION_ROUTE[stopIndex];
       const script = getNarrationScript(carId, locale);
       if (!script) return;
+
+      // Muted / text-only mode: render the full stop script at once and let
+      // the user read at their own pace. Skips speech synthesis entirely so
+      // it does not compete with screen readers.
+      if (isMutedRef.current) {
+        engine.stop();
+        const fullText = [script.intro, script.body, script.outro]
+          .filter(Boolean)
+          .join(" ");
+        setSubtitleText(fullText);
+        setNarrationPhase("body");
+        setIsNarrating(false);
+        setTourState("waiting");
+        return;
+      }
 
       const text = script[phase];
       if (!text) return;
@@ -170,6 +191,51 @@ export function NarratedTourProvider({ children }) {
     prefetchStop(1);
   }, []);
 
+  const previousStop = useCallback(() => {
+    if (currentStopIndex <= 0) return;
+    engineRef.current?.stop();
+    const prev = currentStopIndex - 1;
+    setCurrentStopIndex(prev);
+    startNarrationForStop(prev);
+  }, [currentStopIndex, startNarrationForStop]);
+
+  const replayCurrentStop = useCallback(() => {
+    engineRef.current?.stop();
+    startNarrationForStop(currentStopIndex);
+  }, [currentStopIndex, startNarrationForStop]);
+
+  const toggleMute = useCallback(() => {
+    const next = !isMuted;
+
+    // Update the ref synchronously so speakPhase reads the correct value the
+    // moment startNarrationForStop calls it below (before the React state
+    // update + effect cycle has completed).
+    isMutedRef.current = next;
+    setIsMuted(next);
+
+    if (next) {
+      // Going muted: stop current speech and surface the full stop text so
+      // the user can read at their own pace.
+      engineRef.current?.stop();
+      setIsNarrating(false);
+      const carId = NARRATION_ROUTE[currentStopIndex];
+      const script = carId ? getNarrationScript(carId, locale) : null;
+      if (script) {
+        const fullText = [script.intro, script.body, script.outro]
+          .filter(Boolean)
+          .join(" ");
+        setSubtitleText(fullText);
+        setNarrationPhase("body");
+        setTourState("waiting");
+      }
+    } else {
+      // Going unmuted: restart narration for the current stop with audio.
+      startNarrationForStop(currentStopIndex);
+    }
+  }, [isMuted, currentStopIndex, locale, startNarrationForStop]);
+
+  const canGoBack = currentStopIndex > 0;
+
   const value = useMemo(
     () => ({
       isActive,
@@ -181,6 +247,8 @@ export function NarratedTourProvider({ children }) {
       subtitleText,
       narrationPhase,
       isNarrating,
+      isMuted,
+      canGoBack,
       activateTour,
       deactivateTour,
       nextStop,
@@ -189,6 +257,9 @@ export function NarratedTourProvider({ children }) {
       resumeNarration,
       beginFirstStop,
       restartTour,
+      previousStop,
+      replayCurrentStop,
+      toggleMute,
     }),
     [
       isActive,
@@ -200,6 +271,8 @@ export function NarratedTourProvider({ children }) {
       subtitleText,
       narrationPhase,
       isNarrating,
+      isMuted,
+      canGoBack,
       activateTour,
       deactivateTour,
       nextStop,
@@ -208,6 +281,9 @@ export function NarratedTourProvider({ children }) {
       resumeNarration,
       beginFirstStop,
       restartTour,
+      previousStop,
+      replayCurrentStop,
+      toggleMute,
     ],
   );
 
