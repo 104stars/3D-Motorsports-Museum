@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   Pause,
@@ -8,6 +8,11 @@ import {
   SkipForward,
   X,
   ChevronRight,
+  ChevronLeft,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  BookOpen,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useNarratedTour } from "./NarratedTourContext";
@@ -16,23 +21,29 @@ import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
-export default function NarratedTourHUD() {
+export default function NarratedTourHUD({ onViewDetails }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const {
     isActive,
     currentStopIndex,
     currentCarInfo,
+    currentCarId,
     totalStops,
     tourState,
     subtitleText,
     isNarrating,
+    isMuted,
+    canGoBack,
     nextStop,
     skipStop,
     pauseNarration,
     resumeNarration,
     deactivateTour,
     restartTour,
+    previousStop,
+    replayCurrentStop,
+    toggleMute,
   } = useNarratedTour();
 
   const t = useTranslations("tour.hud");
@@ -40,6 +51,9 @@ export default function NarratedTourHUD() {
   const locale = useLocale();
   const exitDialogRef = useRef(null);
   const completionFocusRef = useRef(null);
+  const primaryControlRef = useRef(null);
+  const muteToggleRef = useRef(null);
+  const focusOnStartHandledRef = useRef(false);
   useFocusTrap(exitDialogRef, showExitConfirm);
 
   useEffect(() => {
@@ -48,10 +62,32 @@ export default function NarratedTourHUD() {
     }
   }, [tourState]);
 
+  // Move focus into the HUD the first time the tour reaches an interactive
+  // state. Keyboard users would otherwise have to blind-Tab to find controls.
+  useEffect(() => {
+    if (!isActive) {
+      focusOnStartHandledRef.current = false;
+      return;
+    }
+    if (focusOnStartHandledRef.current) return;
+    if (tourState !== "narrating" && tourState !== "waiting") return;
+    if (showExitConfirm) return;
+
+    const id = requestAnimationFrame(() => {
+      // Focus the mute toggle first — tour starts muted by default, so this
+      // is the most immediately relevant control for all users.
+      (muteToggleRef.current ?? primaryControlRef.current)?.focus();
+      focusOnStartHandledRef.current = true;
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isActive, tourState, showExitConfirm]);
+
   if (!isActive) return null;
 
   const nextCarId = NARRATION_ROUTE[currentStopIndex + 1];
   const nextCarInfo = nextCarId ? getCarInfo(nextCarId, locale) : null;
+  const prevCarId = NARRATION_ROUTE[currentStopIndex - 1];
+  const prevCarInfo = prevCarId ? getCarInfo(prevCarId, locale) : null;
 
   // Tour complete screen
   if (tourState === "finished") {
@@ -160,21 +196,39 @@ export default function NarratedTourHUD() {
           aria-label={tA11y("tourProgress", { current: currentStopIndex + 1, total: totalStops })}
         />
 
-        {/* Right: exit */}
-        <motion.button
-          onClick={() => setShowExitConfirm(true)}
-          className={cn(
-            "pointer-events-auto p-3 rounded-full",
-            "bg-black/40 backdrop-blur-xl text-white/70 hover:text-white hover:bg-black/[0.55]",
-            "border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors duration-200",
-            "focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+        {/* Right: view details + exit */}
+        <div className="flex items-center gap-2">
+          {onViewDetails && currentCarInfo && (
+            <motion.button
+              onClick={() => onViewDetails(currentCarId)}
+              className={cn(
+                "pointer-events-auto p-3 rounded-full",
+                "bg-black/40 backdrop-blur-xl text-white/70 hover:text-white hover:bg-black/[0.55]",
+                "border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors duration-200",
+                "focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+              )}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={tA11y("viewDetailsFor", { name: currentCarInfo.name })}
+            >
+              <BookOpen className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
+            </motion.button>
           )}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label={t("exitTour")}
-        >
-          <X className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
-        </motion.button>
+          <motion.button
+            onClick={() => setShowExitConfirm(true)}
+            className={cn(
+              "pointer-events-auto p-3 rounded-full",
+              "bg-black/40 backdrop-blur-xl text-white/70 hover:text-white hover:bg-black/[0.55]",
+              "border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors duration-200",
+              "focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label={t("exitTour")}
+          >
+            <X className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
+          </motion.button>
+        </div>
       </div>
 
       {/* Exit confirmation modal */}
@@ -254,6 +308,15 @@ export default function NarratedTourHUD() {
                         </span>
                       </>
                     )}
+                    {isMuted && (
+                      <>
+                        <span className="h-3.5 w-px bg-white/15" aria-hidden="true" />
+                        <span className="flex items-center gap-1 text-amber-300/[0.85]">
+                          <VolumeX className="w-3 h-3" strokeWidth={2} aria-hidden="true" />
+                          {t("textOnly")}
+                        </span>
+                      </>
+                    )}
                   </div>
                   {currentCarInfo && (
                     <p className="mt-1.5 truncate font-serif text-xl italic tracking-tight text-white/[0.95] md:text-2xl">
@@ -263,8 +326,31 @@ export default function NarratedTourHUD() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 md:justify-end md:gap-3">
+                  <ControlButton
+                    ref={muteToggleRef}
+                    onClick={toggleMute}
+                    icon={isMuted ? VolumeX : Volume2}
+                    label={isMuted ? t("unmuteNarrator") : t("muteNarrator")}
+                    ariaLabel={tA11y("toggleMuteNarrator")}
+                    ariaPressed={isMuted}
+                  />
+
+                  {canGoBack && tourState !== "narrating" && (
+                    <ControlButton
+                      onClick={previousStop}
+                      icon={ChevronLeft}
+                      label={t("previous")}
+                      ariaLabel={
+                        prevCarInfo
+                          ? tA11y("previousExhibit", { name: prevCarInfo.name })
+                          : t("previous")
+                      }
+                    />
+                  )}
+
                   {canPause && (
                     <ControlButton
+                      ref={primaryControlRef}
                       onClick={pauseNarration}
                       icon={Pause}
                       label={t("pause")}
@@ -272,12 +358,24 @@ export default function NarratedTourHUD() {
                   )}
                   {canResume && (
                     <ControlButton
+                      ref={primaryControlRef}
                       onClick={resumeNarration}
                       icon={Play}
                       label={t("resume")}
                       emphasis
                     />
                   )}
+
+                  <ControlButton
+                    onClick={replayCurrentStop}
+                    icon={RotateCcw}
+                    label={t("replay")}
+                    ariaLabel={
+                      currentCarInfo
+                        ? tA11y("replayStop", { name: currentCarInfo.name })
+                        : t("replay")
+                    }
+                  />
 
                   {(canPause || canResume) && (
                     <ControlButton
@@ -289,6 +387,7 @@ export default function NarratedTourHUD() {
 
                   {showNext && (
                     <motion.button
+                      ref={primaryControlRef}
                       onClick={nextStop}
                       initial={{ opacity: 0, scale: 0.96 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -394,9 +493,13 @@ function NarratorOrbIndicator({ isNarrating, isPaused }) {
   );
 }
 
-function ControlButton({ onClick, icon: Icon, label, emphasis = false }) {
+const ControlButton = forwardRef(function ControlButton(
+  { onClick, icon: Icon, label, emphasis = false, ariaLabel, ariaPressed },
+  ref,
+) {
   return (
     <motion.button
+      ref={ref}
       onClick={onClick}
       className={cn(
         "flex h-12 items-center gap-2 rounded-2xl px-3.5 md:px-4",
@@ -408,10 +511,11 @@ function ControlButton({ onClick, icon: Icon, label, emphasis = false }) {
       )}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label={label}
+      aria-label={ariaLabel || label}
+      aria-pressed={ariaPressed}
     >
       <Icon className="w-4 h-4 shrink-0" strokeWidth={2} aria-hidden="true" />
       <span className="hidden text-sm font-medium md:inline" aria-hidden="true">{label}</span>
     </motion.button>
   );
-}
+});

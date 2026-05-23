@@ -165,7 +165,7 @@ function useIsMobile() {
  * Information panel that displays detailed car information.
  * Features motion-enhanced staged scroll behavior with spring physics.
  */
-export default function CarInformationPanel({ carId, onClose, onViewerStateChange }) {
+export default function CarInformationPanel({ carId, onClose, onViewerStateChange, tourMode = false }) {
   const t = useTranslations("carInfo");
   const locale = useLocale();
   const panelRef = useRef(null);
@@ -280,12 +280,12 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
     <AnimatePresence mode="wait">
       {carId && carInfo && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="panel-title"
+          className={cn(
+            "fixed inset-0 flex items-center justify-center p-4 md:p-8",
+            tourMode ? "z-[70]" : "z-50"
+          )}
         >
-          {/* Backdrop */}
+          {/* Backdrop — aria-hidden so screen readers skip straight to the panel */}
           <motion.div
             className="absolute inset-0 bg-neutral-950/80 backdrop-blur-md"
             initial={{ opacity: 0 }}
@@ -296,9 +296,16 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
             aria-hidden="true"
           />
 
-          {/* Panel */}
+          {/* Panel — role="dialog" lives here so the dialog semantics are
+              directly on the element that receives focus. Screen readers
+              announce the dialog name (panel-title) and description
+              (panel-tagline) the moment focus arrives. */}
           <motion.div
             ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="panel-title"
+            aria-describedby="panel-tagline"
             tabIndex={-1}
             className={cn(
               "relative w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden rounded-3xl",
@@ -321,12 +328,12 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
               className="relative w-full overflow-hidden flex-shrink-0"
               style={{ height: headerHeight }}
             >
-              {/* Background Image */}
+              {/* Background Image — purely decorative, hidden from AT */}
               {heroImage && (
-                <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 z-0" aria-hidden="true">
                   <motion.img 
                     src={heroImage.src} 
-                    alt={heroImage.alt}
+                    alt=""
                     className="w-full h-full object-cover"
                     style={{
                       opacity: heroOpacity,
@@ -353,23 +360,32 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
               <div className="relative z-10 h-full flex flex-col justify-between p-6 md:p-8 lg:p-10">
                 {/* Top Controls */}
                 <div className="flex justify-between items-start">
-                  <motion.div 
+                  {/* Category + year with sr-only labels so screen readers
+                      get "Category: Rally — Year: 1980-1991" rather than
+                      bare values with no context. */}
+                  <motion.dl 
                     className="flex items-center gap-3 origin-left"
                     style={{ scale: badgeScale }}
                   >
-                    <span className="font-mono text-xs text-blue-400 uppercase tracking-widest bg-black/40 backdrop-blur-md px-2 py-1 rounded border border-white/10">
-                      {carInfo.category}
-                    </span>
-                    <div className="h-px w-4 bg-white/40" />
-                    <span className="font-mono text-xs text-white/80 tracking-wider">
-                      {carInfo.year}
-                    </span>
-                  </motion.div>
+                    <div className="flex items-center">
+                      <dt className="sr-only">{t("categoryLabel")}</dt>
+                      <dd className="font-mono text-xs text-blue-400 uppercase tracking-widest bg-black/40 backdrop-blur-md px-2 py-1 rounded border border-white/10">
+                        {carInfo.category}
+                      </dd>
+                    </div>
+                    <div className="h-px w-4 bg-white/40" aria-hidden="true" />
+                    <div className="flex items-center">
+                      <dt className="sr-only">{t("yearLabel")}</dt>
+                      <dd className="font-mono text-xs text-white/80 tracking-wider">
+                        {carInfo.year}
+                      </dd>
+                    </div>
+                  </motion.dl>
 
                   <motion.button
                     onClick={onClose}
                     className="p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:text-white hover:bg-black/40 transition-colors duration-200 group border border-white/5 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
-                    aria-label="Close panel"
+                    aria-label={t("closePanel", { name: carInfo.name })}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -387,6 +403,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                     {carInfo.name}
                   </motion.h2>
                   <motion.p 
+                    id="panel-tagline"
                     className="text-neutral-200 font-sans font-extralight tracking-wide drop-shadow-md max-w-2xl text-base md:text-lg lg:text-xl mt-3 overflow-hidden"
                     style={{
                       opacity: taglineOpacity,
@@ -395,7 +412,9 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                     {carInfo.tagline}
                   </motion.p>
                   
-                  {/* View 3D Model Button */}
+                  {/* View 3D Model Button — hidden in tour mode, since the
+                      tour already exposes the model in its own viewer. */}
+                  {!tourMode && (
                   <motion.div
                     className="mt-6"
                     style={{
@@ -422,6 +441,7 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
                       </span>
                     </motion.button>
                   </motion.div>
+                  )}
                 </div>
               </div>
 
@@ -437,10 +457,20 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
               </motion.div>
             </motion.div>
 
-            {/* Scrollable content */}
+            {/* Scrollable content.
+                role="document" re-enables screen reader browse/reading mode
+                (virtual cursor + arrow key navigation) for this region.
+                The outer tour page carries role="application" which disables
+                browse mode globally — without this override, all non-focusable
+                content (history text, specs, facts) is invisible to AT.
+                tabIndex={0} makes the container itself keyboard-focusable so
+                users can Tab to it and scroll with Page Down / arrow keys. */}
             <div 
               ref={scrollContainerRef}
               className="flex-1 overflow-y-auto custom-scrollbar"
+              role="document"
+              aria-label={t("detailsFor", { name: carInfo.name })}
+              tabIndex={0}
             >
               <motion.div 
                 className="grid grid-cols-1 lg:grid-cols-12 gap-12 p-8 md:p-12"
@@ -516,8 +546,16 @@ export default function CarInformationPanel({ carId, onClose, onViewerStateChang
 
               {/* Footer hint */}
               <div className="px-12 py-8 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs font-mono text-neutral-500 tracking-widest uppercase">
-                  {t("pressEscToClose")} <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 mx-1 text-neutral-300">{t("escKey")}</kbd> {t("toClose")}
+                {/* The visual three-part "Press ESC to close" is kept for
+                    sighted users; a single aria-label gives AT the full
+                    sentence without the fragmentation. */}
+                <span
+                  className="text-xs font-mono text-neutral-500 tracking-widest uppercase"
+                  aria-label={t("escHint")}
+                >
+                  <span aria-hidden="true">
+                    {t("pressEscToClose")} <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 mx-1 text-neutral-300">{t("escKey")}</kbd> {t("toClose")}
+                  </span>
                 </span>
                 
                 {/* Back to top button */}

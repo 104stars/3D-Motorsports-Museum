@@ -65,6 +65,7 @@
       "subtitle": "Choose how you'd like to experience the collection",
       "freeRoam": "Free Roam",
       "freeRoamDesc": "Explore the museum at your own pace. Walk through exhibits and interact with cars freely.",
+      "freeRoamRequires": "Requires mouse and pointer lock",
       "narratedTour": "Narrated Tour",
       "narratedTourDesc": "A curated journey through 8 legendary cars with narration and interesting facts.",
       "footer": "Select a mode to begin",
@@ -128,6 +129,12 @@
       "pause": "Pause",
       "resume": "Resume",
       "skip": "Skip",
+      "previous": "Previous",
+      "replay": "Replay",
+      "muteNarrator": "Mute narrator",
+      "unmuteNarrator": "Unmute narrator",
+      "textOnly": "Text only",
+      "viewDetails": "View Details",
       "nextExhibit": "Next Exhibit",
       "finishTour": "Finish Tour",
       "exitConfirmTitle": "Exit narrated tour?",
@@ -152,7 +159,11 @@
       "freeRoamMouseNote": "Requires mouse and pointer lock. For keyboard navigation, use the Narrated Tour.",
       "tourProgress": "Tour progress: stop {current} of {total}",
       "carViewerLabel": "3D model viewer for {name}",
-      "exhibitListSkipLink": "Skip to exhibits list"
+      "exhibitListSkipLink": "Skip to exhibits list",
+      "previousExhibit": "Go to previous exhibit: {name}",
+      "replayStop": "Replay narration for {name}",
+      "toggleMuteNarrator": "Toggle narrator audio",
+      "viewDetailsFor": "View full details for {name}"
     }
   },
   "carInfo": {
@@ -168,7 +179,12 @@
     "pressEscToClose": "Press",
     "escKey": "ESC",
     "toClose": "to close",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "closePanel": "Close {name} details",
+    "detailsFor": "{name} details",
+    "categoryLabel": "Category",
+    "yearLabel": "Year",
+    "escHint": "Press Escape to close"
   },
   "carViewer": {
     "rotate": "Rotate",

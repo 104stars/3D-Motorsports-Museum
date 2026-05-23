@@ -32,6 +32,26 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
   const controllerRef = useRef(null);
   const [subscribeKeys] = useKeyboardControls();
 
+  // Gate jump to a single-frame impulse per keypress.
+  // At high FPS, ecctrl can apply jump force across multiple render frames
+  // before the player leaves the ground, causing a higher apex on faster machines.
+  // Dispatching a synthetic keyup on the next RAF ensures KeyboardControls sees
+  // the jump key as released after exactly one frame regardless of frame rate.
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code !== "Space" || e.repeat) return;
+      requestAnimationFrame(() => {
+        document.dispatchEvent(
+          new KeyboardEvent("keyup", { code: "Space", key: " ", bubbles: true })
+        );
+      });
+    };
+
+    document.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", handleKeyDown, { capture: true });
+  }, []);
+
   const initialPosition = useMemo(
     () => [...(spawn ?? DEFAULT_SPAWN)],
     [spawn]
@@ -111,12 +131,12 @@ export default function PlayerController({ spawn = DEFAULT_SPAWN }) {
       // --- 5. MOVEMENT ---
       maxVelLimit={6}
       sprintMult={1.8}
-      jumpVel={7.5}
-      jumpForceToGroundMult={5}
+      jumpVel={7}
+      jumpForceToGroundMult={0}
       sprintJumpMult={1}
       fallingGravityScale={2.7}
       dragDampingC={2.0}
-      accDeltaTime={8}
+      accDeltaTime={4}
       airDragMultiplier={0.2}
 
       // --- CAMERA ---
