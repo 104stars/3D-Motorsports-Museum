@@ -42,7 +42,10 @@ export function NarratedTourProvider({ children }) {
   const [subtitleText, setSubtitleText] = useState("");
   const [narrationPhase, setNarrationPhase] = useState("intro"); // intro | body | outro
   const [isNarrating, setIsNarrating] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  // Default to text-only so audio narration never starts without explicit
+  // user opt-in. Avoids overlap with screen readers and gives all users a
+  // clean first impression; audio is enabled via the narrator toggle.
+  const [isMuted, setIsMuted] = useState(true);
 
   const engineRef = useRef(null);
   const isMutedRef = useRef(false);

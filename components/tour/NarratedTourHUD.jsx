@@ -52,6 +52,7 @@ export default function NarratedTourHUD({ onViewDetails }) {
   const exitDialogRef = useRef(null);
   const completionFocusRef = useRef(null);
   const primaryControlRef = useRef(null);
+  const muteToggleRef = useRef(null);
   const focusOnStartHandledRef = useRef(false);
   useFocusTrap(exitDialogRef, showExitConfirm);
 
@@ -73,7 +74,9 @@ export default function NarratedTourHUD({ onViewDetails }) {
     if (showExitConfirm) return;
 
     const id = requestAnimationFrame(() => {
-      primaryControlRef.current?.focus();
+      // Focus the mute toggle first — tour starts muted by default, so this
+      // is the most immediately relevant control for all users.
+      (muteToggleRef.current ?? primaryControlRef.current)?.focus();
       focusOnStartHandledRef.current = true;
     });
     return () => cancelAnimationFrame(id);
@@ -323,6 +326,15 @@ export default function NarratedTourHUD({ onViewDetails }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 md:justify-end md:gap-3">
+                  <ControlButton
+                    ref={muteToggleRef}
+                    onClick={toggleMute}
+                    icon={isMuted ? VolumeX : Volume2}
+                    label={isMuted ? t("unmuteNarrator") : t("muteNarrator")}
+                    ariaLabel={tA11y("toggleMuteNarrator")}
+                    ariaPressed={isMuted}
+                  />
+
                   {canGoBack && tourState !== "narrating" && (
                     <ControlButton
                       onClick={previousStop}
@@ -372,14 +384,6 @@ export default function NarratedTourHUD({ onViewDetails }) {
                       label={t("skip")}
                     />
                   )}
-
-                  <ControlButton
-                    onClick={toggleMute}
-                    icon={isMuted ? VolumeX : Volume2}
-                    label={isMuted ? t("unmuteNarrator") : t("muteNarrator")}
-                    ariaLabel={tA11y("toggleMuteNarrator")}
-                    ariaPressed={isMuted}
-                  />
 
                   {showNext && (
                     <motion.button
