@@ -179,7 +179,12 @@
     "pressEscToClose": "Press",
     "escKey": "ESC",
     "toClose": "to close",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "closePanel": "Close {name} details",
+    "detailsFor": "{name} details",
+    "categoryLabel": "Category",
+    "yearLabel": "Year",
+    "escHint": "Press Escape to close"
   },
   "carViewer": {
     "rotate": "Rotate",
