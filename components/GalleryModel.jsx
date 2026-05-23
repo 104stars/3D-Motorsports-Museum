@@ -12,16 +12,16 @@ import {
 } from "three";
 import { getGalleryModelUrl } from "@/lib/supabase/storage";
 
-const MODEL_PATH = getGalleryModelUrl();
+const MODEL_PATH =
+  process.env.NEXT_PUBLIC_GALLERY_MODEL_URL ?? getGalleryModelUrl();
 
 export default function GalleryModel({ onBoundsReady, ...props }) {
   const { scene } = useGLTF(MODEL_PATH);
 
   const bakedScene = useMemo(() => {
     if (!scene) return null;
-    const clone = scene.clone(true);
 
-    clone.traverse((child) => {
+    scene.traverse((child) => {
       if (!child.isMesh) return;
 
       const materials = Array.isArray(child.material)
@@ -50,7 +50,7 @@ export default function GalleryModel({ onBoundsReady, ...props }) {
       child.castShadow = false;
     });
 
-    return clone;
+    return scene;
   }, [scene]);
 
   useEffect(() => {

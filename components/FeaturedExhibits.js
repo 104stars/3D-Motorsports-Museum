@@ -1,35 +1,17 @@
 "use client";
 
 import { ExhibitCard } from "@/components/ui/ExhibitCard";
-
-const exhibits = [
-  {
-    id: 1,
-    title: "Formula 1 Heritage",
-    description:
-      "Witness the evolution of speed with iconic F1 machines, from legendary championship-winning cars to cutting-edge hybrid technology that defines modern racing.",
-    image: "/1.webp",
-    tags: ["Interactive Display", "20+ Vehicles"],
-  },
-  {
-    id: 2,
-    title: "Le Mans Endurance",
-    description:
-      "Experience the ultimate test of stamina and engineering, featuring legendary endurance racers that conquered the 24-hour battle at Circuit de la Sarthe.",
-    image: "/2.webp",
-    tags: ["Historic Collection", "Prototype Racers"],
-  },
-  {
-    id: 3,
-    title: "Rally Legends",
-    description:
-      "Feel the raw power of off-road racing with championship-winning rally cars that dominated grueling stages across mountains, forests, and desert terrain.",
-    image: "/3.webp",
-    tags: ["All-Terrain Icons", "Group B Classics"],
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function FeaturedExhibits() {
+  const t = useTranslations("exhibits");
+
+  const exhibits = [
+    { id: 1, key: "f1", image: "/1.webp" },
+    { id: 2, key: "lemans", image: "/2.webp" },
+    { id: 3, key: "rally", image: "/3.webp" },
+  ];
+
   return (
     <section className="relative isolate overflow-hidden bg-neutral-950 pt-52 pb-24 px-6 md:px-12 lg:px-20">
       {/* Top blend gradient into hero */}
@@ -48,12 +30,11 @@ export default function FeaturedExhibits() {
       {/* Section Heading */}
       <div className="max-w-7xl mx-auto mb-12">
         <h2 className="text-5xl md:text-6xl font-light mb-3 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
-          Featured Exhibits
+          {t("title")}
         </h2>
 
         <p className="text-neutral-400 text-lg font-light max-w-2xl">
-          Explore our carefully curated collection of motorsport history's most
-          iconic moments and machines.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -62,10 +43,10 @@ export default function FeaturedExhibits() {
         {exhibits.map((exhibit) => (
           <ExhibitCard
             key={exhibit.id}
-            title={exhibit.title}
-            description={exhibit.description}
+            title={t(`cards.${exhibit.key}.title`)}
+            description={t(`cards.${exhibit.key}.description`)}
             image={exhibit.image}
-            tags={exhibit.tags}
+            tags={[t(`cards.${exhibit.key}.tags.0`), t(`cards.${exhibit.key}.tags.1`)]}
           />
         ))}
       </div>

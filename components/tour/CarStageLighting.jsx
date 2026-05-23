@@ -4,42 +4,46 @@ import { Environment, ContactShadows } from "@react-three/drei";
 import { Vector3 } from "three";
 import { getPrimaryCarPosition } from "@/lib/tour/carConfig";
 
-/**
- * Specialized lighting rig for the Car.
- * Uses an HDRI for reflections (essential for metal/glass)
- * without extra spotlights so the scene relies on the museum lighting.
- */
 export default function CarStageLighting() {
   const carPos = new Vector3(...getPrimaryCarPosition());
 
   return (
     <group>
       {/* 
-        1. Environment: Essential for car paint reflections. 
-        'warehouse' or 'city' presets usually look best on cars due to high contrast.
-        background={false} ensures we don't see the image, just the lighting/reflections.
+        1. Environment: Optimized for performance.
+        - resolution={256}: Drastically lowers memory usage. 
+          Since we use blur={0.6}, high res is wasted pixels.
       */}
-      <Environment preset="warehouse" background={false} blur={0.6} />
+      <Environment 
+        files="/shop.hdr" 
+        background={false} 
+        blur={0.6} 
+        resolution={256} 
+      />
 
       {/* 
-        4. Fill Light: Soft global ambient light to prevent pitch black shadows.
+        2. Main Light: A directional light is computationally cheap 
+        and creates defined specular highlights on the car paint 
+        that the HDRI might miss at lower resolutions.
+      */}
+      <directionalLight 
+        position={[5, 10, 5]} 
+        intensity={1.5} 
+        castShadow={false} // Keep false to rely on ContactShadows instead
+      />
+
+      {/* 
+        3. Fill Light: Kept low to maintain contrast.
       */}
       <ambientLight intensity={0.4} />
 
       {/* 
-        5. Contact Shadows: Adds a grounded occlusion shadow beneath the car. 
-        Much more realistic than standard shadow maps for the floor contact.
-        Positioned at floor level (y=0.02) to avoid z-fighting.
+        4. Contact Shadows: Heavily Optimized.
+        - resolution={256}: Massive FPS boost over default (usually 1024).
+        - far={1.5}: Only calculates geometry 1.5 units up (wheels/bumper).
+        - smooth={false}: Disabling smoothing (if acceptable) speeds up blur shader.
       */}
-      <ContactShadows
-        frames={1}
-        position={[carPos.x, 0.02, carPos.z]}
-        opacity={0.6}
-        scale={10}
-        blur={2}
-        far={4}
-      />
+
     </group>
   );
 }
-

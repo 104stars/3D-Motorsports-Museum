@@ -1,13 +1,64 @@
 "use client";
 
+import { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import CarModel from "@/components/CarModel";
-import DebugMarker from "./DebugMarker";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
+import { getActiveFloors, getCarFloor } from "@/lib/tour/constants";
 
 /**
- * Renders all car exhibits and their debug markers.
+ * All cars are mounted once. Visibility is toggled per-floor, with activations
+ * staggered across frames (one car per frame) to avoid GPU spikes from
+ * rendering multiple new meshes simultaneously. Deactivations are instant
+ * since hiding is cheap.
  */
-export default function CarExhibits({ showDebugMarkers = true }) {
+export default function CarExhibits() {
+  const [activeCars, setActiveCars] = useState(() => {
+    const floors = getActiveFloors(0);
+    return new Set(
+      CAR_CONFIGS
+        .filter((c) => floors.has(getCarFloor(c.position[1])))
+        .map((c) => c.id)
+    );
+  });
+
+  const prevFloorsRef = useRef(getActiveFloors(0));
+  const activationQueue = useRef([]);
+
+  useFrame(({ camera }) => {
+    const floors = getActiveFloors(camera.position.y);
+
+    if (!setsEqual(floors, prevFloorsRef.current)) {
+      prevFloorsRef.current = floors;
+
+      const nowActive = CAR_CONFIGS.filter((c) =>
+        floors.has(getCarFloor(c.position[1]))
+      );
+      const nowActiveIds = new Set(nowActive.map((c) => c.id));
+
+      // Deactivate cars no longer on the active floor immediately.
+      setActiveCars((prev) => {
+        const next = new Set(prev);
+        for (const id of prev) {
+          if (!nowActiveIds.has(id)) next.delete(id);
+        }
+        return next;
+      });
+
+      // Queue newly-visible cars for staggered activation (1 per frame).
+      const newlyVisible = nowActive
+        .map((c) => c.id)
+        .filter((id) => !activeCars.has(id));
+      activationQueue.current = newlyVisible;
+    }
+
+    // Drain one car from the activation queue per frame.
+    if (activationQueue.current.length > 0) {
+      const nextId = activationQueue.current.shift();
+      setActiveCars((prev) => new Set([...prev, nextId]));
+    }
+  });
+
   return (
     <>
       {CAR_CONFIGS.map((car) => (
@@ -19,19 +70,15 @@ export default function CarExhibits({ showDebugMarkers = true }) {
           rotation={car.rotation}
           scale={car.scale}
           debugColor={car.debugColor}
+          active={activeCars.has(car.id)}
         />
       ))}
-
-      {showDebugMarkers &&
-        CAR_CONFIGS.map((car) => (
-          <DebugMarker
-            key={`debug-${car.id}`}
-            position={car.position}
-            color={car.debugColor}
-            size={0.5}
-          />
-        ))}
     </>
   );
 }
 
+function setsEqual(a, b) {
+  if (a.size !== b.size) return false;
+  for (const v of a) if (!b.has(v)) return false;
+  return true;
+}

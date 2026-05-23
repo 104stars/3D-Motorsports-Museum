@@ -1,15 +1,20 @@
 "use client"
 
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import CenterUnderline from "@/components/fancy/text/underline-center"
 import UnderlineToBackground from "@/components/fancy/text/underline-to-background"
 import { useAuth } from "@/components/auth/AuthProvider"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { getAvatarThumbUrl } from "@/lib/avatars/defaultAvatars"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
 
 export default function Navigation() {
+  const t = useTranslations("nav")
   const { user, loading } = useAuth()
   const initial = user?.email?.[0]?.toUpperCase() || "U"
+  const avatarThumb = getAvatarThumbUrl(user?.user_metadata?.avatar_id)
 
   return (
     <nav className="fixed top-6 left-0 right-0 z-50">
@@ -18,25 +23,26 @@ export default function Navigation() {
           {/* Logo/Brand */}
           <div className="justify-self-start flex items-center h-full">
             <Link href="/" className="text-white/90 hover:text-white text-xl md:text-2xl font-light tracking-tight">
-              Motorsports Museum
+              {t("brand")}
             </Link>
           </div>
 
           {/* Navigation Links - Center */}
           <div className="hidden md:flex items-center justify-center gap-9 h-full">
             <CenterUnderline as={Link} href="#exhibits" className="text-white font-light text-xl flex items-center h-full">
-              Exhibits
+              {t("exhibits")}
             </CenterUnderline>
             <CenterUnderline as={Link} href="#tour" className="text-white font-light text-xl flex items-center h-full">
-              Tour
+              {t("tour")}
             </CenterUnderline>
             <CenterUnderline as={Link} href="#about" className="text-white font-light text-xl flex items-center h-full">
-              About
+              {t("about")}
             </CenterUnderline>
           </div>
 
           {/* Auth Button/Avatar - Right */}
-          <div className="justify-self-end flex items-center h-full">
+          <div className="justify-self-end flex items-center gap-4 h-full">
+            <LanguageSwitcher variant="compact" />
             {!loading && !user && (
               <UnderlineToBackground
                 as={Link}
@@ -45,11 +51,12 @@ export default function Navigation() {
                 targetTextColor="#000000"
                 maxUnderlineHeightRatio={0.8}
               >
-                Login
+                {t("login")}
               </UnderlineToBackground>
             )}
             {!loading && user && (
               <Avatar className="h-10 w-10 border-2 border-white/20 hover:border-white/40 transition-colors cursor-pointer">
+                {avatarThumb && <AvatarImage src={avatarThumb} alt="User avatar" />}
                 <AvatarFallback className="bg-white/10 text-white font-light text-lg">
                   {initial}
                 </AvatarFallback>

@@ -2,12 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from 'next/navigation'
+import { useTranslations } from "next-intl"
 import { createClient } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function LoginForm({ onToggle }) {
+  const t = useTranslations("auth")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -32,7 +34,7 @@ export default function LoginForm({ onToggle }) {
         router.push("/")
       }
     } catch (err) {
-      setError("An unexpected error occurred")
+      setError(t("unexpectedError"))
     } finally {
       setLoading(false)
     }
@@ -41,11 +43,11 @@ export default function LoginForm({ onToggle }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-neutral-300 font-light text-sm">Email</Label>
+        <Label htmlFor="email" className="text-neutral-300 font-light text-sm">{t("email")}</Label>
         <Input
           id="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder={t("emailPlaceholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -55,11 +57,11 @@ export default function LoginForm({ onToggle }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-neutral-300 font-light text-sm">Password</Label>
+        <Label htmlFor="password" className="text-neutral-300 font-light text-sm">{t("password")}</Label>
         <Input
           id="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder={t("passwordPlaceholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -77,18 +79,18 @@ export default function LoginForm({ onToggle }) {
         className="w-full cursor-pointer h-12 text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed" 
         disabled={loading}
       >
-        {loading ? "Signing in..." : "Sign in"}
+        {loading ? t("signingIn") : t("signIn")}
       </Button>
 
       <p className="text-center text-sm text-neutral-400 font-light">
-        {"Don't have an account? "}
+        {t("noAccount") + " "}
         <button 
           type="button" 
           onClick={onToggle} 
           className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer" 
           disabled={loading}
         >
-          Sign up
+          {t("signUp")}
         </button>
       </p>
     </form>
