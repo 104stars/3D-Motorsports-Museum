@@ -10,7 +10,7 @@ export default function ExploreInvitation() {
   const t = useTranslations("explore");
 
   return (
-    <section className="relative isolate overflow-hidden bg-neutral-950">
+    <section aria-labelledby="explore-heading" className="relative isolate overflow-hidden bg-neutral-950">
       {/* Top gradient blend from FeaturedExhibits */}
       <div
         aria-hidden
@@ -44,7 +44,7 @@ export default function ExploreInvitation() {
               {t("eyebrow")}
             </p>
 
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-light font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(133,133,133,0.3)] mb-6 max-w-3xl leading-tight">
+            <h2 id="explore-heading" className="text-5xl md:text-6xl lg:text-7xl font-light font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(133,133,133,0.3)] mb-6 max-w-3xl leading-tight">
               {t("titlePre")}
               <span>{t("titleAccent")}</span>
             </h2>

@@ -106,7 +106,14 @@
     "confirmationSent": "We've sent you a confirmation link to complete your registration.",
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 6 characters",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "backToHome": "Back to home"
+  },
+  "meta": {
+    "loginTitle": "Sign in · Motorsports Museum",
+    "signupTitle": "Create account · Motorsports Museum"
   },
   "tour": {
     "modeSelection": {
