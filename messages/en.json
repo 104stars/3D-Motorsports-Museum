@@ -34,6 +34,14 @@
       }
     }
   },
+  "explore": {
+    "eyebrow": "Step Inside",
+    "titlePre": "Explore the ",
+    "titleAccent": "Collection",
+    "description": "Walk the halls of motorsport history. Explore iconic machines up close, listen to their stories, and experience racing heritage like never before.",
+    "cta": "Enter the museum",
+    "imageAlt": "Panoramic view of the Motorsports Museum interior"
+  },
   "auth": {
     "welcomeBack": "Welcome back",
     "createAccount": "Create account",

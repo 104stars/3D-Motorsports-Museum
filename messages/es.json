@@ -34,6 +34,14 @@
       }
     }
   },
+  "explore": {
+    "eyebrow": "Entra Ahora",
+    "titlePre": "Explora la ",
+    "titleAccent": "Colección",
+    "description": "Recorre los pasillos de la historia del motorsport. Explora máquinas icónicas de cerca, escucha sus historias y vive el legado de las carreras como nunca antes.",
+    "cta": "Entrar al museo",
+    "imageAlt": "Vista panorámica del interior del Museo de Motorsport"
+  },
   "auth": {
     "welcomeBack": "Bienvenido de vuelta",
     "createAccount": "Crear cuenta",
