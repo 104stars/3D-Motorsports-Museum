@@ -37,6 +37,6 @@ export const NARRATION_SCRIPTS = {
   "redbull-rb9": {
     intro: "Nuestra última parada: el Red Bull RB9 — la cúspide de la era de dominio de Adrian Newey en diseño.",
     body: "Este auto llevó a Sebastian Vettel a su cuarto Campeonato Mundial consecutivo en 2013, una hazaña igualada solo por Juan Manuel Fangio. El RB9 contaba con un innovador difusor soplado por los escapes que utilizaba los gases de escape para aumentar la carga aerodinámica trasera. Combinado con la agresiva aerodinámica de Newey y el fiable motor V8 de Renault, era prácticamente imbatible. La temporada de Vettel fue histórica: tras una primera mitad competitiva, ganó nueve carreras consecutivas desde Bélgica hasta Brasil, rompiendo un récord que se mantenía desde los años 50. Aseguró su cuarto título en India con tres carreras restantes. El RB9 fue también el último Red Bull en usar un motor atmosférico antes de que la era híbrida comenzara en 2014.",
-    outro: "Eso concluye nuestro recorrido por el Museo del Motorsport. Gracias por acompañarnos en este viaje por la historia de las carreras.",
+    outro: "Eso concluye nuestro recorrido por el Museo del Automovilismo. Gracias por acompañarnos en este viaje por la historia de las carreras.",
   },
 };

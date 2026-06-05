@@ -199,6 +199,12 @@
       "preparingTour": "Preparing your tour",
       "loadingExhibits": "Loading exhibits..."
     },
+    "freeRoamHud": {
+      "pressEsc": "Press",
+      "escKey": "ESC",
+      "toOpenPauseMenu": "to open pause menu",
+      "pauseHintA11y": "Press Escape to open the pause menu"
+    },
     "a11y": {
       "appLabel": "Motorsports Museum 3D Tour",
       "exhibitList": "Museum exhibits",

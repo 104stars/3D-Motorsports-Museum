@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "Museo del Motorsport",
+    "brand": "Museo del Automovilismo",
     "exhibits": "Exhibiciones",
     "tour": "Recorrido",
     "about": "Acerca de",
@@ -12,18 +12,18 @@
     "skipToContent": "Saltar al contenido principal"
   },
   "footer": {
-    "copyright": "© 2025 Museo del Motorsport. Todos los derechos reservados."
+    "copyright": "© 2025 Museo del Automovilismo. Todos los derechos reservados."
   },
   "hero": {
     "headlinePre": "Donde las Leyendas de la Pista ",
     "headlineAccent": "Cobran Vida",
-    "subtitle": "Experimenta la emoción de las leyendas del motorsport en un espacio digital interactivo.",
+    "subtitle": "Experimenta la emoción de las leyendas del automovilismo en un espacio digital interactivo.",
     "ctaTour": "Iniciar recorrido",
     "ctaLearn": "Más información"
   },
   "exhibits": {
     "title": "Exhibiciones Destacadas",
-    "subtitle": "Explora nuestra cuidadosa colección de los momentos y máquinas más icónicos de la historia del motorsport.",
+    "subtitle": "Explora nuestra cuidadosa colección de los momentos y máquinas más icónicos de la historia del automovilismo.",
     "cards": {
       "f1": {
         "title": "Legado de Fórmula 1",
@@ -46,9 +46,9 @@
     "eyebrow": "Entra Ahora",
     "titlePre": "Explora la ",
     "titleAccent": "Colección",
-    "description": "Recorre los pasillos de la historia del motorsport. Explora máquinas icónicas de cerca, escucha sus historias y vive el legado de las carreras como nunca antes.",
+    "description": "Recorre los pasillos de la historia del automovilismo. Explora máquinas icónicas de cerca, escucha sus historias y vive el legado de las carreras como nunca antes.",
     "cta": "Entrar al museo",
-    "imageAlt": "Vista panorámica del interior del Museo de Motorsport"
+    "imageAlt": "Vista panorámica del interior del Museo de Automovilismo"
   },
   "about": {
     "eyebrow": "Dentro de la App",
@@ -87,7 +87,7 @@
     "welcomeBack": "Bienvenido de vuelta",
     "createAccount": "Crear cuenta",
     "loginSubtitle": "Ingresa tus credenciales para acceder a tu cuenta",
-    "signupSubtitle": "Regístrate para iniciar tu viaje por el motorsport",
+    "signupSubtitle": "Regístrate para iniciar tu viaje por el automovilismo",
     "email": "Correo electrónico",
     "emailPlaceholder": "tu@ejemplo.com",
     "password": "Contraseña",
@@ -110,7 +110,7 @@
   },
   "tour": {
     "modeSelection": {
-      "title": "Museo del Motorsport",
+      "title": "Museo del Automovilismo",
       "subtitle": "Elige cómo quieres experimentar la colección",
       "freeRoam": "Exploración Libre",
       "freeRoamDesc": "Explora el museo a tu ritmo. Camina por las exhibiciones e interactúa con los autos libremente.",
@@ -171,7 +171,7 @@
     },
     "hud": {
       "tourComplete": "Recorrido Completo",
-      "tourCompleteMessage": "Gracias por experimentar la colección del Museo del Motorsport.",
+      "tourCompleteMessage": "Gracias por experimentar la colección del Museo del Automovilismo.",
       "returnToMuseum": "Volver al Museo",
       "restartTour": "Reiniciar Recorrido",
       "stop": "Parada",
@@ -192,15 +192,21 @@
       "exitTour": "Salir del recorrido"
     },
     "loading": {
-      "title": "Museo del Motorsport",
+      "title": "Museo del Automovilismo",
       "est": "EST. 2025",
       "loadingAssets": "CARGANDO RECURSOS",
       "initializing": "Inicializando entorno...",
       "preparingTour": "Preparando tu recorrido",
       "loadingExhibits": "Cargando exhibiciones..."
     },
+    "freeRoamHud": {
+      "pressEsc": "Presiona",
+      "escKey": "ESC",
+      "toOpenPauseMenu": "para abrir el menú de pausa",
+      "pauseHintA11y": "Presiona Escape para abrir el menú de pausa"
+    },
     "a11y": {
-      "appLabel": "Recorrido 3D del Museo del Motorsport",
+      "appLabel": "Recorrido 3D del Museo del Automovilismo",
       "exhibitList": "Exhibiciones del museo",
       "exhibitListHeading": "Exhibiciones",
       "viewExhibit": "Ver exhibición de {name}, {category}",
