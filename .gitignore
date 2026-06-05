@@ -36,6 +36,4 @@ yarn-error.log*
 
 *.tsbuildinfo
 next-env.d.ts
-card-design.md
-projectInfo.md
-desc.md
+*.md
