@@ -39,7 +39,7 @@ export default function ExploreInvitation() {
 
         {/* Content */}
         <div className="relative z-20 flex flex-col justify-end h-full min-h-[75vh] lg:min-h-[85vh] px-6 md:px-12 lg:px-20 pb-20 lg:pb-28">
-          <div className="max-w-7xl mx-auto w-full">
+          <div id="tour" className="max-w-7xl mx-auto w-full scroll-mt-100">
             <p className="text-neutral-400 text-sm tracking-[0.2em] uppercase font-light mb-5">
               {t("eyebrow")}
             </p>

@@ -4,7 +4,15 @@
     "exhibits": "Exhibiciones",
     "tour": "Recorrido",
     "about": "Acerca de",
-    "login": "Ingresar"
+    "login": "Ingresar",
+    "ariaLabel": "Navegación principal",
+    "menuOpen": "Abrir menú de navegación",
+    "menuClose": "Cerrar menú de navegación",
+    "viewProfile": "Ver tu perfil",
+    "skipToContent": "Saltar al contenido principal"
+  },
+  "footer": {
+    "copyright": "© 2025 Museo del Motorsport. Todos los derechos reservados."
   },
   "hero": {
     "headlinePre": "Donde las Leyendas de la Pista ",
@@ -41,6 +49,39 @@
     "description": "Recorre los pasillos de la historia del motorsport. Explora máquinas icónicas de cerca, escucha sus historias y vive el legado de las carreras como nunca antes.",
     "cta": "Entrar al museo",
     "imageAlt": "Vista panorámica del interior del Museo de Motorsport"
+  },
+  "about": {
+    "eyebrow": "Dentro de la App",
+    "titlePre": "Qué Puedes Hacer ",
+    "titleAccent": "En el Museo",
+    "subtitle": "Elige un estilo de recorrido, muévete por el espacio y abre detalles específicos de cada auto.",
+    "cta": "Entrar al museo",
+    "cards": {
+      "modes": {
+        "title": "Dos Formas de Vivirlo",
+        "description": "Elige entre dos modos al entrar al museo. Cada uno ofrece una manera distinta de recorrer la colección."
+      },
+      "movement": {
+        "title": "Muévete por la Sala",
+        "description": "Usa WASD para caminar, Shift para correr, Espacio para saltar y R para resetear tu posición."
+      },
+      "interaction": {
+        "title": "Lee la Historia",
+        "description": "Aparece un indicador de ojo cuando apuntas a un auto. Haz click para abrir su panel completo."
+      },
+      "viewer": {
+        "title": "Inspecciona Modelos 3D",
+        "description": "Abre la vista detallada para rotar, mover y hacer zoom en autos seleccionados."
+      },
+      "details": {
+        "title": "Lee Detalles de Exhibición",
+        "description": "Revisa la historia, especificaciones técnicas, galería multimedia y datos rápidos de cada auto."
+      }
+    },
+    "visuals": {
+      "panel": "PANEL",
+      "infoLabel": "Info"
+    }
   },
   "auth": {
     "welcomeBack": "Bienvenido de vuelta",

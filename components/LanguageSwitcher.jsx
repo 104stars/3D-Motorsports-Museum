@@ -30,7 +30,12 @@ export default function LanguageSwitcher({ className, variant = "default" }) {
         isPending && "opacity-60 pointer-events-none",
         className,
       )}
+      aria-busy={isPending}
     >
+      {/* Announce locale changes to screen readers */}
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {isPending ? (locale === "en" ? "Switching language" : "Cambiando idioma") : ""}
+      </span>
       <button
         onClick={() => switchLocale("en")}
         aria-pressed={locale === "en"}

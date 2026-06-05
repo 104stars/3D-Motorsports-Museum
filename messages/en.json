@@ -4,7 +4,15 @@
     "exhibits": "Exhibits",
     "tour": "Tour",
     "about": "About",
-    "login": "Login"
+    "login": "Login",
+    "ariaLabel": "Main navigation",
+    "menuOpen": "Open navigation menu",
+    "menuClose": "Close navigation menu",
+    "viewProfile": "View your profile",
+    "skipToContent": "Skip to main content"
+  },
+  "footer": {
+    "copyright": "© 2025 Motorsports Museum. All rights reserved."
   },
   "hero": {
     "headlinePre": "Where Legends of the Track ",
@@ -41,6 +49,39 @@
     "description": "Walk the halls of motorsport history. Explore iconic machines up close, listen to their stories, and experience racing heritage like never before.",
     "cta": "Enter the museum",
     "imageAlt": "Panoramic view of the Motorsports Museum interior"
+  },
+  "about": {
+    "eyebrow": "Inside the App",
+    "titlePre": "What You Can Do ",
+    "titleAccent": "In the Museum",
+    "subtitle": "Pick a tour style, move through the space, and open focused details for each car.",
+    "cta": "Enter the museum",
+    "cards": {
+      "modes": {
+        "title": "Two Ways to Experience It",
+        "description": "Choose between two modes when you enter the museum. Each one offers a different way to move through the collection."
+      },
+      "movement": {
+        "title": "Move Through the Hall",
+        "description": "Use WASD to walk, Shift to run, Space to jump, and R to reset your position if needed."
+      },
+      "interaction": {
+        "title": "Read the History",
+        "description": "An eye indicator appears when you face a car. Click it to open the full information panel."
+      },
+      "viewer": {
+        "title": "Inspect 3D Models",
+        "description": "Open the detailed model view to rotate, pan, and zoom around selected cars."
+      },
+      "details": {
+        "title": "Read Exhibit Details",
+        "description": "Review each car's history, technical specs, media gallery, and quick facts in one place."
+      }
+    },
+    "visuals": {
+      "panel": "PANEL",
+      "infoLabel": "Info"
+    }
   },
   "auth": {
     "welcomeBack": "Welcome back",
