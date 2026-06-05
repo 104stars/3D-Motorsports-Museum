@@ -112,6 +112,10 @@ export default function TourPreloader({ isActive, onReady }) {
 
             <p className="mt-4 text-xs font-mono text-white/30">{progress}%</p>
           </motion.div>
+
+          <p className="absolute bottom-6 left-0 right-0 px-6 text-xs font-mono text-white/30 text-center">
+            {t("stuckHint")}
+          </p>
         </motion.div>
       )}
     </AnimatePresence>

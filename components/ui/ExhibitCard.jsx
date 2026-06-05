@@ -4,7 +4,7 @@ export function ExhibitCard({ title, description, image, tags }) {
   const compressedImage = image.replace(/(\.\w+)$/, 'com$1');
   
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-3xl group outline-1 outline-white/10 shadow-[0_0_60px_rgba(255,255,255,0.06)] transition-shadow duration-300">
+    <article className="relative h-[600px] w-full overflow-hidden rounded-3xl group outline-1 outline-white/10 shadow-[0_0_60px_rgba(255,255,255,0.06)] transition-shadow duration-300">
       <Image
         src={compressedImage}
         alt=""
@@ -18,7 +18,8 @@ export function ExhibitCard({ title, description, image, tags }) {
         <div className="relative w-full h-full [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
           <Image
             src={image}
-            alt={title}
+            alt=""
+            aria-hidden
             fill
             
             className="object-cover pointer-events-none transition-transform duration-700"
@@ -37,7 +38,7 @@ export function ExhibitCard({ title, description, image, tags }) {
           </p>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 

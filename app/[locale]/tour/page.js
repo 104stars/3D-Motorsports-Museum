@@ -32,6 +32,7 @@ import NarratedTourHUD from "@/components/tour/NarratedTourHUD";
 import DetailedCarViewer from "@/components/tour/DetailedCarViewer";
 import A11yAnnouncer from "@/components/tour/A11yAnnouncer";
 import CarA11yList from "@/components/tour/CarA11yList";
+import FreeRoamHint from "@/components/tour/FreeRoamHint";
 
 useLoader.preload(HDRLoader, "/shop.hdr");
 
@@ -257,7 +258,7 @@ function TourPageInner() {
 
             <CarDetectionProvider>
               <Suspense fallback={null}>
-                <CarExhibits />
+                <CarExhibits showLabels={modeSelected === "free"} />
               </Suspense>
               {!isOverlayOpen && !isViewerActive && !isPaused && !showModeSelection && (
                 <CarHoverDetector onDetect={setHoveredCarId} />
@@ -327,6 +328,15 @@ function TourPageInner() {
           )}
         </div>
       )}
+
+      <FreeRoamHint
+        isVisible={
+          modeSelected === "free" &&
+          !isPaused &&
+          !selectedCarId &&
+          !isViewerActive
+        }
+      />
 
       <PauseMenu
         isOpen={isPaused}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import CarModel from "@/components/CarModel";
+import CarLabel from "@/components/tour/CarLabel";
 import { CAR_CONFIGS } from "@/lib/tour/carConfig";
 import { getActiveFloors, getCarFloor } from "@/lib/tour/constants";
 
@@ -12,7 +13,7 @@ import { getActiveFloors, getCarFloor } from "@/lib/tour/constants";
  * rendering multiple new meshes simultaneously. Deactivations are instant
  * since hiding is cheap.
  */
-export default function CarExhibits() {
+export default function CarExhibits({ showLabels = false }) {
   const [activeCars, setActiveCars] = useState(() => {
     const floors = getActiveFloors(0);
     return new Set(
@@ -73,6 +74,17 @@ export default function CarExhibits() {
           active={activeCars.has(car.id)}
         />
       ))}
+      {showLabels && (
+        <Suspense fallback={null}>
+          {CAR_CONFIGS.map((car) => (
+            <CarLabel
+              key={`label-${car.id}`}
+              car={car}
+              active={activeCars.has(car.id)}
+            />
+          ))}
+        </Suspense>
+      )}
     </>
   );
 }

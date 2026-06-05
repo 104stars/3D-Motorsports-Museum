@@ -28,7 +28,7 @@ export default function FeaturedExhibits() {
       </div>
 
       {/* Section Heading */}
-      <div className="max-w-7xl mx-auto mb-12">
+      <div id="exhibits" className="max-w-7xl mx-auto mb-12 scroll-mt-28">
         <h2 className="text-5xl md:text-6xl font-light mb-3 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
           {t("title")}
         </h2>
