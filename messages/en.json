@@ -197,7 +197,8 @@
       "loadingAssets": "LOADING ASSETS",
       "initializing": "Initializing environment...",
       "preparingTour": "Preparing your tour",
-      "loadingExhibits": "Loading exhibits..."
+      "loadingExhibits": "Loading exhibits...",
+      "stuckHint": "If loading seems stuck, try reloading the page."
     },
     "freeRoamHud": {
       "pressEsc": "Press",

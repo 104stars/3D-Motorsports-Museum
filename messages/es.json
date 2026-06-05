@@ -197,7 +197,8 @@
       "loadingAssets": "CARGANDO RECURSOS",
       "initializing": "Inicializando entorno...",
       "preparingTour": "Preparando tu recorrido",
-      "loadingExhibits": "Cargando exhibiciones..."
+      "loadingExhibits": "Cargando exhibiciones...",
+      "stuckHint": "Si la carga parece detenida, intenta recargar la página."
     },
     "freeRoamHud": {
       "pressEsc": "Presiona",

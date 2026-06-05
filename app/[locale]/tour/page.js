@@ -258,7 +258,7 @@ function TourPageInner() {
 
             <CarDetectionProvider>
               <Suspense fallback={null}>
-                <CarExhibits />
+                <CarExhibits showLabels={modeSelected === "free"} />
               </Suspense>
               {!isOverlayOpen && !isViewerActive && !isPaused && !showModeSelection && (
                 <CarHoverDetector onDetect={setHoveredCarId} />

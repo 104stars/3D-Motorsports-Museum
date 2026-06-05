@@ -215,9 +215,7 @@ export default function CustomLoader({ onComplete }) {
           </div>
 
           {/* Center/Main Section */}
-          <div className="flex-1 flex items-center justify-center relative">
-             {/* Large background typography or decorative element could go here */}
-          </div>
+          <div className="flex-1 flex items-center justify-center relative" />
 
           {/* Bottom Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end border-t border-white/20 pt-4">
@@ -245,6 +243,10 @@ export default function CustomLoader({ onComplete }) {
               </motion.div>
             </div>
           </div>
+
+          <p className="text-xs md:text-sm text-white/30 font-mono text-center">
+            {t("stuckHint")}
+          </p>
         </motion.div>
       )}
     </AnimatePresence>
