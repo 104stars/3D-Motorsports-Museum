@@ -2,21 +2,38 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import CenterUnderline from "@/components/fancy/text/underline-center"
 import UnderlineToBackground from "@/components/fancy/text/underline-to-background"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { getAvatarThumbUrl } from "@/lib/avatars/defaultAvatars"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogOut } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 export default function Navigation() {
   const t = useTranslations("nav")
   const { user, loading } = useAuth()
+  const router = useRouter()
   const initial = user?.email?.[0]?.toUpperCase() || "U"
   const avatarThumb = getAvatarThumbUrl(user?.user_metadata?.avatar_id)
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/")
+    router.refresh()
+  }
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const hamburgerRef = useRef(null)
@@ -97,7 +114,7 @@ export default function Navigation() {
 
           {/* Right side — auth + language + hamburger */}
           <div className="justify-self-end flex items-center gap-4 h-full">
-            <LanguageSwitcher variant="compact" />
+            <LanguageSwitcher variant="compact" groupLabel={t("languageSwitcher")} />
 
             {!loading && !user && (
               <UnderlineToBackground
@@ -112,18 +129,31 @@ export default function Navigation() {
             )}
 
             {!loading && user && (
-              <Link
-                href="/profile"
-                aria-label={t("viewProfile")}
-                className="rounded-full focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2"
-              >
-                <Avatar className="h-10 w-10 border-2 border-white/20 hover:border-white/40 transition-colors">
-                  {avatarThumb && <AvatarImage src={avatarThumb} alt="" />}
-                  <AvatarFallback className="bg-white/10 text-white font-light text-lg">
-                    {initial}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    aria-label={t("viewProfile")}
+                    className="rounded-full focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2"
+                  >
+                    <Avatar className="h-10 w-10 border-2 border-white/20 hover:border-white/40 transition-colors cursor-pointer">
+                      {avatarThumb && <AvatarImage src={avatarThumb} alt="" />}
+                      <AvatarFallback className="bg-white/10 text-white font-light text-lg">
+                        {initial}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                    {t("logout")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
 
             {/* Hamburger — mobile only */}
@@ -189,7 +219,7 @@ export default function Navigation() {
             </ul>
           </nav>
 
-          <LanguageSwitcher />
+          <LanguageSwitcher groupLabel={t("languageSwitcher")} />
         </div>
       )}
     </header>

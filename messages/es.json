@@ -9,7 +9,9 @@
     "menuOpen": "Abrir menú de navegación",
     "menuClose": "Cerrar menú de navegación",
     "viewProfile": "Ver tu perfil",
-    "skipToContent": "Saltar al contenido principal"
+    "skipToContent": "Saltar al contenido principal",
+    "logout": "Cerrar sesión",
+    "languageSwitcher": "Idioma"
   },
   "footer": {
     "copyright": "© 2025 Museo del Automovilismo. Todos los derechos reservados."
@@ -19,7 +21,8 @@
     "headlineAccent": "Cobran Vida",
     "subtitle": "Experimenta la emoción de las leyendas del automovilismo en un espacio digital interactivo.",
     "ctaTour": "Iniciar recorrido",
-    "ctaLearn": "Más información"
+    "ctaLearn": "Más información",
+    "ctaLearnLabel": "Más información sobre el Museo del Automovilismo"
   },
   "exhibits": {
     "title": "Exhibiciones Destacadas",
@@ -109,7 +112,11 @@
     "unexpectedError": "Ocurrió un error inesperado",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
-    "backToHome": "Volver al inicio"
+    "backToHome": "Volver a la página principal",
+    "avatarOption": "Avatar {name}",
+    "avatarSelected": "Avatar {name}, actualmente seleccionado",
+    "accountCreated": "Cuenta creada con éxito",
+    "formError": "Error en el formulario"
   },
   "meta": {
     "loginTitle": "Iniciar sesión · Museo del Automovilismo",
@@ -182,6 +189,8 @@
       "returnToMuseum": "Volver al Museo",
       "restartTour": "Reiniciar Recorrido",
       "stop": "Parada",
+      "jumpToStop": "Ir a parada",
+      "carList": "Lista de autos",
       "pause": "Pausar",
       "resume": "Reanudar",
       "skip": "Saltar",
@@ -226,7 +235,10 @@
       "previousExhibit": "Ir a la exhibición anterior: {name}",
       "replayStop": "Repetir narración de {name}",
       "toggleMuteNarrator": "Alternar audio del narrador",
-      "viewDetailsFor": "Ver detalles completos de {name}"
+      "viewDetailsFor": "Ver detalles completos de {name}",
+      "jumpToStopMenu": "Ir a una parada del recorrido, actualmente parada {current} de {total}",
+      "goToStop": "Ir a la parada {number}: {name}",
+      "carListMenu": "Abrir lista de autos, actualmente parada {current} de {total}"
     }
   },
   "carInfo": {

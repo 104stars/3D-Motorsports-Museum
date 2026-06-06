@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   Pause,
@@ -9,10 +9,12 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  ChevronUp,
   RotateCcw,
   Volume2,
   VolumeX,
   BookOpen,
+  LayoutList,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useNarratedTour } from "./NarratedTourContext";
@@ -20,6 +22,14 @@ import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function NarratedTourHUD({ onViewDetails }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -42,6 +52,7 @@ export default function NarratedTourHUD({ onViewDetails }) {
     deactivateTour,
     restartTour,
     previousStop,
+    goToStop,
     replayCurrentStop,
     toggleMute,
   } = useNarratedTour();
@@ -157,9 +168,13 @@ export default function NarratedTourHUD({ onViewDetails }) {
             {/* Stop info */}
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
-                  {t("stop")} {currentStopIndex + 1} / {totalStops}
-                </span>
+                <TourStopPicker
+                  currentStopIndex={currentStopIndex}
+                  totalStops={totalStops}
+                  locale={locale}
+                  onSelectStop={goToStop}
+                  className="text-[10px] tracking-widest text-white/40 hover:text-white/60"
+                />
                 {currentCarInfo && (
                   <>
                     <div className="w-px h-3 bg-white/20" />
@@ -196,8 +211,14 @@ export default function NarratedTourHUD({ onViewDetails }) {
           aria-label={tA11y("tourProgress", { current: currentStopIndex + 1, total: totalStops })}
         />
 
-        {/* Right: view details + exit */}
+        {/* Right: car list + view details + exit */}
         <div className="flex items-center gap-2">
+          <CarListDropdown
+            currentStopIndex={currentStopIndex}
+            totalStops={totalStops}
+            locale={locale}
+            onSelectStop={goToStop}
+          />
           {onViewDetails && currentCarInfo && (
             <motion.button
               onClick={() => onViewDetails(currentCarId)}
@@ -299,7 +320,12 @@ export default function NarratedTourHUD({ onViewDetails }) {
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0" aria-live="polite" aria-atomic="true">
                   <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] text-white/[0.5]">
-                    <span>{t("stop")} {currentStopIndex + 1} / {totalStops}</span>
+                    <TourStopPicker
+                      currentStopIndex={currentStopIndex}
+                      totalStops={totalStops}
+                      locale={locale}
+                      onSelectStop={goToStop}
+                    />
                     {currentCarInfo?.category && (
                       <>
                         <span className="h-3.5 w-px bg-white/15" aria-hidden="true" />
@@ -440,6 +466,188 @@ export default function NarratedTourHUD({ onViewDetails }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Shared item used by both TourStopPicker and CarListDropdown
+function StopListItem({ index, totalStops, carId, info, isCurrent, onSelect, tA11y }) {
+  return (
+    <DropdownMenuItem
+      onSelect={onSelect}
+      aria-current={isCurrent ? "true" : undefined}
+      aria-label={tA11y("goToStop", { number: index + 1, name: info?.name ?? carId })}
+      className={cn(
+        "cursor-pointer rounded-lg px-3 py-2 outline-none",
+        "text-white focus:bg-white/10 data-[highlighted]:bg-white/10 data-[highlighted]:text-white",
+        isCurrent && "bg-white/[0.06]",
+      )}
+    >
+      <span className="flex items-center gap-3 w-full min-w-0">
+        {/* Stop number */}
+        <span
+          className="shrink-0 w-5 font-mono text-[10px] tabular-nums text-right text-white/35 select-none leading-none"
+          aria-hidden="true"
+        >
+          {index + 1}
+        </span>
+        {/* Car name + category */}
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="truncate font-serif text-sm italic leading-snug">
+            {info?.name ?? carId}
+          </span>
+          {info?.category && (
+            <span className="font-mono text-[10px] uppercase tracking-wider text-blue-300/70">
+              {info.category}
+            </span>
+          )}
+        </span>
+        {/* Current-stop accent dot */}
+        {isCurrent && (
+          <span className="shrink-0 ml-1 w-1.5 h-1.5 rounded-full bg-blue-400/80" aria-hidden="true" />
+        )}
+      </span>
+    </DropdownMenuItem>
+  );
+}
+
+// Shared dropdown content styles
+const DROPDOWN_CONTENT_CLASS = cn(
+  "z-[80] min-w-[15rem] max-h-[min(55vh,22rem)] overflow-y-auto",
+  "rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl p-1.5",
+  "text-white shadow-[0_16px_40px_rgba(0,0,0,0.5)]",
+);
+
+function focusCurrentOnOpen(e) {
+  e.preventDefault();
+  const current = e.currentTarget?.querySelector('[aria-current="true"]');
+  if (current) {
+    current.focus();
+    current.scrollIntoView({ block: "nearest" });
+  }
+}
+
+function TourStopPicker({ currentStopIndex, totalStops, locale, onSelectStop, className }) {
+  const t = useTranslations("tour.hud");
+  const tA11y = useTranslations("tour.a11y");
+
+  const stops = useMemo(
+    () =>
+      NARRATION_ROUTE.map((carId, index) => ({
+        index,
+        carId,
+        info: getCarInfo(carId, locale),
+      })),
+    [locale],
+  );
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "inline-flex items-center gap-1 rounded-md font-mono uppercase",
+            "hover:text-white/80 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+            "transition-colors",
+            className,
+          )}
+          aria-label={tA11y("jumpToStopMenu", { current: currentStopIndex + 1, total: totalStops })}
+          aria-haspopup="menu"
+        >
+          <span aria-hidden="true">
+            {t("stop")} {currentStopIndex + 1} / {totalStops}
+          </span>
+          <ChevronUp className="w-3 h-3 shrink-0 opacity-70" strokeWidth={2} aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side="top"
+        align="start"
+        sideOffset={8}
+        aria-label={t("jumpToStop")}
+        onOpenAutoFocus={focusCurrentOnOpen}
+        className={DROPDOWN_CONTENT_CLASS}
+      >
+        <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-widest text-white/40" aria-hidden="true">
+          {t("jumpToStop")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-white/10" />
+        {stops.map(({ index, carId, info }) => (
+          <StopListItem
+            key={carId}
+            index={index}
+            totalStops={totalStops}
+            carId={carId}
+            info={info}
+            isCurrent={index === currentStopIndex}
+            onSelect={() => onSelectStop(index)}
+            tA11y={tA11y}
+          />
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function CarListDropdown({ currentStopIndex, totalStops, locale, onSelectStop }) {
+  const t = useTranslations("tour.hud");
+  const tA11y = useTranslations("tour.a11y");
+
+  const stops = useMemo(
+    () =>
+      NARRATION_ROUTE.map((carId, index) => ({
+        index,
+        carId,
+        info: getCarInfo(carId, locale),
+      })),
+    [locale],
+  );
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <motion.button
+          type="button"
+          className={cn(
+            "pointer-events-auto p-3 rounded-full",
+            "bg-black/40 backdrop-blur-xl text-white/70 hover:text-white hover:bg-black/[0.55]",
+            "border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors duration-200",
+            "focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+          )}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={tA11y("carListMenu", { current: currentStopIndex + 1, total: totalStops })}
+          aria-haspopup="menu"
+        >
+          <LayoutList className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
+        </motion.button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side="bottom"
+        align="end"
+        sideOffset={8}
+        aria-label={t("carList")}
+        onOpenAutoFocus={focusCurrentOnOpen}
+        className={DROPDOWN_CONTENT_CLASS}
+      >
+        <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-widest text-white/40" aria-hidden="true">
+          {t("carList")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-white/10" />
+        {stops.map(({ index, carId, info }) => (
+          <StopListItem
+            key={carId}
+            index={index}
+            totalStops={totalStops}
+            carId={carId}
+            info={info}
+            isCurrent={index === currentStopIndex}
+            onSelect={() => onSelectStop(index)}
+            tA11y={tA11y}
+          />
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

@@ -99,7 +99,7 @@ export default function SignupForm({ onToggle }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div className="space-y-2">
         <Label htmlFor="signup-email" className="text-neutral-300 font-light text-sm">{t("email")}</Label>
         <Input
@@ -129,10 +129,11 @@ export default function SignupForm({ onToggle }) {
           required
           aria-required="true"
           aria-invalid={!!error}
-          aria-describedby={error ? "signup-error" : undefined}
+          aria-describedby={error ? "signup-error" : "signup-password-hint"}
           className="h-12 bg-white/5 border-white/10 text-white placeholder:text-neutral-500 focus:border-white/25 focus:ring-white/20 rounded-xl transition-colors"
           disabled={loading}
         />
+        <span id="signup-password-hint" className="sr-only">{t("passwordTooShort")}</span>
       </div>
 
       <div className="space-y-2">
@@ -170,7 +171,7 @@ export default function SignupForm({ onToggle }) {
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
-                aria-label={avatar.name}
+                aria-label={isSelected ? t("avatarSelected", { name: avatar.name }) : t("avatarOption", { name: avatar.name })}
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setSelectedAvatar(avatar.id)}
                 disabled={loading}
@@ -189,7 +190,7 @@ export default function SignupForm({ onToggle }) {
                     draggable={false}
                   />
                 </div>
-                <span className={`text-[11px] font-light truncate w-full text-center transition-colors ${
+                <span aria-hidden="true" className={`text-[11px] font-light truncate w-full text-center transition-colors ${
                   isSelected ? "text-white" : "text-neutral-500 group-hover:text-neutral-400"
                 }`}>
                   {avatar.name}
@@ -233,4 +234,3 @@ export default function SignupForm({ onToggle }) {
     </form>
   )
 }
-

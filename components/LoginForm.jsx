@@ -42,7 +42,7 @@ export default function LoginForm({ onToggle }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div className="space-y-2">
         <Label htmlFor="email" className="text-neutral-300 font-light text-sm">{t("email")}</Label>
         <Input
@@ -111,4 +111,3 @@ export default function LoginForm({ onToggle }) {
     </form>
   )
 }
-

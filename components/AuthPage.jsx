@@ -33,6 +33,7 @@ export default function AuthPage() {
       <main
         id="main-content"
         tabIndex={-1}
+        aria-labelledby="auth-heading"
         className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate outline-none"
       >
         {/* Back button */}
@@ -48,6 +49,7 @@ export default function AuthPage() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             aria-hidden="true"
+            focusable="false"
           >
             <path
               strokeLinecap="round"
@@ -65,8 +67,8 @@ export default function AuthPage() {
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" />
 
         <div className="w-full max-w-md relative z-20">
-          <div className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
+          <div className="mb-10" aria-live="polite" aria-atomic="true">
+            <h1 id="auth-heading" className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
               {isLogin ? t("welcomeBack") : t("createAccount")}
             </h1>
             <p className="text-neutral-400 text-lg font-light">
