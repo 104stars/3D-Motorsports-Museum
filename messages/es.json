@@ -9,7 +9,9 @@
     "menuOpen": "Abrir menú de navegación",
     "menuClose": "Cerrar menú de navegación",
     "viewProfile": "Ver tu perfil",
-    "skipToContent": "Saltar al contenido principal"
+    "skipToContent": "Saltar al contenido principal",
+    "logout": "Cerrar sesión",
+    "languageSwitcher": "Idioma"
   },
   "footer": {
     "copyright": "© 2025 Museo del Automovilismo. Todos los derechos reservados."
@@ -19,7 +21,8 @@
     "headlineAccent": "Cobran Vida",
     "subtitle": "Experimenta la emoción de las leyendas del automovilismo en un espacio digital interactivo.",
     "ctaTour": "Iniciar recorrido",
-    "ctaLearn": "Más información"
+    "ctaLearn": "Más información",
+    "ctaLearnLabel": "Más información sobre el Museo del Automovilismo"
   },
   "exhibits": {
     "title": "Exhibiciones Destacadas",
@@ -106,7 +109,12 @@
     "confirmationSent": "Te hemos enviado un enlace de confirmación para completar tu registro.",
     "passwordMismatch": "Las contraseñas no coinciden",
     "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
-    "unexpectedError": "Ocurrió un error inesperado"
+    "unexpectedError": "Ocurrió un error inesperado",
+    "backToHome": "Volver a la página principal",
+    "avatarOption": "Avatar {name}",
+    "avatarSelected": "Avatar {name}, actualmente seleccionado",
+    "accountCreated": "Cuenta creada con éxito",
+    "formError": "Error en el formulario"
   },
   "tour": {
     "modeSelection": {

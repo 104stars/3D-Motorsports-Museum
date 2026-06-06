@@ -9,7 +9,9 @@
     "menuOpen": "Open navigation menu",
     "menuClose": "Close navigation menu",
     "viewProfile": "View your profile",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "logout": "Log out",
+    "languageSwitcher": "Language"
   },
   "footer": {
     "copyright": "© 2025 Motorsports Museum. All rights reserved."
@@ -19,7 +21,8 @@
     "headlineAccent": "Come to Life",
     "subtitle": "Experience the thrill of motorsport legends inside an interactive digital space.",
     "ctaTour": "Start tour",
-    "ctaLearn": "Learn more"
+    "ctaLearn": "Learn more",
+    "ctaLearnLabel": "Learn more about the Motorsports Museum"
   },
   "exhibits": {
     "title": "Featured Exhibits",
@@ -106,7 +109,12 @@
     "confirmationSent": "We've sent you a confirmation link to complete your registration.",
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 6 characters",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "backToHome": "Go back to home page",
+    "avatarOption": "{name} avatar",
+    "avatarSelected": "{name} avatar, currently selected",
+    "accountCreated": "Account created successfully",
+    "formError": "Form error"
   },
   "tour": {
     "modeSelection": {

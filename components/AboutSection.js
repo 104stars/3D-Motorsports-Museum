@@ -81,6 +81,7 @@ export default function AboutSection() {
   return (
     <section
       id="about"
+      aria-labelledby="about-heading"
       className="relative isolate overflow-hidden bg-neutral-950 pt-32 pb-40 px-6 md:px-12 lg:px-20 scroll-mt-28"
     >
       {/* Top blend gradient from ExploreInvitation */}
@@ -102,7 +103,7 @@ export default function AboutSection() {
         <p className="text-neutral-400 text-sm tracking-[0.2em] uppercase font-light mb-4">
           {t("eyebrow")}
         </p>
-        <h2 className="text-5xl md:text-6xl font-light mb-4 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
+        <h2 id="about-heading" className="text-5xl md:text-6xl font-light mb-4 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
           {t("titlePre")}
           <span className="font-serif italic">{t("titleAccent")}</span>
         </h2>

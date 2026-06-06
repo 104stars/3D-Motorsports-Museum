@@ -13,7 +13,11 @@ export default function FeaturedExhibits() {
   ];
 
   return (
-    <section className="relative isolate overflow-hidden bg-neutral-950 pt-52 pb-24 px-6 md:px-12 lg:px-20">
+    <section
+      id="exhibits"
+      aria-labelledby="exhibits-heading"
+      className="relative isolate overflow-hidden bg-neutral-950 pt-52 pb-24 px-6 md:px-12 lg:px-20"
+    >
       {/* Top blend gradient into hero */}
       <div
         aria-hidden
@@ -28,8 +32,8 @@ export default function FeaturedExhibits() {
       </div>
 
       {/* Section Heading */}
-      <div id="exhibits" className="max-w-7xl mx-auto mb-12 scroll-mt-28">
-        <h2 className="text-5xl md:text-6xl font-light mb-3 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
+      <div className="max-w-7xl mx-auto mb-12 scroll-mt-28">
+        <h2 id="exhibits-heading" className="text-5xl md:text-6xl font-light mb-3 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
           {t("title")}
         </h2>
 

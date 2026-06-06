@@ -62,7 +62,7 @@ export default function SignupForm({ onToggle }) {
 
   if (success) {
     return (
-      <div className="py-8">
+      <div role="status" aria-live="polite" aria-atomic="true" className="py-8">
         <h2 className="text-2xl font-light mb-3 text-white">{t("checkEmail")}</h2>
         <p className="text-neutral-400 font-light">
           {t("confirmationSent")}
@@ -72,16 +72,20 @@ export default function SignupForm({ onToggle }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div className="space-y-2">
         <Label htmlFor="signup-email" className="text-neutral-300 font-light text-sm">{t("email")}</Label>
         <Input
           id="signup-email"
           type="email"
+          autoComplete="email"
           placeholder={t("emailPlaceholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          aria-required="true"
+          aria-invalid={!!error}
+          aria-describedby={error ? "signup-error" : undefined}
           className="h-12 bg-white/5 border-white/10 text-white placeholder:text-neutral-500 focus:border-white/25 focus:ring-white/20 rounded-xl transition-colors"
           disabled={loading}
         />
@@ -92,13 +96,18 @@ export default function SignupForm({ onToggle }) {
         <Input
           id="signup-password"
           type="password"
+          autoComplete="new-password"
           placeholder={t("passwordPlaceholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          aria-required="true"
+          aria-invalid={!!error}
+          aria-describedby={error ? "signup-error" : "signup-password-hint"}
           className="h-12 bg-white/5 border-white/10 text-white placeholder:text-neutral-500 focus:border-white/25 focus:ring-white/20 rounded-xl transition-colors"
           disabled={loading}
         />
+        <span id="signup-password-hint" className="sr-only">{t("passwordTooShort")}</span>
       </div>
 
       <div className="space-y-2">
@@ -106,18 +115,22 @@ export default function SignupForm({ onToggle }) {
         <Input
           id="confirm-password"
           type="password"
+          autoComplete="new-password"
           placeholder={t("confirmPasswordPlaceholder")}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          aria-required="true"
+          aria-invalid={!!error}
+          aria-describedby={error ? "signup-error" : undefined}
           className="h-12 bg-white/5 border-white/10 text-white placeholder:text-neutral-500 focus:border-white/25 focus:ring-white/20 rounded-xl transition-colors"
           disabled={loading}
         />
       </div>
 
       {/* Avatar selection */}
-      <div className="space-y-3">
-        <Label className="text-neutral-300 font-light text-sm">{t("chooseAvatar")}</Label>
+      <div className="space-y-3" role="group" aria-labelledby="avatar-group-label">
+        <Label id="avatar-group-label" className="text-neutral-300 font-light text-sm">{t("chooseAvatar")}</Label>
         <div className="grid grid-cols-5 gap-3">
           {DEFAULT_AVATARS.map((avatar) => {
             const isSelected = selectedAvatar === avatar.id
@@ -127,6 +140,8 @@ export default function SignupForm({ onToggle }) {
                 type="button"
                 onClick={() => setSelectedAvatar(avatar.id)}
                 disabled={loading}
+                aria-pressed={isSelected}
+                aria-label={isSelected ? t("avatarSelected", { name: avatar.name }) : t("avatarOption", { name: avatar.name })}
                 className={`group flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? "bg-white/10 ring-2 ring-white shadow-[0_0_12px_rgba(255,255,255,0.15)]"
@@ -136,12 +151,13 @@ export default function SignupForm({ onToggle }) {
                 <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-white/5">
                   <img
                     src={avatar.thumbUrl}
-                    alt={avatar.name}
+                    alt=""
+                    aria-hidden="true"
                     className="w-full h-full object-cover"
                     draggable={false}
                   />
                 </div>
-                <span className={`text-[11px] font-light truncate w-full text-center transition-colors ${
+                <span aria-hidden="true" className={`text-[11px] font-light truncate w-full text-center transition-colors ${
                   isSelected ? "text-white" : "text-neutral-500 group-hover:text-neutral-400"
                 }`}>
                   {avatar.name}
@@ -153,11 +169,19 @@ export default function SignupForm({ onToggle }) {
       </div>
 
       {error && (
-        <div className="text-red-400 text-sm text-center font-light">{error}</div>
+        <div
+          id="signup-error"
+          role="alert"
+          aria-live="assertive"
+          className="text-red-400 text-sm text-center font-light"
+        >
+          {error}
+        </div>
       )}
 
       <Button 
-        type="submit" 
+        type="submit"
+        aria-busy={loading}
         className="w-full h-12 cursor-pointer text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed" 
         disabled={loading}
       >
@@ -169,7 +193,7 @@ export default function SignupForm({ onToggle }) {
         <button 
           type="button" 
           onClick={onToggle} 
-          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer" 
+          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer underline-offset-2 hover:underline" 
           disabled={loading}
         >
           {t("signIn")}

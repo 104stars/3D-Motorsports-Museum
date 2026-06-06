@@ -30,10 +30,14 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex bg-neutral-950">
       {/* Left side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate">
+      <main
+        className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate"
+        aria-labelledby="auth-heading"
+      >
         {/* Back button */}
         <Link
           href="/"
+          aria-label={t("backToHome")}
           className="absolute top-8 left-8 z-30 text-white/80 hover:text-white transition-colors"
         >
           <svg
@@ -42,6 +46,8 @@ export default function AuthPage() {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            aria-hidden="true"
+            focusable="false"
           >
             <path
               strokeLinecap="round"
@@ -52,15 +58,15 @@ export default function AuthPage() {
           </svg>
         </Link>
 
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0" aria-hidden="true">
           <SilkBackground speed={3.3} scale={0.8} rotation={0.2} noiseIntensity={0.8} color="#212121" />
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" aria-hidden="true" />
 
         <div className="w-full max-w-md relative z-20">
-          <div className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
+          <div className="mb-10" aria-live="polite" aria-atomic="true">
+            <h1 id="auth-heading" className="text-4xl md:text-5xl font-light mb-3 text-white font-sans">
               {isLogin ? t("welcomeBack") : t("createAccount")}
             </h1>
             <p className="text-neutral-400 text-lg font-light">
@@ -80,15 +86,15 @@ export default function AuthPage() {
         </div>
 
         {isAnimating && (
-          <div className="absolute inset-0 bg-neutral-900 z-20 wormCover" />
+          <div className="absolute inset-0 bg-neutral-900 z-20 wormCover" aria-hidden="true" />
         )}
-      </div>
+      </main>
 
-      {/* Right side - Image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
+      {/* Right side - Decorative image */}
+      <div className="hidden lg:block lg:w-1/2 relative" aria-hidden="true">
         <img
           src="/login.webp"
-          alt="Motorsport racing"
+          alt=""
           className="w-full h-full object-cover"
         />
       </div>

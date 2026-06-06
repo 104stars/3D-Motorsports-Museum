@@ -18,7 +18,10 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black">
+    <section
+      className="relative h-screen w-full overflow-hidden bg-black"
+      aria-labelledby="hero-heading"
+    >
       {/* Background Video — decorative, no content value */}
       <video
         ref={videoRef}
@@ -38,7 +41,7 @@ export default function HeroSection() {
 
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col justify-end h-full text-left pl-30 pb-26">
-        <h1 className="text-4xl md:text-5xl font-sans italic font-light text-white mb-6 max-w-xl leading-tight">
+        <h1 id="hero-heading" className="text-4xl md:text-5xl font-sans italic font-light text-white mb-6 max-w-xl leading-tight">
           {t("headlinePre")}
           <span className="font-serif italic">{t("headlineAccent")}</span>
         </h1>
@@ -68,6 +71,7 @@ export default function HeroSection() {
           >
             <a
               href="#about"
+              aria-label={t("ctaLearnLabel")}
               onClick={(e) => {
                 e.preventDefault();
                 const el = document.getElementById("about");

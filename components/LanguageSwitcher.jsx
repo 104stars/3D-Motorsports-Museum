@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
 
-export default function LanguageSwitcher({ className, variant = "default" }) {
+export default function LanguageSwitcher({ className, variant = "default", groupLabel = "Language" }) {
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -22,6 +22,8 @@ export default function LanguageSwitcher({ className, variant = "default" }) {
 
   return (
     <div
+      role="group"
+      aria-label={groupLabel}
       className={cn(
         "flex items-center rounded-full border transition-opacity",
         isCompact
