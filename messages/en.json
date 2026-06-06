@@ -189,6 +189,7 @@
       "returnToMuseum": "Return to Museum",
       "restartTour": "Restart Tour",
       "stop": "Stop",
+      "jumpToStop": "Jump to stop",
       "pause": "Pause",
       "resume": "Resume",
       "skip": "Skip",
@@ -233,7 +234,9 @@
       "previousExhibit": "Go to previous exhibit: {name}",
       "replayStop": "Replay narration for {name}",
       "toggleMuteNarrator": "Toggle narrator audio",
-      "viewDetailsFor": "View full details for {name}"
+      "viewDetailsFor": "View full details for {name}",
+      "jumpToStopMenu": "Jump to tour stop, currently stop {current} of {total}",
+      "goToStop": "Go to stop {number}: {name}"
     }
   },
   "carInfo": {

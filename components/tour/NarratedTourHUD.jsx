@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   Pause,
@@ -9,6 +9,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  ChevronUp,
   RotateCcw,
   Volume2,
   VolumeX,
@@ -20,6 +21,15 @@ import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
 import { getCarInfo } from "@/lib/tour/carInfo";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function NarratedTourHUD({ onViewDetails }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -42,6 +52,7 @@ export default function NarratedTourHUD({ onViewDetails }) {
     deactivateTour,
     restartTour,
     previousStop,
+    goToStop,
     replayCurrentStop,
     toggleMute,
   } = useNarratedTour();
@@ -157,9 +168,13 @@ export default function NarratedTourHUD({ onViewDetails }) {
             {/* Stop info */}
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
-                  {t("stop")} {currentStopIndex + 1} / {totalStops}
-                </span>
+                <TourStopPicker
+                  currentStopIndex={currentStopIndex}
+                  totalStops={totalStops}
+                  locale={locale}
+                  onSelectStop={goToStop}
+                  className="text-[10px] tracking-widest text-white/40 hover:text-white/60"
+                />
                 {currentCarInfo && (
                   <>
                     <div className="w-px h-3 bg-white/20" />
@@ -299,7 +314,12 @@ export default function NarratedTourHUD({ onViewDetails }) {
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0" aria-live="polite" aria-atomic="true">
                   <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] text-white/[0.5]">
-                    <span>{t("stop")} {currentStopIndex + 1} / {totalStops}</span>
+                    <TourStopPicker
+                      currentStopIndex={currentStopIndex}
+                      totalStops={totalStops}
+                      locale={locale}
+                      onSelectStop={goToStop}
+                    />
                     {currentCarInfo?.category && (
                       <>
                         <span className="h-3.5 w-px bg-white/15" aria-hidden="true" />
@@ -440,6 +460,94 @@ export default function NarratedTourHUD({ onViewDetails }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function TourStopPicker({ currentStopIndex, totalStops, locale, onSelectStop, className }) {
+  const t = useTranslations("tour.hud");
+  const tA11y = useTranslations("tour.a11y");
+
+  const stops = useMemo(
+    () =>
+      NARRATION_ROUTE.map((carId, index) => ({
+        index,
+        carId,
+        info: getCarInfo(carId, locale),
+      })),
+    [locale],
+  );
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "inline-flex items-center gap-1 rounded-md font-mono uppercase",
+            "hover:text-white/80 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none",
+            "transition-colors",
+            className,
+          )}
+          aria-label={tA11y("jumpToStopMenu", {
+            current: currentStopIndex + 1,
+            total: totalStops,
+          })}
+        >
+          <span>
+            {t("stop")} {currentStopIndex + 1} / {totalStops}
+          </span>
+          <ChevronUp className="w-3 h-3 shrink-0 opacity-70" strokeWidth={2} aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side="top"
+        align="start"
+        className={cn(
+          "z-[80] min-w-[14rem] max-h-[min(50vh,20rem)] overflow-y-auto",
+          "rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl p-1.5",
+          "text-white shadow-[0_16px_40px_rgba(0,0,0,0.5)]",
+        )}
+      >
+        <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-widest text-white/40">
+          {t("jumpToStop")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuRadioGroup
+          value={String(currentStopIndex)}
+          onValueChange={(value) => onSelectStop(Number(value))}
+        >
+          {stops.map(({ index, carId, info }) => (
+            <DropdownMenuRadioItem
+              key={carId}
+              value={String(index)}
+              aria-label={tA11y("goToStop", {
+                number: index + 1,
+                name: info?.name ?? carId,
+              })}
+              className={cn(
+                "cursor-pointer rounded-lg px-2 py-2",
+                "text-white focus:bg-white/10 focus:text-white",
+                "[&_svg]:text-blue-400",
+              )}
+            >
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-white/40">
+                  {t("stop")} {index + 1}
+                </span>
+                <span className="truncate font-serif text-sm italic">
+                  {info?.name ?? carId}
+                </span>
+                {info?.category && (
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-blue-300/80">
+                    {info.category}
+                  </span>
+                )}
+              </span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

@@ -189,6 +189,7 @@
       "returnToMuseum": "Volver al Museo",
       "restartTour": "Reiniciar Recorrido",
       "stop": "Parada",
+      "jumpToStop": "Ir a parada",
       "pause": "Pausar",
       "resume": "Reanudar",
       "skip": "Saltar",
@@ -233,7 +234,9 @@
       "previousExhibit": "Ir a la exhibición anterior: {name}",
       "replayStop": "Repetir narración de {name}",
       "toggleMuteNarrator": "Alternar audio del narrador",
-      "viewDetailsFor": "Ver detalles completos de {name}"
+      "viewDetailsFor": "Ver detalles completos de {name}",
+      "jumpToStopMenu": "Ir a una parada del recorrido, actualmente parada {current} de {total}",
+      "goToStop": "Ir a la parada {number}: {name}"
     }
   },
   "carInfo": {

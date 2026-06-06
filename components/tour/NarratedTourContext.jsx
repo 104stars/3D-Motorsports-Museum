@@ -202,6 +202,19 @@ export function NarratedTourProvider({ children }) {
     startNarrationForStop(prev);
   }, [currentStopIndex, startNarrationForStop]);
 
+  const goToStop = useCallback(
+    (stopIndex) => {
+      if (stopIndex < 0 || stopIndex >= totalStops) return;
+      if (stopIndex === currentStopIndex) return;
+      engineRef.current?.stop();
+      setCurrentStopIndex(stopIndex);
+      prefetchStop(stopIndex - 1);
+      prefetchStop(stopIndex + 1);
+      startNarrationForStop(stopIndex);
+    },
+    [currentStopIndex, totalStops, startNarrationForStop],
+  );
+
   const replayCurrentStop = useCallback(() => {
     engineRef.current?.stop();
     startNarrationForStop(currentStopIndex);
@@ -261,6 +274,7 @@ export function NarratedTourProvider({ children }) {
       beginFirstStop,
       restartTour,
       previousStop,
+      goToStop,
       replayCurrentStop,
       toggleMute,
     }),
@@ -285,6 +299,7 @@ export function NarratedTourProvider({ children }) {
       beginFirstStop,
       restartTour,
       previousStop,
+      goToStop,
       replayCurrentStop,
       toggleMute,
     ],
