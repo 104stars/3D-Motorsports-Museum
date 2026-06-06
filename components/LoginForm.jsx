@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/PasswordInput"
 
 export default function LoginForm({ onToggle }) {
   const t = useTranslations("auth")
@@ -62,9 +63,8 @@ export default function LoginForm({ onToggle }) {
 
       <div className="space-y-2">
         <Label htmlFor="password" className="text-neutral-300 font-light text-sm">{t("password")}</Label>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="current-password"
           placeholder={t("passwordPlaceholder")}
           value={password}
@@ -78,21 +78,20 @@ export default function LoginForm({ onToggle }) {
         />
       </div>
 
-      {error && (
-        <div
-          id="login-error"
-          role="alert"
-          aria-live="assertive"
-          className="text-red-400 text-sm text-center font-light"
-        >
-          {error}
-        </div>
-      )}
+      <div
+        id="login-error"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        className="text-red-400 text-sm text-center font-light empty:hidden"
+      >
+        {error}
+      </div>
 
-      <Button 
+      <Button
         type="submit"
         aria-busy={loading}
-        className="w-full cursor-pointer h-12 text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed" 
+        className="w-full cursor-pointer h-12 text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={loading}
       >
         {loading ? t("signingIn") : t("signIn")}
@@ -100,10 +99,10 @@ export default function LoginForm({ onToggle }) {
 
       <p className="text-center text-sm text-neutral-400 font-light">
         {t("noAccount") + " "}
-        <button 
-          type="button" 
-          onClick={onToggle} 
-          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer underline-offset-2 hover:underline" 
+        <button
+          type="button"
+          onClick={onToggle}
+          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2"
           disabled={loading}
         >
           {t("signUp")}
@@ -112,4 +111,3 @@ export default function LoginForm({ onToggle }) {
     </form>
   )
 }
-

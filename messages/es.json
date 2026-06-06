@@ -110,11 +110,17 @@
     "passwordMismatch": "Las contraseñas no coinciden",
     "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
     "unexpectedError": "Ocurrió un error inesperado",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
     "backToHome": "Volver a la página principal",
     "avatarOption": "Avatar {name}",
     "avatarSelected": "Avatar {name}, actualmente seleccionado",
     "accountCreated": "Cuenta creada con éxito",
     "formError": "Error en el formulario"
+  },
+  "meta": {
+    "loginTitle": "Iniciar sesión · Museo del Automovilismo",
+    "signupTitle": "Crear cuenta · Museo del Automovilismo"
   },
   "tour": {
     "modeSelection": {

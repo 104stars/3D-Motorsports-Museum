@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from 'next/navigation'
 import { useTranslations } from "next-intl"
 import { createClient } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/PasswordInput"
 import { DEFAULT_AVATARS } from "@/lib/avatars/defaultAvatars"
 
 export default function SignupForm({ onToggle }) {
@@ -20,6 +21,20 @@ export default function SignupForm({ onToggle }) {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const successHeadingRef = useRef(null)
+  const avatarRefs = useRef([])
+
+  const handleAvatarKeyDown = (e) => {
+    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"]
+    if (!keys.includes(e.key)) return
+    e.preventDefault()
+    const currentIndex = DEFAULT_AVATARS.findIndex((a) => a.id === selectedAvatar)
+    const forward = e.key === "ArrowRight" || e.key === "ArrowDown"
+    const nextIndex =
+      (currentIndex + (forward ? 1 : -1) + DEFAULT_AVATARS.length) % DEFAULT_AVATARS.length
+    setSelectedAvatar(DEFAULT_AVATARS[nextIndex].id)
+    avatarRefs.current[nextIndex]?.focus()
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -60,10 +75,22 @@ export default function SignupForm({ onToggle }) {
     }
   }
 
+  useEffect(() => {
+    if (success) {
+      successHeadingRef.current?.focus()
+    }
+  }, [success])
+
   if (success) {
     return (
-      <div role="status" aria-live="polite" aria-atomic="true" className="py-8">
-        <h2 className="text-2xl font-light mb-3 text-white">{t("checkEmail")}</h2>
+      <div className="py-8" role="status" aria-live="polite" aria-atomic="true">
+        <h2
+          ref={successHeadingRef}
+          tabIndex={-1}
+          className="text-2xl font-light mb-3 text-white outline-none"
+        >
+          {t("checkEmail")}
+        </h2>
         <p className="text-neutral-400 font-light">
           {t("confirmationSent")}
         </p>
@@ -93,9 +120,8 @@ export default function SignupForm({ onToggle }) {
 
       <div className="space-y-2">
         <Label htmlFor="signup-password" className="text-neutral-300 font-light text-sm">{t("password")}</Label>
-        <Input
+        <PasswordInput
           id="signup-password"
-          type="password"
           autoComplete="new-password"
           placeholder={t("passwordPlaceholder")}
           value={password}
@@ -112,9 +138,8 @@ export default function SignupForm({ onToggle }) {
 
       <div className="space-y-2">
         <Label htmlFor="confirm-password" className="text-neutral-300 font-light text-sm">{t("confirmPassword")}</Label>
-        <Input
+        <PasswordInput
           id="confirm-password"
-          type="password"
           autoComplete="new-password"
           placeholder={t("confirmPasswordPlaceholder")}
           value={confirmPassword}
@@ -129,20 +154,28 @@ export default function SignupForm({ onToggle }) {
       </div>
 
       {/* Avatar selection */}
-      <div className="space-y-3" role="group" aria-labelledby="avatar-group-label">
-        <Label id="avatar-group-label" className="text-neutral-300 font-light text-sm">{t("chooseAvatar")}</Label>
-        <div className="grid grid-cols-5 gap-3">
-          {DEFAULT_AVATARS.map((avatar) => {
+      <div className="space-y-3">
+        <span id="avatar-group-label" className="block text-neutral-300 font-light text-sm">{t("chooseAvatar")}</span>
+        <div
+          role="radiogroup"
+          aria-labelledby="avatar-group-label"
+          onKeyDown={handleAvatarKeyDown}
+          className="grid grid-cols-5 gap-3"
+        >
+          {DEFAULT_AVATARS.map((avatar, index) => {
             const isSelected = selectedAvatar === avatar.id
             return (
               <button
                 key={avatar.id}
+                ref={(el) => (avatarRefs.current[index] = el)}
                 type="button"
+                role="radio"
+                aria-checked={isSelected}
+                aria-label={isSelected ? t("avatarSelected", { name: avatar.name }) : t("avatarOption", { name: avatar.name })}
+                tabIndex={isSelected ? 0 : -1}
                 onClick={() => setSelectedAvatar(avatar.id)}
                 disabled={loading}
-                aria-pressed={isSelected}
-                aria-label={isSelected ? t("avatarSelected", { name: avatar.name }) : t("avatarOption", { name: avatar.name })}
-                className={`group flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all duration-200 cursor-pointer ${
+                className={`group flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2 ${
                   isSelected
                     ? "bg-white/10 ring-2 ring-white shadow-[0_0_12px_rgba(255,255,255,0.15)]"
                     : "bg-white/[0.03] hover:bg-white/[0.07] ring-1 ring-white/10 hover:ring-white/20"
@@ -168,21 +201,20 @@ export default function SignupForm({ onToggle }) {
         </div>
       </div>
 
-      {error && (
-        <div
-          id="signup-error"
-          role="alert"
-          aria-live="assertive"
-          className="text-red-400 text-sm text-center font-light"
-        >
-          {error}
-        </div>
-      )}
+      <div
+        id="signup-error"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        className="text-red-400 text-sm text-center font-light empty:hidden"
+      >
+        {error}
+      </div>
 
-      <Button 
+      <Button
         type="submit"
         aria-busy={loading}
-        className="w-full h-12 cursor-pointer text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed" 
+        className="w-full h-12 cursor-pointer text-base font-semibold tracking-wide bg-white text-neutral-950 rounded-full shadow-[0_18px_45px_-25px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_24px_55px_-25px_rgba(255,255,255,0.9)] disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={loading}
       >
         {loading ? t("creatingAccount") : t("createAccountBtn")}
@@ -190,10 +222,10 @@ export default function SignupForm({ onToggle }) {
 
       <p className="text-center text-sm text-neutral-400 font-light">
         {t("hasAccount")}{" "}
-        <button 
-          type="button" 
-          onClick={onToggle} 
-          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer underline-offset-2 hover:underline" 
+        <button
+          type="button"
+          onClick={onToggle}
+          className="text-white hover:text-neutral-200 font-normal transition-colors cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2"
           disabled={loading}
         >
           {t("signIn")}
@@ -202,4 +234,3 @@ export default function SignupForm({ onToggle }) {
     </form>
   )
 }
-

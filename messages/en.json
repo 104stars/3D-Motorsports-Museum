@@ -110,11 +110,17 @@
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 6 characters",
     "unexpectedError": "An unexpected error occurred",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "backToHome": "Go back to home page",
     "avatarOption": "{name} avatar",
     "avatarSelected": "{name} avatar, currently selected",
     "accountCreated": "Account created successfully",
     "formError": "Form error"
+  },
+  "meta": {
+    "loginTitle": "Sign in · Motorsports Museum",
+    "signupTitle": "Create account · Motorsports Museum"
   },
   "tour": {
     "modeSelection": {

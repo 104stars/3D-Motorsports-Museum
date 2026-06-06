@@ -31,14 +31,16 @@ export default function AuthPage() {
     <div className="min-h-screen flex bg-neutral-950">
       {/* Left side - Form */}
       <main
-        className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate"
+        id="main-content"
+        tabIndex={-1}
         aria-labelledby="auth-heading"
+        className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden isolate outline-none"
       >
         {/* Back button */}
         <Link
           href="/"
           aria-label={t("backToHome")}
-          className="absolute top-8 left-8 z-30 text-white/80 hover:text-white transition-colors"
+          className="absolute top-8 left-8 z-30 text-white/80 hover:text-white transition-colors rounded-sm focus-visible:outline-2 focus-visible:outline-white/70 focus-visible:outline-offset-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -58,11 +60,11 @@ export default function AuthPage() {
           </svg>
         </Link>
 
-        <div className="absolute inset-0 z-0" aria-hidden="true">
+        <div aria-hidden="true" className="absolute inset-0 z-0">
           <SilkBackground speed={3.3} scale={0.8} rotation={0.2} noiseIntensity={0.8} color="#212121" />
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" aria-hidden="true" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-neutral-950/40 via-neutral-950/30 to-neutral-950/20 z-10" />
 
         <div className="w-full max-w-md relative z-20">
           <div className="mb-10" aria-live="polite" aria-atomic="true">
@@ -86,12 +88,12 @@ export default function AuthPage() {
         </div>
 
         {isAnimating && (
-          <div className="absolute inset-0 bg-neutral-900 z-20 wormCover" aria-hidden="true" />
+          <div aria-hidden="true" className="absolute inset-0 bg-neutral-900 z-20 wormCover" />
         )}
       </main>
 
-      {/* Right side - Decorative image */}
-      <div className="hidden lg:block lg:w-1/2 relative" aria-hidden="true">
+      {/* Right side - Image (decorative) */}
+      <div aria-hidden="true" className="hidden lg:block lg:w-1/2 relative">
         <img
           src="/login.webp"
           alt=""
