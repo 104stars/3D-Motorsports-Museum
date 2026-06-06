@@ -31,6 +31,7 @@ export default function HeroSection() {
         playsInline
         suppressHydrationWarning
         aria-hidden="true"
+        poster="/media/cars/quattro/1mnc.webp"
         className="absolute inset-0 w-full h-full object-cover"
       >
         <source src="/landingVideo.mp4" type="video/mp4" />
@@ -40,7 +41,7 @@ export default function HeroSection() {
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-neutral-950 from-0% to-neutral-950/10 to-100%" />
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col justify-end h-full text-left pl-30 pb-26">
+      <div className="relative z-10 flex flex-col justify-end h-full text-left pl-6 sm:pl-12 md:pl-20 lg:pl-30 pb-16 sm:pb-20 lg:pb-26">
         <h1 id="hero-heading" className="text-4xl md:text-5xl font-sans italic font-light text-white mb-6 max-w-xl leading-tight">
           {t("headlinePre")}
           <span className="font-serif italic">{t("headlineAccent")}</span>
