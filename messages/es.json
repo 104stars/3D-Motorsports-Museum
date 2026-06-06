@@ -190,6 +190,7 @@
       "restartTour": "Reiniciar Recorrido",
       "stop": "Parada",
       "jumpToStop": "Ir a parada",
+      "carList": "Lista de autos",
       "pause": "Pausar",
       "resume": "Reanudar",
       "skip": "Saltar",
@@ -236,7 +237,8 @@
       "toggleMuteNarrator": "Alternar audio del narrador",
       "viewDetailsFor": "Ver detalles completos de {name}",
       "jumpToStopMenu": "Ir a una parada del recorrido, actualmente parada {current} de {total}",
-      "goToStop": "Ir a la parada {number}: {name}"
+      "goToStop": "Ir a la parada {number}: {name}",
+      "carListMenu": "Abrir lista de autos, actualmente parada {current} de {total}"
     }
   },
   "carInfo": {

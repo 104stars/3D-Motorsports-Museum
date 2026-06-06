@@ -190,6 +190,7 @@
       "restartTour": "Restart Tour",
       "stop": "Stop",
       "jumpToStop": "Jump to stop",
+      "carList": "Car List",
       "pause": "Pause",
       "resume": "Resume",
       "skip": "Skip",
@@ -236,7 +237,8 @@
       "toggleMuteNarrator": "Toggle narrator audio",
       "viewDetailsFor": "View full details for {name}",
       "jumpToStopMenu": "Jump to tour stop, currently stop {current} of {total}",
-      "goToStop": "Go to stop {number}: {name}"
+      "goToStop": "Go to stop {number}: {name}",
+      "carListMenu": "Open car list, currently stop {current} of {total}"
     }
   },
   "carInfo": {
