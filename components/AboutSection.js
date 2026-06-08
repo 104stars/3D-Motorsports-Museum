@@ -57,32 +57,19 @@ export default function AboutSection() {
     },
   ];
 
-  const containerVariants = shouldReduceMotion
-    ? { hidden: {}, visible: {} }
+  const cardAnimation = shouldReduceMotion
+    ? {}
     : {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { staggerChildren: 0.1 },
-        },
-      };
-
-  const cardVariants = shouldReduceMotion
-    ? { hidden: {}, visible: {} }
-    : {
-        hidden: { y: 40, opacity: 0 },
-        visible: {
-          y: 0,
-          opacity: 1,
-          transition: { type: "spring", stiffness: 100, damping: 15 },
-        },
+        initial: { y: 30, opacity: 0 },
+        whileInView: { y: 0, opacity: 1 },
+        viewport: { once: true, amount: 0.1 },
       };
 
   return (
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="relative isolate overflow-hidden bg-neutral-950 pt-32 pb-40 px-6 md:px-12 lg:px-20 scroll-mt-28"
+      className="relative isolate overflow-hidden bg-neutral-950 pt-16 md:pt-24 lg:pt-32 pb-24 md:pb-32 lg:pb-40 px-6 md:px-12 lg:px-20 scroll-mt-28"
     >
       {/* Top blend gradient from ExploreInvitation */}
       <div
@@ -99,11 +86,11 @@ export default function AboutSection() {
       </div>
 
       {/* Section Heading */}
-      <div className="max-w-7xl mx-auto mb-16 text-center md:text-left">
+      <div className="max-w-7xl mx-auto mb-8 md:mb-12 lg:mb-16 text-center md:text-left">
         <p className="text-neutral-400 text-sm tracking-[0.2em] uppercase font-light mb-4">
           {t("eyebrow")}
         </p>
-        <h2 id="about-heading" className="text-5xl md:text-6xl font-light mb-4 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
+        <h2 id="about-heading" className="text-4xl sm:text-5xl lg:text-6xl font-light mb-4 font-sans bg-gradient-to-r from-neutral-50 to-neutral-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(133,133,133,0.25)]">
           {t("titlePre")}
           <span className="font-serif italic">{t("titleAccent")}</span>
         </h2>
@@ -113,18 +100,13 @@ export default function AboutSection() {
       </div>
 
       {/* Bento Grid */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {cards.map(({ key, icon: Icon, className = "", visual }) => (
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map(({ key, icon: Icon, className = "", visual }, index) => (
           <motion.div
             key={key}
-            variants={cardVariants}
-            className={`${className} min-h-[300px] bg-neutral-900/30 backdrop-blur-md border border-white/10 hover:border-white/20 hover:shadow-[0_0_50px_rgba(255,255,255,0.02)] transition-all duration-500 rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative group`}
+            {...cardAnimation}
+            transition={shouldReduceMotion ? {} : { type: "spring", stiffness: 100, damping: 15, delay: index * 0.08 }}
+            className={`${className} min-h-[280px] sm:min-h-[300px] bg-neutral-900/60 border border-white/10 hover:border-white/20 hover:shadow-[0_0_50px_rgba(255,255,255,0.02)] transition-all duration-500 rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative group`}
           >
             <div aria-hidden="true" className="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all duration-500" />
 
@@ -143,7 +125,7 @@ export default function AboutSection() {
             <div className="relative z-10 mt-8">{visual}</div>
           </motion.div>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }

@@ -103,25 +103,14 @@ export default function AuthPage() {
 
       <style jsx>{`
         .wormCover {
-          /* Start collapsed at the top to avoid any flash */
-          clip-path: inset(0 0 100% 0);
-          will-change: clip-path;
+          transform: translateY(-100%);
           animation: wormClip 600ms ease-in-out forwards;
         }
 
         @keyframes wormClip {
-          0% {
-            /* Block starts collapsed at top */
-            clip-path: inset(0 0 100% 0);
-          }
-          50% {
-            /* Fully extended: covers entire area */
-            clip-path: inset(0 0 0 0);
-          }
-          100% {
-            /* Collapsed at bottom: exits */
-            clip-path: inset(100% 0 0 0);
-          }
+          0%   { transform: translateY(-100%); }
+          50%  { transform: translateY(0%); }
+          100% { transform: translateY(100%); }
         }
       `}</style>
     </div>
