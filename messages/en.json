@@ -200,8 +200,8 @@
     },
     "controls": {
       "back": "Back",
-      "title": "Controls Guide",
-      "swipeHint": "Swipe for more",
+      "title": "Controls",
+      "eyebrow": "Reference",
       "movement": {
         "title": "Movement",
         "subtitle": "Explore the museum freely using your keyboard.",
@@ -213,15 +213,17 @@
       "camera": {
         "title": "Camera",
         "subtitle": "Control your view to admire every detail.",
-        "freeLook": "Free Look",
+        "freeLook": "Look around",
         "freeLookDesc": "Move the mouse to look around. The cursor will remain hidden during the tour.",
-        "pauseCursor": "Pause / Release Cursor"
+        "lookHint": "Move the mouse",
+        "pauseCursor": "Pause / Release Cursor",
+        "pauseMenu": "Pause menu"
       },
       "interaction": {
         "title": "Interaction",
         "subtitle": "Discover the history behind each vehicle.",
         "interestIndicator": "Interest Indicator",
-        "interestIndicatorDesc": "When you look at a car, an eye icon will appear. <strong>Left click</strong> to open its information panel.",
+        "interestIndicatorDesc": "When you look at a car, an eye icon appears. <strong>Left click</strong> to open its information panel — with the car's history and a detailed 3D view.",
         "click": "Click",
         "panel": "PANEL"
       },
@@ -229,8 +231,11 @@
         "title": "Detailed View",
         "subtitle": "Examine 3D models with total freedom.",
         "rotate": "Rotate",
-        "move": "Move",
+        "move": "Pan",
         "zoom": "Zoom",
+        "leftDrag": "Left drag",
+        "rightDrag": "Right drag",
+        "scroll": "Scroll",
         "cursorNote": "In this mode the cursor <strong>is not locked</strong>. You can interact freely with the model.",
         "closeView": "Close view"
       }

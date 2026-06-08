@@ -200,8 +200,8 @@
     },
     "controls": {
       "back": "Volver",
-      "title": "Guía de Controles",
-      "swipeHint": "Desliza para ver más",
+      "title": "Controles",
+      "eyebrow": "Referencia",
       "movement": {
         "title": "Movimiento",
         "subtitle": "Explora el museo libremente usando tu teclado.",
@@ -213,15 +213,17 @@
       "camera": {
         "title": "Cámara",
         "subtitle": "Controla tu vista para admirar cada detalle.",
-        "freeLook": "Vista Libre",
+        "freeLook": "Mirar alrededor",
         "freeLookDesc": "Mueve el mouse para mirar alrededor. El cursor permanecerá oculto durante el recorrido.",
-        "pauseCursor": "Pausar / Liberar Cursor"
+        "lookHint": "Mueve el mouse",
+        "pauseCursor": "Pausar / Liberar Cursor",
+        "pauseMenu": "Menú de pausa"
       },
       "interaction": {
         "title": "Interacción",
         "subtitle": "Descubre la historia detrás de cada vehículo.",
         "interestIndicator": "Indicador de Interés",
-        "interestIndicatorDesc": "Cuando mires fijamente un auto, aparecerá un icono de ojo. Haz <strong>click izquierdo</strong> para abrir su panel de información.",
+        "interestIndicatorDesc": "Cuando mires un auto, aparece un icono de ojo. Haz <strong>click izquierdo</strong> para abrir su panel de información, con la historia del auto y una vista 3D detallada.",
         "click": "Click",
         "panel": "PANEL"
       },
@@ -229,8 +231,11 @@
         "title": "Vista Detallada",
         "subtitle": "Examina los modelos 3D con total libertad.",
         "rotate": "Rotar",
-        "move": "Mover",
+        "move": "Desplazar",
         "zoom": "Zoom",
+        "leftDrag": "Arrastrar izq.",
+        "rightDrag": "Arrastrar der.",
+        "scroll": "Rueda",
         "cursorNote": "En este modo el cursor <strong>no está bloqueado</strong>. Puedes interactuar libremente con el modelo.",
         "closeView": "Cerrar vista"
       }

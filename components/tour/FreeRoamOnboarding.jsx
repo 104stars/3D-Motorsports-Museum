@@ -17,6 +17,7 @@ import {
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import Kbd from "@/components/tour/Kbd";
 
 const TITLE_ID = "freeroam-onboarding-title";
 const BODY_ID = "freeroam-onboarding-body";
@@ -417,18 +418,5 @@ function ControlRow({ label, children }) {
       <span className="text-sm text-neutral-300">{label}</span>
       <div className="flex shrink-0 items-center gap-1.5">{children}</div>
     </div>
-  );
-}
-
-function Kbd({ children, wide = false }) {
-  return (
-    <kbd
-      className={cn(
-        "flex h-9 items-center justify-center rounded-lg border-b-2 border-white/20 bg-gradient-to-b from-white/15 to-white/5 font-mono text-xs font-bold text-white shadow-md select-none",
-        wide ? "min-w-[3.5rem] px-3" : "w-9",
-      )}
-    >
-      {children}
-    </kbd>
   );
 }

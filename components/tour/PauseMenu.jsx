@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Play, HelpCircle, Home, Headphones, ChevronRight } from "lucide-react";
@@ -52,7 +52,14 @@ export default function PauseMenu({ isOpen, onResume, onStartTour }) {
   const t = useTranslations("tour.pause");
   const dialogRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
-  useFocusTrap(dialogRef, isOpen && !showHelp);
+  // Trap focus across both views: dialogRef wraps the menu and the help panel,
+  // so Tab stays inside whichever one is currently shown.
+  useFocusTrap(dialogRef, isOpen);
+
+  // Always reopen on the menu, never on a stale help panel from a prior visit.
+  useEffect(() => {
+    if (!isOpen) setShowHelp(false);
+  }, [isOpen]);
 
   const activeContainerVariants = shouldReduceMotion ? reducedContainerVariants : containerVariants;
   const activeItemVariants = shouldReduceMotion ? reducedItemVariants : itemVariants;
@@ -72,7 +79,7 @@ export default function PauseMenu({ isOpen, onResume, onStartTour }) {
           transition={{ duration: 0.3 }}
           role="dialog"
           aria-modal="true"
-          aria-labelledby="pause-menu-heading"
+          aria-labelledby={showHelp ? "controls-help-heading" : "pause-menu-heading"}
         >
           {/* Cinematic Backdrop */}
           <motion.div
@@ -122,6 +129,7 @@ export default function PauseMenu({ isOpen, onResume, onStartTour }) {
                       onClick={onResume}
                       variants={activeItemVariants}
                       primary
+                      autoFocus
                     />
                     <PauseMenuItem
                       icon={Headphones}
@@ -171,11 +179,12 @@ export default function PauseMenu({ isOpen, onResume, onStartTour }) {
   );
 }
 
-function PauseMenuItem({ icon: Icon, label, description, onClick, primary = false, danger = false, variants }) {
+function PauseMenuItem({ icon: Icon, label, description, onClick, primary = false, danger = false, variants, autoFocus = false }) {
   return (
     <motion.button
       variants={variants ?? itemVariants}
       onClick={onClick}
+      autoFocus={autoFocus}
       className={cn(
         "group relative flex items-center justify-between w-full p-1 pl-1 pr-6 rounded-2xl",
         "transition-colors border border-transparent",
