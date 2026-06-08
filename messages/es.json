@@ -134,6 +134,58 @@
       "footer": "Selecciona un modo para comenzar",
       "enter": "Entrar"
     },
+    "onboarding": {
+      "skip": "Saltar tutorial",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "finish": "Comenzar a explorar",
+      "stepStatus": "Paso {current} de {total}: {title}",
+      "welcome": {
+        "eyebrow": "Bienvenida",
+        "title": "Bienvenido al museo",
+        "body": "Adéntrate en una colección de máquinas de carreras legendarias. Recorre las salas a tu ritmo, acércate a cada auto y descubre las historias y la ingeniería detrás de la historia del automovilismo."
+      },
+      "movement": {
+        "eyebrow": "Desplazarse",
+        "title": "Muévete y mira alrededor",
+        "body": "Usa el teclado para moverte y el mouse para mirar. El museo tiene tres pisos, uno por cada disciplina del automovilismo.",
+        "move": "Desplazarse",
+        "run": "Correr",
+        "jump": "Saltar",
+        "look": "Mirar",
+        "lookDesc": "Mueve el mouse",
+        "floorsTitle": "Tres pisos",
+        "floor1": "Resistencia",
+        "floor2": "Rally",
+        "floor3": "Fórmula 1"
+      },
+      "interact": {
+        "eyebrow": "Descubre los autos",
+        "title": "Inspecciona un auto",
+        "body": "Acércate a cualquier auto. Cuando estés lo bastante cerca, la mira se convierte en un icono de ojo, lo que significa que puedes interactuar con él.",
+        "step1": "Acércate a un auto",
+        "step2": "Espera el icono de ojo",
+        "step3": "Haz click para abrirlo",
+        "panelNote": "El panel de información se abre con la historia del auto y una vista 3D detallada que puedes rotar y ampliar."
+      },
+      "pause": {
+        "eyebrow": "Toma un descanso",
+        "title": "Pausa cuando quieras",
+        "body": "Presiona cualquiera de las dos teclas para abrir el menú de pausa.",
+        "or": "o",
+        "optionsTitle": "Desde el menú de pausa puedes:",
+        "optResume": "Reanudar la exploración",
+        "optTour": "Iniciar el recorrido narrado",
+        "optControls": "Revisar los controles",
+        "optLanguage": "Cambiar el idioma",
+        "optExit": "Salir a la página de inicio"
+      },
+      "ready": {
+        "eyebrow": "Todo listo",
+        "title": "Listo para explorar",
+        "body": "Eso es todo lo que necesitas. Cierra esto para empezar a caminar; puedes volver a abrir los controles cuando quieras desde el menú de pausa."
+      }
+    },
     "pause": {
       "title": "Pausa",
       "resume": "Reanudar",

@@ -134,6 +134,58 @@
       "footer": "Select a mode to begin",
       "enter": "Enter"
     },
+    "onboarding": {
+      "skip": "Skip tutorial",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Start exploring",
+      "stepStatus": "Step {current} of {total}: {title}",
+      "welcome": {
+        "eyebrow": "Welcome",
+        "title": "Welcome to the museum",
+        "body": "Step inside a collection of legendary racing machines. Walk the halls at your own pace, get up close to each car, and uncover the stories and engineering behind motorsport history."
+      },
+      "movement": {
+        "eyebrow": "Getting around",
+        "title": "Move and look around",
+        "body": "Use your keyboard to move and your mouse to look. The museum spans three floors, one for each motorsport discipline.",
+        "move": "Move",
+        "run": "Run",
+        "jump": "Jump",
+        "look": "Look",
+        "lookDesc": "Move the mouse",
+        "floorsTitle": "Three floors",
+        "floor1": "Endurance",
+        "floor2": "Rally",
+        "floor3": "Formula 1"
+      },
+      "interact": {
+        "eyebrow": "Discover the cars",
+        "title": "Inspect a car",
+        "body": "Walk up to any car. When you're close enough, the crosshair turns into an eye icon — that means you can interact with it.",
+        "step1": "Get close to a car",
+        "step2": "Wait for the eye icon",
+        "step3": "Click to open it",
+        "panelNote": "The information panel opens with the car's history and a detailed 3D view you can rotate and zoom."
+      },
+      "pause": {
+        "eyebrow": "Take a break",
+        "title": "Pause anytime",
+        "body": "Press either key to open the pause menu.",
+        "or": "or",
+        "optionsTitle": "From the pause menu you can:",
+        "optResume": "Resume exploring",
+        "optTour": "Start the narrated tour",
+        "optControls": "Review the controls",
+        "optLanguage": "Switch the language",
+        "optExit": "Exit to the home page"
+      },
+      "ready": {
+        "eyebrow": "All set",
+        "title": "You're ready to explore",
+        "body": "That's everything you need. Close this to start walking — you can reopen the controls anytime from the pause menu."
+      }
+    },
     "pause": {
       "title": "Pause",
       "resume": "Resume",

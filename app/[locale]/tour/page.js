@@ -33,6 +33,7 @@ import DetailedCarViewer from "@/components/tour/DetailedCarViewer";
 import A11yAnnouncer from "@/components/tour/A11yAnnouncer";
 import CarA11yList from "@/components/tour/CarA11yList";
 import FreeRoamHint from "@/components/tour/FreeRoamHint";
+import FreeRoamOnboarding from "@/components/tour/FreeRoamOnboarding";
 
 useLoader.preload(HDRLoader, "/shop.hdr");
 
@@ -58,6 +59,11 @@ function TourPageInner() {
 
   const [loaderComplete, setLoaderComplete] = useState(false);
   const [modeSelected, setModeSelected] = useState(null);
+  // The first-run onboarding shows only when the player explicitly chooses Free
+  // Roam — not when a finished narrated tour drops them back into the museum.
+  // While it's up it behaves like any other overlay: movement keys, pointer
+  // lock, hover detection and the in-game shortcuts are all suspended.
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [tourPreloading, setTourPreloading] = useState(false);
   const [tourDetailOpen, setTourDetailOpen] = useState(false);
 
@@ -75,25 +81,53 @@ function TourPageInner() {
       const canvas = canvasRef.current;
       const isLocked = document.pointerLockElement === canvas;
 
-      if (!isLocked && canvas && !selectedCarId && !isViewerActive && !tour.isActive && modeSelected === "free") {
+      if (!isLocked && canvas && !selectedCarId && !isViewerActive && !tour.isActive && modeSelected === "free" && !showOnboarding) {
         setIsPaused(true);
       }
     };
 
     document.addEventListener("pointerlockchange", handlePointerLockChange);
     return () => document.removeEventListener("pointerlockchange", handlePointerLockChange);
-  }, [selectedCarId, isViewerActive, tour.isActive, modeSelected]);
+  }, [selectedCarId, isViewerActive, tour.isActive, modeSelected, showOnboarding]);
+
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+    setTimeout(() => {
+      canvasRef.current?.requestPointerLock?.();
+    }, 50);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Escape closes the pause menu (opening it is driven by pointer-lock loss).
       if (e.key === "Escape" && isPaused) {
         setIsPaused(false);
+        return;
+      }
+
+      // "P" toggles the pause menu in free roam. Unlike Escape it doesn't rely
+      // on the browser releasing pointer lock, so it also works when the pointer
+      // is already free. Suppressed during onboarding or any other overlay.
+      if (
+        (e.key === "p" || e.key === "P") &&
+        modeSelected === "free" &&
+        !showOnboarding &&
+        !selectedCarId &&
+        !isViewerActive &&
+        !tour.isActive
+      ) {
+        e.preventDefault();
+        if (isPaused) {
+          handleResume();
+        } else {
+          setIsPaused(true);
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPaused]);
+  }, [isPaused, modeSelected, showOnboarding, selectedCarId, isViewerActive, tour.isActive, handleResume]);
 
   const handleBoundsReady = useCallback((box) => {
     if (!box) return;
@@ -117,19 +151,17 @@ function TourPageInner() {
     setIsViewerActive(active);
   }, []);
 
-  const handleResume = useCallback(() => {
-    setIsPaused(false);
-    setTimeout(() => {
-      canvasRef.current?.requestPointerLock?.();
-    }, 50);
-  }, []);
-
   const handleLoaderComplete = useCallback(() => {
     setLoaderComplete(true);
   }, []);
 
   const handleFreeRoam = useCallback(() => {
     setModeSelected("free");
+    setShowOnboarding(true);
+  }, []);
+
+  const handleOnboardingComplete = useCallback(() => {
+    setShowOnboarding(false);
   }, []);
 
   const handleNarratedTour = useCallback(() => {
@@ -196,7 +228,8 @@ function TourPageInner() {
 
     const handleTab = (e) => {
       if (e.key !== "Tab") return;
-      if (isOverlayOpen || isViewerActive) return;
+      // While onboarding is up it traps Tab within its own dialog, so leave it be.
+      if (isOverlayOpen || isViewerActive || showOnboarding) return;
 
       const nav = document.querySelector("[data-a11y-list]");
       if (!nav || nav.contains(document.activeElement)) return;
@@ -207,7 +240,7 @@ function TourPageInner() {
 
     document.addEventListener("keydown", handleTab, { capture: true });
     return () => document.removeEventListener("keydown", handleTab, { capture: true });
-  }, [modeSelected, isOverlayOpen, isViewerActive]);
+  }, [modeSelected, isOverlayOpen, isViewerActive, showOnboarding]);
 
   const handleA11yCarSelect = useCallback((id) => {
     if (!tour.isActive && !isViewerActive) {
@@ -228,7 +261,7 @@ function TourPageInner() {
       <A11yAnnouncer />
       <CarA11yList
         onSelect={handleA11yCarSelect}
-        disabled={isOverlayOpen || showModeSelection || isViewerActive}
+        disabled={isOverlayOpen || showModeSelection || isViewerActive || showOnboarding}
       />
       <Canvas
         shadows
@@ -246,14 +279,14 @@ function TourPageInner() {
         }}
       >
         <SceneWarmup />
-        <KeyboardControls map={isOverlayOpen || showModeSelection ? [] : PLAYER_KEYBOARD_MAP}>
+        <KeyboardControls map={isOverlayOpen || showModeSelection || showOnboarding ? [] : PLAYER_KEYBOARD_MAP}>
           <Physics
             gravity={[0, -9.81, 0]}
             timeStep={1 / 60}
             updateLoop="independent"
           >
             <CarStageLighting />
-            <PointerLockHandler isOverlayOpen={isOverlayOpen || showModeSelection} />
+            <PointerLockHandler isOverlayOpen={isOverlayOpen || showModeSelection || showOnboarding} />
             <CameraPositionLogger />
 
             <Suspense fallback={null}>
@@ -264,7 +297,7 @@ function TourPageInner() {
               <Suspense fallback={null}>
                 <CarExhibits showLabels={modeSelected === "free"} />
               </Suspense>
-              {!isOverlayOpen && !isViewerActive && !isPaused && !showModeSelection && (
+              {!isOverlayOpen && !isViewerActive && !isPaused && !showModeSelection && !showOnboarding && (
                 <CarHoverDetector onDetect={setHoveredCarId} />
               )}
             </CarDetectionProvider>
@@ -320,7 +353,7 @@ function TourPageInner() {
         />
       )}
 
-      {!isOverlayOpen && modeSelected === "free" && (
+      {!isOverlayOpen && modeSelected === "free" && !showOnboarding && (
         <div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10"
           aria-hidden="true"
@@ -338,8 +371,14 @@ function TourPageInner() {
           modeSelected === "free" &&
           !isPaused &&
           !selectedCarId &&
-          !isViewerActive
+          !isViewerActive &&
+          !showOnboarding
         }
+      />
+
+      <FreeRoamOnboarding
+        isVisible={showOnboarding}
+        onComplete={handleOnboardingComplete}
       />
 
       <PauseMenu
