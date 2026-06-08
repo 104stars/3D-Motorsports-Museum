@@ -218,7 +218,11 @@ function TourPageInner() {
   return (
     <div
       className="w-full h-screen bg-neutral-950 relative"
-      role="application"
+      // role="application" switches screen readers out of browse mode so the
+      // canvas can receive raw WASD/arrow keys. Only Free Roam needs that; the
+      // narrated tour is standard widgets + text, where browse mode (virtual
+      // cursor, arrow-key element navigation) is what AT users rely on.
+      role={modeSelected === "free" ? "application" : undefined}
       aria-label={t("appLabel")}
     >
       <A11yAnnouncer />

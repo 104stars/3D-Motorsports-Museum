@@ -10,8 +10,9 @@ import {
   useState,
 } from "react";
 import { useGLTF } from "@react-three/drei";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import NarrationEngine from "./NarrationEngine";
+import { announceA11y } from "./A11yAnnouncer";
 import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
 import { getNarrationScript } from "@/lib/tour/narrationScripts";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
@@ -36,6 +37,11 @@ function prefetchStop(index) {
 
 export function NarratedTourProvider({ children }) {
   const locale = useLocale();
+  // Held in a ref so the memoized callbacks below can announce without taking
+  // the translator (whose identity changes each render) as a dependency.
+  const tA11y = useTranslations("tour.a11y");
+  const tA11yRef = useRef(tA11y);
+  tA11yRef.current = tA11y;
   const [isActive, setIsActive] = useState(false);
   const [currentStopIndex, setCurrentStopIndex] = useState(0);
   const [tourState, setTourState] = useState("idle"); // idle | loading | narrating | paused | waiting | finished
@@ -173,11 +179,13 @@ export function NarratedTourProvider({ children }) {
   const pauseNarration = useCallback(() => {
     engineRef.current?.pause();
     setTourState("paused");
+    announceA11y(tA11yRef.current("narrationPaused"));
   }, []);
 
   const resumeNarration = useCallback(() => {
     engineRef.current?.resume();
     setTourState("narrating");
+    announceA11y(tA11yRef.current("narrationResumed"));
   }, []);
 
   const beginFirstStop = useCallback(() => {
@@ -228,6 +236,7 @@ export function NarratedTourProvider({ children }) {
     // update + effect cycle has completed).
     isMutedRef.current = next;
     setIsMuted(next);
+    announceA11y(tA11yRef.current(next ? "textOnlyMode" : "audioNarrationOn"));
 
     if (next) {
       // Going muted: stop current speech and surface the full stop text so

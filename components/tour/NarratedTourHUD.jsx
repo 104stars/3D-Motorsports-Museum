@@ -93,6 +93,38 @@ export default function NarratedTourHUD({ onViewDetails }) {
     return () => cancelAnimationFrame(id);
   }, [isActive, tourState, showExitConfirm]);
 
+  // Escape opens the exit confirmation from anywhere in the tour, and closes it
+  // again. Skipped while a dropdown menu is open so Radix can handle its own
+  // Escape-to-close first.
+  useEffect(() => {
+    if (!isActive) return;
+    const handleKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      if (showExitConfirm) {
+        setShowExitConfirm(false);
+        return;
+      }
+      if (tourState === "finished") return;
+      if (document.querySelector('[role="menu"]')) return; // dropdown open
+      setShowExitConfirm(true);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isActive, showExitConfirm, tourState]);
+
+  // When a focused control unmounts during a state transition (e.g. the Next
+  // button after advancing in audio mode), focus would fall to <body>. Restore
+  // it to the primary control so keyboard / screen-reader users keep their place.
+  useEffect(() => {
+    if (!isActive || tourState === "finished" || showExitConfirm) return;
+    const active = document.activeElement;
+    if (active && active !== document.body) return;
+    const id = requestAnimationFrame(() => {
+      (primaryControlRef.current ?? muteToggleRef.current)?.focus();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isActive, currentStopIndex, tourState, showExitConfirm]);
+
   if (!isActive) return null;
 
   const nextCarId = NARRATION_ROUTE[currentStopIndex + 1];

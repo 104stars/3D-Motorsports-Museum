@@ -238,7 +238,16 @@
       "viewDetailsFor": "Ver detalles completos de {name}",
       "jumpToStopMenu": "Ir a una parada del recorrido, actualmente parada {current} de {total}",
       "goToStop": "Ir a la parada {number}: {name}",
-      "carListMenu": "Abrir lista de autos, actualmente parada {current} de {total}"
+      "carListMenu": "Abrir lista de autos, actualmente parada {current} de {total}",
+      "loadingTourStatus": "Preparando tu recorrido, por favor espera.",
+      "loadingMuseumStatus": "Cargando el museo, por favor espera.",
+      "loadingProgress": "Cargando: {percent} por ciento",
+      "tourReady": "Recorrido listo.",
+      "museumLoaded": "Museo cargado.",
+      "narrationPaused": "Narración en pausa",
+      "narrationResumed": "Narración reanudada",
+      "audioNarrationOn": "Narración de audio activada",
+      "textOnlyMode": "Solo texto. La narración se muestra como texto."
     }
   },
   "carInfo": {

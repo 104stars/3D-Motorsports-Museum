@@ -238,7 +238,16 @@
       "viewDetailsFor": "View full details for {name}",
       "jumpToStopMenu": "Jump to tour stop, currently stop {current} of {total}",
       "goToStop": "Go to stop {number}: {name}",
-      "carListMenu": "Open car list, currently stop {current} of {total}"
+      "carListMenu": "Open car list, currently stop {current} of {total}",
+      "loadingTourStatus": "Preparing your tour, please wait.",
+      "loadingMuseumStatus": "Loading the museum, please wait.",
+      "loadingProgress": "Loading: {percent} percent",
+      "tourReady": "Tour ready.",
+      "museumLoaded": "Museum loaded.",
+      "narrationPaused": "Narration paused",
+      "narrationResumed": "Narration resumed",
+      "audioNarrationOn": "Audio narration on",
+      "textOnlyMode": "Text only. Narration shown as text."
     }
   },
   "carInfo": {
