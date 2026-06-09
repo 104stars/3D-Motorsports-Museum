@@ -126,13 +126,31 @@ export default function CustomLoader({ onComplete }) {
       }
     }
 
+    // Returning to the tour via client-side navigation (language switch, or
+    // exit-to-landing then back) reuses drei's global progress store. Because
+    // useGLTF/useLoader resolve cached assets from the suspense cache without
+    // re-running the loaders, the LoadingManager never fires again and the store
+    // stays finished (active=false, progress=100). There's no active session to
+    // observe, so without this the bar would sit at 0% forever. Detect the
+    // already-complete store on mount and drive straight to 100.
+    if (!active && !wasActiveRef.current && targetPctRef.current < 100) {
+      const alreadyLoaded = (total > 0 && loaded >= total) || progress >= 100;
+      if (alreadyLoaded) {
+        if (loadStartTimeRef.current == null) {
+          loadStartTimeRef.current = Date.now();
+        }
+        targetPctRef.current = 100;
+        isAnimatingRef.current = true;
+      }
+    }
+
     wasActiveRef.current = active;
     
     // Restart animation if needed
     if (isAnimatingRef.current && visible) {
       startAnimationLoop();
     }
-  }, [active, progress, visible, startAnimationLoop]);
+  }, [active, progress, visible, loaded, total, startAnimationLoop]);
 
   // Animate displayPct toward targetPct using rAF with smoother easing
   // Only runs when visible and needs animation
