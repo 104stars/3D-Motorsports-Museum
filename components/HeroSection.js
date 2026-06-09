@@ -19,7 +19,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative h-screen w-full overflow-hidden bg-black"
+      className="relative h-dvh w-full overflow-hidden bg-black"
       aria-labelledby="hero-heading"
     >
       {/* Background Video — decorative, no content value */}
@@ -29,6 +29,8 @@ export default function HeroSection() {
         loop
         muted
         playsInline
+        preload="auto"
+        poster="/1.webp"
         suppressHydrationWarning
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
@@ -40,7 +42,7 @@ export default function HeroSection() {
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-neutral-950 from-0% to-neutral-950/10 to-100%" />
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col justify-end h-full text-left pl-30 pb-26">
+      <div className="relative z-10 flex flex-col justify-end h-full text-left pl-[clamp(1.5rem,6.25vw,7.5rem)] pb-[clamp(3.5rem,10vh,6.5rem)]">
         <h1 id="hero-heading" className="text-4xl md:text-5xl font-sans italic font-light text-white mb-6 max-w-xl leading-tight">
           {t("headlinePre")}
           <span className="font-serif italic">{t("headlineAccent")}</span>

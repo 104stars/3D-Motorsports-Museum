@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useProgress } from "@react-three/drei";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
+import { announceA11y } from "./A11yAnnouncer";
 
 /**
  * Full-screen loader with smooth, monotonic progress (0→100).
@@ -11,6 +12,7 @@ import { useTranslations } from "next-intl";
  */
 export default function CustomLoader({ onComplete }) {
   const t = useTranslations("tour.loading");
+  const tA11y = useTranslations("tour.a11y");
   const { active, progress, loaded, total, item } = useProgress();
   const [visible, setVisible] = useState(true);
   // Rendered percent (integer). Keep a separate float ref for smooth easing
@@ -124,13 +126,31 @@ export default function CustomLoader({ onComplete }) {
       }
     }
 
+    // Returning to the tour via client-side navigation (language switch, or
+    // exit-to-landing then back) reuses drei's global progress store. Because
+    // useGLTF/useLoader resolve cached assets from the suspense cache without
+    // re-running the loaders, the LoadingManager never fires again and the store
+    // stays finished (active=false, progress=100). There's no active session to
+    // observe, so without this the bar would sit at 0% forever. Detect the
+    // already-complete store on mount and drive straight to 100.
+    if (!active && !wasActiveRef.current && targetPctRef.current < 100) {
+      const alreadyLoaded = (total > 0 && loaded >= total) || progress >= 100;
+      if (alreadyLoaded) {
+        if (loadStartTimeRef.current == null) {
+          loadStartTimeRef.current = Date.now();
+        }
+        targetPctRef.current = 100;
+        isAnimatingRef.current = true;
+      }
+    }
+
     wasActiveRef.current = active;
     
     // Restart animation if needed
     if (isAnimatingRef.current && visible) {
       startAnimationLoop();
     }
-  }, [active, progress, visible, startAnimationLoop]);
+  }, [active, progress, visible, loaded, total, startAnimationLoop]);
 
   // Animate displayPct toward targetPct using rAF with smoother easing
   // Only runs when visible and needs animation
@@ -178,6 +198,9 @@ export default function CustomLoader({ onComplete }) {
       const timeout = setTimeout(() => {
         setVisible(false);
         hasCompletedInitialLoadRef.current = true;
+        // Announce completion via the persistent global announcer (this
+        // overlay and its embedded live region unmount on completion).
+        announceA11y(tA11y("museumLoaded"));
         onComplete?.();
       }, remainingTime + postLoadDelay);
       
@@ -203,7 +226,13 @@ export default function CustomLoader({ onComplete }) {
             } 
           }}
           className="fixed inset-0 z-[100] flex flex-col justify-between bg-neutral-950 p-6 md:p-12 text-white font-sans selection:bg-white selection:text-black overflow-hidden"
+          aria-busy="true"
         >
+          {/* Screen-reader status — announced the moment the loader appears */}
+          <span role="status" aria-live="assertive" className="sr-only">
+            {tA11y("loadingMuseumStatus")}
+          </span>
+
           {/* Top Section */}
           <div className="flex w-full justify-between items-start border-b border-white/20 pb-4">
             <h1 className="text-sm md:text-base font-bold uppercase tracking-widest">
@@ -218,12 +247,19 @@ export default function CustomLoader({ onComplete }) {
           <div className="flex-1 flex items-center justify-center relative" />
 
           {/* Bottom Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end border-t border-white/20 pt-4">
-            
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end border-t border-white/20 pt-4"
+            role="progressbar"
+            aria-valuenow={pct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={tA11y("loadingProgress", { percent: pct })}
+          >
+
             {/* Asset Info */}
-            <div className="space-y-2 font-mono text-xs md:text-sm opacity-60">
+            <div className="space-y-2 font-mono text-xs md:text-sm opacity-70">
               <div className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" aria-hidden="true" />
                 <span>{t("loadingAssets")}</span>
               </div>
               <div className="truncate max-w-[200px] md:max-w-[300px]">
@@ -232,8 +268,8 @@ export default function CustomLoader({ onComplete }) {
             </div>
 
             {/* Percentage Big */}
-            <div className="text-right">
-              <motion.div 
+            <div className="text-right" aria-hidden="true">
+              <motion.div
                 className="text-[6rem] md:text-[12rem] leading-[0.8] font-bold tracking-tighter"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -244,7 +280,7 @@ export default function CustomLoader({ onComplete }) {
             </div>
           </div>
 
-          <p className="text-xs md:text-sm text-white/30 font-mono text-center">
+          <p className="text-xs md:text-sm text-white/60 font-mono text-center">
             {t("stuckHint")}
           </p>
         </motion.div>

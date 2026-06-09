@@ -108,9 +108,9 @@ const Silk = ({ speed = 5, scale = 1, color = '#7B7481', noiseIntensity = 1.5, r
 
   return (
     <Canvas
-      dpr={[1, 2]}
+      dpr={1}
       frameloop="always"
-      gl={{ alpha: true, antialias: true }}
+      gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
       style={{ width: "100%", height: "100%", pointerEvents: "none", background: "transparent" }}
     >
       <SilkPlane ref={meshRef} uniforms={uniforms} />

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 import { getHighQualityModelUrl } from "@/lib/tour/carConfig";
 import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
+import { announceA11y } from "./A11yAnnouncer";
 
 /**
  * Preloads the first two tour stops from Supabase, then calls onReady.
@@ -13,9 +14,11 @@ import { NARRATION_ROUTE } from "@/lib/tour/narrationRoute";
  */
 export default function TourPreloader({ isActive, onReady }) {
   const t = useTranslations("tour.loading");
+  const tA11y = useTranslations("tour.a11y");
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const hasCalledReady = useRef(false);
+  const overlayRef = useRef(null);
 
   useEffect(() => {
     if (!isActive || hasCalledReady.current) return;
@@ -60,10 +63,22 @@ export default function TourPreloader({ isActive, onReady }) {
       setTimeout(() => {
         hasCalledReady.current = true;
         setIsLoading(false);
+        // The overlay (and its embedded live region) unmounts here, so announce
+        // completion through the persistent global announcer instead.
+        announceA11y(tA11y("tourReady"));
         onReady?.();
       }, 600);
     });
-  }, [isActive, onReady]);
+  }, [isActive, onReady, tA11y]);
+
+  // When the overlay appears, move focus onto it so the screen reader's context
+  // lands on the loading status rather than being orphaned on the unmounting
+  // mode-selection button.
+  useEffect(() => {
+    if (isActive && isLoading) {
+      overlayRef.current?.focus();
+    }
+  }, [isActive, isLoading]);
 
   // Reset when deactivated
   useEffect(() => {
@@ -79,19 +94,27 @@ export default function TourPreloader({ isActive, onReady }) {
       {isActive && isLoading && (
         <motion.div
           key="tour-preloader"
+          ref={overlayRef}
+          tabIndex={-1}
+          aria-busy="true"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[98] flex flex-col items-center justify-center bg-neutral-950 text-white"
+          className="fixed inset-0 z-[98] flex flex-col items-center justify-center bg-neutral-950 text-white focus:outline-none"
         >
+          {/* Screen-reader status — announced the moment the overlay appears */}
+          <span role="status" aria-live="assertive" className="sr-only">
+            {tA11y("loadingTourStatus")}
+          </span>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="flex flex-col items-center"
           >
-            <div className="h-px w-12 bg-white/20 mb-8" />
+            <div className="h-px w-12 bg-white/20 mb-8" aria-hidden="true" />
 
             <h2 className="font-serif italic text-3xl md:text-4xl tracking-tight mb-3">
               {t("preparingTour")}
@@ -101,7 +124,14 @@ export default function TourPreloader({ isActive, onReady }) {
             </p>
 
             {/* Progress bar */}
-            <div className="w-64 h-px bg-white/10 relative overflow-hidden rounded-full">
+            <div
+              className="w-64 h-px bg-white/10 relative overflow-hidden rounded-full"
+              role="progressbar"
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={tA11y("loadingProgress", { percent: progress })}
+            >
               <motion.div
                 className="absolute inset-y-0 left-0 bg-white/80"
                 initial={{ width: "0%" }}
@@ -110,10 +140,10 @@ export default function TourPreloader({ isActive, onReady }) {
               />
             </div>
 
-            <p className="mt-4 text-xs font-mono text-white/30">{progress}%</p>
+            <p className="mt-4 text-xs font-mono text-white/60" aria-hidden="true">{progress}%</p>
           </motion.div>
 
-          <p className="absolute bottom-6 left-0 right-0 px-6 text-xs font-mono text-white/30 text-center">
+          <p className="absolute bottom-6 left-0 right-0 px-6 text-xs font-mono text-white/60 text-center">
             {t("stuckHint")}
           </p>
         </motion.div>
