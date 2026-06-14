@@ -37,3 +37,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *.md
+
+Manual_de_Usuario_Museo_del_Automovilismo.docx
+scripts/generate_manual.py
+~$nual_de_Usuario_Museo_del_Automovilismo.docx

@@ -1,28 +1,42 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import LetterSwapForward from "@/components/fancy/text/letter-swap-forward-anim";
-import Image from "next/image";
 
 export default function HeroSection() {
   const t = useTranslations("hero");
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, []);
 
   return (
     <section
       className="relative h-dvh w-full overflow-hidden bg-black"
       aria-labelledby="hero-heading"
     >
-      {/* Background Image — decorative, no content value */}
-      <Image
-        src="/bg.webp"
-        alt=""
-        fill
-        priority
+      {/* Background Video — decorative, no content value */}
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        poster="/bg.webp"
+        suppressHydrationWarning
         aria-hidden="true"
-        className="object-cover"
-      />
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/landingVideo.mp4" type="video/mp4" />
+      </video>
 
       {/* Dark Overlay */}
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-neutral-950 from-0% to-neutral-950/10 to-100%" />
